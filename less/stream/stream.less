@@ -1,0 +1,255 @@
+// @font-color: #eef8f9;
+@font-color: #eef8f8;
+@font-color-highlighted: #b5b5b5;
+@font-color-warn: #E44827;
+@nav-bg-color: #343a40;
+@nav-sub-bg-color: #353535;
+@transparent: transparent;
+@body-color: #1e1e23;
+
+#stream{
+    color: @font-color;
+    .header {
+        padding: 0px 5px 0px 5px;
+        border-radius: 5px;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        background-color: @nav-sub-bg-color !important;
+
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        -webkit-box-align: center;
+
+        align-items: center;
+
+        .title {
+            margin :-2px auto 7px 5px;
+
+            span {
+                word-break: break-all;
+                font-size: 12px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+    #chart {
+        margin-top: 5px;
+    }
+
+    .alerts {
+        padding-left: 10px;
+        
+        .alert {
+            padding-left: 10px;
+        }
+    }
+
+    .timeseries {
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: .25rem;
+        height: 570px;
+    }
+    .chatters {
+        height: 570px;
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: .25rem;
+        
+        .text-following{
+            color: #b5b5b5 !important;
+            font-weight: 800;
+        }
+
+        .chatter-header {
+            background-color: @body-color;
+            margin-top: 0.5rem;
+            h4 {
+                float: left;
+            }
+            input {
+                margin-bottom: 10px;
+            }
+        }
+
+        .stream-not-following {
+            color: @font-color-warn;
+        }
+
+        .stream-following {
+            color: @font-color;
+        }
+
+        .list-group-item {
+            display: contents;
+            padding: 0px 0px;
+            margin: 0px 0px 0px 32px;
+            border: 0px 0px;
+            
+
+            small {
+                margin: 4px 4px 4px 40px;
+            }
+        }
+
+        .panel-heading{
+            display: inline-block;
+            width: 100%;
+            margin-bottom: -10px;
+            margin-top: -10px;
+        }
+        .pagination-info{
+            .pagination-numbers {
+                float: left;
+                margin-left: 12px;
+                font-size: 0.75rem;
+            }
+
+            .page-link{
+                padding: .15rem .5rem;
+                font-size: .875rem;
+                line-height: .75;
+
+                background-color: @transparent;
+                border-color: @transparent;
+            }
+        }
+
+        .list-group {
+            display: inline-flex;
+        }
+    }
+
+    .pie-active {
+        height: 450px;
+
+        .octicon {
+            position: absolute;
+            margin-top: 10px;
+            right: 10px;
+            cursor: help;
+        }
+    }
+
+    svg {
+        fill: @font-color;
+    }
+
+    #chatters-help {
+        margin-top: -30px;
+        float: right;
+        cursor: pointer;
+    }
+
+    #chatters-search {
+        .simple-input;
+        width: 170px;
+        margin-left: 22px;
+    }
+
+    #chatters-search-icon {
+        float: left;
+        position: absolute;
+        margin-top: 13px;
+        margin-left: -2px;
+    }
+}
+
+
+.simple-input {
+	background-color: @transparent;
+	color: @font-color;
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-bottom: 1px solid #b3b3b3;
+	border-radius: 0px;
+	outline: none;
+	box-shadow: none;
+}
+
+#twitch-stream {
+    
+    #embeded-twitch-collapse {
+        cursor: pointer;
+    }
+    #twitch-embed {
+        min-height: 400px;
+        min-width: 550px;
+        iframe {
+            min-height: 400px;
+            min-width: 550px;
+        }
+    }
+
+    #embeded-twitch-channel {
+
+    }
+
+    #embeded-twitch-desc {
+        margin-left: 1em;
+        font-size: 0.5em;
+        margin-top: auto;
+    }
+
+    .header {
+        padding: 10px 10px 10px 10px;
+        border-radius: 5px;
+        background-color: @nav-sub-bg-color !important;
+    }
+}
+
+.channel-input-group {
+    height: 35px;
+    margin-top: 5px;
+    .input-group-prepend {
+        height: 28px;
+
+        .input-group-text {
+            border: 0;
+            background-color: transparent;
+            color: @font-color;
+            font-size: 20px;
+        }
+    }
+    .form-control {
+        height: 28px;
+    }
+
+    input {
+        width: 160px;
+        padding-left: 0.2em;
+        .simple-input
+    }
+
+    ul {
+        color: black;
+    }
+}
+
+#interval-selector {
+    margin: 0px 0px 0px 0px;
+}
+
+.svg-help-dot {
+    fill: white;   
+    position: absolute;
+    display: block;
+    height: 12px;
+    margin-left: 0.1em;
+}
+
+#time-start {
+    width: 140px;
+}
+
+#time-end {
+    width: 140px;
+}
+
+.quite-text {
+    color: @font-color-highlighted;
+}

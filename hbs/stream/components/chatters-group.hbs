@@ -1,0 +1,30 @@
+<div class="panel-heading {{this}}-header">
+    <h4 class="panel-title d-flex justify-content-between align-items-center mb-3">
+        <button id="{{this}}-expand" class="text-muted btn btn-link" type="button" data-toggle="collapse"
+            aria-controls="{{this}}-list" data-target="#{{this}}-list" aria-expanded="false">{{this}}</button>
+        <span id="{{this}}-count" class="badge badge-primary badge-pill"></span>
+    </h4>
+</div>
+<div id="{{this}}-list" class="list panel-collapse collapse">
+    <div id="{{this}}-paginator" class="pagination-info">
+        <span id="{{this}}-pagination-numbers" class="pagination-numbers"></span>
+
+        <ul class="pagination pagination-sm justify-content-end">
+            <li class="page-item">
+                <a id="{{this}}-page-left" class="page-link" href="javascript:void(0);" aria-label="Previous"
+                    onclick="domEvent(event)">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a id="{{this}}-page-right" class="page-link" href="javascript:void(0);" aria-label="Next"
+                    onclick="domEvent(event)">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <ul id="{{this}}-list-chatters" class="list-group mb-3 chatters-list">
+        {{!-- sourced by chatters-group-list.hbs --}}
+    </ul>
+</div>

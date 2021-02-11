@@ -1,0 +1,29 @@
+{{#each this}}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-6 box-shadow">
+            {{#with (lookup this 0)}}
+            <img class="card-img-top" src="{{this.gif}}">
+            <div class="card-body">
+                <p class="card-text text-center">
+                    {{this.message}}
+                </p>
+            </div>
+            {{/with}}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-6 box-shadow">
+            {{#with (lookup this 1)}}
+            <img class="card-img-top" src="{{this.gif}}">
+            <div class="card-body">
+                <p class="card-text text-center">
+                    {{this.message}}
+                </p>
+            </div>
+            {{/with}}
+        </div>
+    </div>
+</div>
+{{/each}}

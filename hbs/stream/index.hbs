@@ -1,0 +1,42 @@
+<div id="stream" class="container-fluid">
+    <div id="twitch-stream" class="row">
+        <div class="col-md-12">
+            <h2 id="embeded-twitch-collapse" class="header pl-4" data-toggle="collapse" data-target="#twitch-embed"
+                aria-expanded="true" aria-controls="twitch-embed" onclick="domEvent(event, 'embeded-twitch-collapse')">
+                <span id="embeded-twitch-channel" class="btn-link">
+                </span>
+                <span id="embeded-twitch-desc">
+                </span>
+            </h2>
+            <div id="twitch-embed" class="collapse show" aria-labelledby="headingOne"
+                data-parent="#embeded-twitch-collapse">
+            </div>
+        </div>
+    </div>
+    <div id="chart" class="row">
+        <div id="timeseries-container" class="timeseries col-md-10">
+            <canvas id="canvas-timeseries"></canvas>
+        </div>
+        <div id="chatters-table" class="chatters col-md-2">
+            {{!-- chatters.hbs --}}
+        </div>
+    </div>
+    <div class="pie-active row">
+        <div id='pie-chats-by-users' class="col-md-4">
+            {{!-- PieChatsByUsers.js --}}
+        </div>
+
+        <div id='pie-proceeds-by-users' class="col-md-4">
+            {{!-- PieProceedsByUsers.js --}}
+        </div>
+
+        <div id='pie-proceeds' class="col-md-4">
+            {{!-- PieProceeds.js --}}
+        </div>
+    </div>
+    <div class="pie-active row">
+        <div id='pie-followed-streamers' class="col-md-8">
+            {{!-- PieFollowedStreamers.js --}}
+        </div>
+    </div>
+</div>

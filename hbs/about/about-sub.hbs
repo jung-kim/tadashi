@@ -1,0 +1,17 @@
+{{#each this}}
+<div class="card">
+    <div class="card-header" id="heading{{@index}}">
+        <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-parent="#faq-accordion"
+                href="#collapse{{@index}}" aria-expanded="false" aria-controls="#collapse{{@index}}">
+                Q: {{this.title}}
+            </button>
+        </h2>
+    </div>
+    <div id="collapse{{@index}}" class="collapse" aria-labelledby="heading{{@index}}" data-parent="#faq-accordion">
+        <div class="card-body">
+            {{{this.body}}}
+        </div>
+    </div>
+</div>
+{{/each}}

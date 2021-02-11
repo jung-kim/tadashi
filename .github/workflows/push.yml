@@ -1,0 +1,23 @@
+name: main
+
+on: 
+  push:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v2
+    - name: Use Node.js 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+    - name: Run tests coverage
+      working-directory: ${{ matrix.project }}
+      run: 
+        npm run cov
+      env: # Or as an environment variable
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}

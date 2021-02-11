@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' href='{{HOST_ENDPOINT}}/t.ico' type='image/x-icon' />
+    <link rel="stylesheet" type="text/css" href="{{HOST_ENDPOINT}}/styles.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/themes/dark.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.base.min.css" rel="stylesheet" />
+    <title>Tadashi.io - Data driven stream optimization</title>
+</head>
+
+<body>
+    <!-- shared/alerts.hbs -->
+    <nav class=" navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav border-right pr-2 pt-1" role="tablist">
+                <li id="nav-stream" role="stream" class="nav-item">
+                    <a class="nav-link" href="#stream">Tadashi</a>
+                </li>
+                <!-- <li id="nav-about" role="about" class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li> -->
+            </ul>
+            <div id="nav-options" class="row ml-1 mr-auto">
+                <!-- components/nav-options.hbs -->
+            </div>
+            <form id="nav-auth" class="nav-auth border-left form-inline mt-2 mt-md-0 pl-2 mr-3">
+                <!-- components/nav-auth.hbs -->
+            </form>
+        </div>
+    </nav>
+
+    <div id="alerts">
+    </div>
+
+    <main id="main" role="main" class="container-fluid">
+    </main>
+</body>
+<footer class="page-footer font-small blue">
+
+    <div class="container">
+        <div class="footer-copyright text-center py-2">
+            Source code: <a href="https://github.com/jung-kim/tadashi">github.com/jung-kim/tadashi</a>
+        </div>
+    </div>
+</footer>
+
+
+<add name="X-Frame-Options" value="SAMEORIGIN" />
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap.native/3.0.9/bootstrap-native.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.31/moment-timezone.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.0-beta.7/chart.min.js"></script>
+<script src="https://player.twitch.tv/js/embed/v1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
+<script src="https://embed.twitch.tv/embed/v1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
+<script src="{{HOST_ENDPOINT}}/hbs-templates.js"></script>
+<script src="{{HOST_ENDPOINT}}/bundle.js"></script>
+<script src="{{HOST_ENDPOINT}}/script.js"></script>
+
+</html>

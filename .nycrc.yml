@@ -1,0 +1,12 @@
+all: true
+include:
+  - "js/**/*.js"
+exclude:
+  - "public/**.js"
+  - "scripts/**.js"
+reporter:
+  - "html"
+  - "lcov"
+  - "text-summary"
+  - "text"
+report-dir: "coverage"

@@ -1,0 +1,46 @@
+<div class="pl-2 pt-2">
+    <div class="dropdown px-1 d-inline-block">
+        <svg id="channel-refresh-help" class="svg-help-dot" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 16"
+            width="8" height="16">
+            <path fill-rule="evenodd" d="M0 8c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"></path>
+        </svg>
+        <button id="channel-refresh" class="btn btn-sm btn-info" onclick="domEvent(event, 'channel-refresh')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                <path
+                    d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                <path fill-rule="evenodd"
+                    d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+            </svg>
+    </div>
+</div>
+<div class="pr-1 pt-1">
+    <div class="channel-input-group">
+        <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="">Channel:</span>
+            </div>
+            <input id="channel-input" type="text" value="" onkeyup="domEvent(event)" onclick="domEvent(event)"
+                onfocusout="domEvent(event)">
+        </div>
+    </div>
+</div>
+<div id="interval-selector" class="dropdown px-1 pt-2">
+    <svg id="interval-selector-help" class="svg-help-dot" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 16"
+        width="8" height="16">
+        <path fill-rule="evenodd" d="M0 8c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"></path>
+    </svg>
+    <button id="interval-selector-btn" class="btn btn-sm btn-info dropdown-toggle" type="button" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        1 minute
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a id="one-min-interval" class="dropdown-item" href="#" onclick="domEvent(event)">1 minute</a>
+        <a id="five-min-interval" class="dropdown-item" href="#" onclick="domEvent(event)">5 minutes</a>
+        <a id="one-hour-interval" class="dropdown-item" href="#" onclick="domEvent(event)">1 hour</a>
+        <a id="one-day-interval" class="dropdown-item" href="#" onclick="domEvent(event)">1 day</a>
+    </div>
+</div>
+<div id="time-selectors" class="pt-2">
+    <!-- date-time-range.hbs -->
+</div>
