@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "@ladjs/env": "^2.0.2",
-    "browserify": "17.0.0",
+    "browserify": "^17.0.0",
     "daterangepicker": "^3.1.0",
     "handlebars": "^4.7.6",
     "http-status-codes": "^2.1.4",
@@ -27,9 +27,9 @@
     "tmi.js": "^1.7.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "aws-sdk": "^2.833.0",
+    "@babel/core": "^7.12.16",
+    "@babel/preset-env": "^7.12.16",
+    "aws-sdk": "^2.842.0",
     "babelify": "^10.0.0",
     "chai": "4.2.0",
     "eslint": "^7.18.0",
@@ -46,7 +46,7 @@
     "mime-types": "^2.1.28",
     "minify-stream": "^2.1.0",
     "mkdirp": "^1.0.4",
-    "mocha": "^8.2.1",
+    "mocha": "^8.3.0",
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "node-localstorage": "^2.1.6",

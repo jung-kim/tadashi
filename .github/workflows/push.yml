@@ -1,4 +1,4 @@
-name: main
+name: Unit Tests
 
 on: 
   push:
@@ -22,3 +22,9 @@ jobs:
         npm run cov
       env: # Or as an environment variable
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+    - uses: codecov/codecov-action@v1
+      with:
+        files: ./coverage1.xml,./coverage2.xml # optional
+        flags: unittests 
+        name: codecov-tadashi
+        fail_ci_if_error: true 
