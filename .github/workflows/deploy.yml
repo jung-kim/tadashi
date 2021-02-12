@@ -6,7 +6,7 @@ on:
       - 'master'
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Git checkout
@@ -15,10 +15,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
+    - run: npm install
     - name: Run build
-      run: 
-        npm install
-        npm run build
+      run: ENVIRONMENT=prod npm run build
       env: # Or as an environment variable
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
     - name: Deploy

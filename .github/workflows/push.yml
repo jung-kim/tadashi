@@ -16,15 +16,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
+    - run: npm install
     - name: Run tests coverage
-      run: 
-        npm install
-        npm run cov
+      run: npm run cov
       env: # Or as an environment variable
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
     - uses: codecov/codecov-action@v1.0.5
       with:
-        files: ./coverage1.xml,./coverage2.xml # optional
         flags: unittests 
         name: codecov-tadashi
+        directory: coverage
         fail_ci_if_error: true 
