@@ -17,7 +17,7 @@ jobs:
         node-version: 14.x
     - name: Run tests coverage
       run: 
-        npm run install
+        npm install
         npm run build
       env: # Or as an environment variable
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
