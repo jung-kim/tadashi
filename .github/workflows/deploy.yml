@@ -1,10 +1,9 @@
-name: main
+name: deploy
 
 on: 
   push:
     branches:
-      - '*'
-      - '!gh-pages'
+      - 'master'
 
 jobs:
   test:
@@ -19,6 +18,11 @@ jobs:
     - name: Run tests coverage
       run: 
         npm run install
-        npm run cov
+        npm run build
       env: # Or as an environment variable
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4.0.0
+      with:
+        branch: gh-pages # The branch the action should deploy to.
+        folder: build # The folder the action should deploy.
