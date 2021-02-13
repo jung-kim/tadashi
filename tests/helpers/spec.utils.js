@@ -2,7 +2,7 @@ const assert = require('chai').assert;
 
 const utils = require('../../js/helpers/utils');
 const constants = require('../../js/helpers/constants');
-const moment = require('moment');
+const moment = require('../../js/helpers/moment');
 const testUtils = require('../testUtils');
 const events = require('../../js/models/events');
 

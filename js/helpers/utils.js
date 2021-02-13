@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('../helpers/moment');
 const constants = require('./constants');
 const models = require('../models/events');
 

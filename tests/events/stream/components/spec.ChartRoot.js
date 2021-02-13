@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('../../../../js/helpers/moment');
 const { assert } = require('chai');
 const sinon = require('sinon')
 

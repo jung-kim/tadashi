@@ -1,6 +1,6 @@
 
 const chartFilter = require('../../shared/chartFilter');
-const moment = require('moment');
+const moment = require('../../../helpers/moment');
 const constants = require('../../../helpers/constants');
 const ChartRoot = require('./ChartRoot');
 const dataCache = require('../../../simpletons/dataCache');

@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const moment = require('moment');
+const moment = require('../../../../js/helpers/moment');
 const sinon = require('sinon');
 
 const chartFilter = require('../../../../js/events/shared/chartFilter');

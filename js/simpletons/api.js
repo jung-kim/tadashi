@@ -1,5 +1,5 @@
 const env = require('../env');
-const moment = require('moment');
+const moment = require('../helpers/moment');
 const statusCodes = require('http-status-codes').StatusCodes;
 const constants = require('../helpers/constants');
 const signals = require('../helpers/signals').signals;

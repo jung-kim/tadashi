@@ -1,6 +1,6 @@
 const constants = require('../../../helpers/constants');
 const signals = require('../../../helpers/signals').signals;
-const moment = require('moment');
+const moment = require('../../../helpers/moment');
 const utils = require('../../../helpers/utils');
 const Filter = require('./Filter');
 

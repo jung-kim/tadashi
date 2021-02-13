@@ -4,8 +4,11 @@ const Handlebars = require('handlebars');
 const glob = require('glob');
 const fs = require('fs');
 const tmi = require('tmi.js');
+const moment = require('../js/helpers/moment');
 _ = require('lodash');
 require('node-localstorage/register');
+
+moment.tz.setDefault("America/Los_Angeles");
 
 const constants = require('../js/helpers/constants');
 

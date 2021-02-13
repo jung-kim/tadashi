@@ -2,7 +2,7 @@ const signals = require('./helpers/signals').signals;
 const domSignals = require('./helpers/signals').domSignals;
 const utils = require('./helpers/utils');
 const constants = require('./helpers/constants');
-const moment = require('moment');
+const moment = require('./helpers/moment');
 
 const twitchClient = require('./singletons/twitchClient');
 const auth = require('./simpletons/auth');
@@ -29,14 +29,14 @@ window.onload = () => {
     navigate();
 };
 
-window.authenticate = () => {
+window.authenticate = async () => {
     if (auth.isAuthenticated()) {
         // Valid auth, just return
         return;
     }
 
     // authenticate
-    const redirectURL = auth.authenticate();
+    const redirectURL = await auth.authenticate();
     if (redirectURL) {
         window.location = redirectURL;
     }

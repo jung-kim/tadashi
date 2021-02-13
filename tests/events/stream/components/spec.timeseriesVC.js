@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 const { assert } = require('chai');
-const moment = require('moment');
+const moment = require('../../../../js/helpers/moment');
 
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');

@@ -42,7 +42,7 @@ const eslintStep = async () => {
     const eslint = new ESLint({
         cache: true,
         baseConfig: {
-            globals: { 'Twitch': true, 'rangePlugin': true }
+            globals: { 'Twitch': true, 'rangePlugin': true, 'moment': true }
         }
     });
     const results = await eslint.lintFiles(jsFiles.map(jsFile => jsFile.originalFilename));

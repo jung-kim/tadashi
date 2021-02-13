@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('../js/helpers/moment');
 
 const constants = require('../js/helpers/constants');
 const utils = require('../js/helpers/utils');
