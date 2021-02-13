@@ -40,6 +40,9 @@ class TwitchClient {
     }
 
     async _initializeClient() {
+        if (twitchClient._initPromise) {
+            await twitchClient._initPromise;
+        }
         if (this._client) {
             // already initialized
             return;
@@ -109,7 +112,8 @@ class TwitchClient {
         });
 
         this._client.connect();
-        signals.dispatch({ event: 'channel.input.update' });
+        signals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
+        this._initPromise = undefined;
     }
 
     async changeChannel(channel, id) {
@@ -118,12 +122,16 @@ class TwitchClient {
             return;
         }
 
-        await this._client.join(channel);
+        await this._initializeClient();
+
         if (this.getChannel()) {
             this._client.part(this.getChannel());
         }
+
         this._setChannel(channel);
         this._setChannelID(id);
+
+        await this._client.join(this.getChannel());
 
         this.updateViewersCache();
         signals.dispatch({
@@ -230,5 +238,5 @@ class TwitchClient {
 }
 
 const twitchClient = new TwitchClient();
-Promise.all([twitchClient._initializeClient()]);
+twitchClient._initPromise = twitchClient._initializeClient();
 module.exports = twitchClient;
