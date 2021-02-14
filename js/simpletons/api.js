@@ -85,7 +85,8 @@ class API {
      */
     async queryTmiApi(path) {
         const url = `${env.TMI_ENDPOINT}/${path}`;
-        return (await fetch(url)).json();
+        const res = await fetch(url, { mode: 'no-cors' });
+        return res.json();
     }
 }
 

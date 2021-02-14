@@ -39,7 +39,7 @@ class TwitchClient {
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
     }
 
-    async _initializeClient() {
+    async initializeClient() {
         if (twitchClient._initPromise) {
             await twitchClient._initPromise;
         }
@@ -121,8 +121,6 @@ class TwitchClient {
             // channel is already set, return
             return;
         }
-
-        await this._initializeClient();
 
         if (this.getChannel()) {
             this._client.part(this.getChannel());
@@ -238,5 +236,5 @@ class TwitchClient {
 }
 
 const twitchClient = new TwitchClient();
-twitchClient._initPromise = twitchClient._initializeClient();
+twitchClient._initPromise = twitchClient.initializeClient();
 module.exports = twitchClient;

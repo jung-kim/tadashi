@@ -20,48 +20,41 @@ describe('twitchClient.js', () => {
 
     describe('changeChannel()', () => {
         it('change channel from undefined', async () => {
-            sinon.stub(twitchClient, 'getChannel').returns(undefined)
             let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
-            let setChannelStub = sinon.stub(twitchClient, '_setChannel').withArgs('abcde');
             let partStub = sinon.stub(twitchClient._client, 'part');
-            let setChannelIDStub = sinon.stub(twitchClient, '_setChannelID');
             let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
-            await twitchClient.changeChannel('abcde');
+            await twitchClient.changeChannel('abcde', 5);
             sinon.assert.calledOnce(joinStub);
-            sinon.assert.calledOnce(setChannelStub);
             sinon.assert.notCalled(partStub);
-            sinon.assert.calledOnce(setChannelIDStub);
             sinon.assert.calledOnce(updateViewerCacheStub);
+            assert.equal(twitchClient._channel, 'abcde');
+            assert.equal(twitchClient._channelID, 5);
         });
 
         it('from same channel', async () => {
-            sinon.stub(twitchClient, 'getChannel').returns('abcde')
-            let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
-            let setChannelStub = sinon.stub(twitchClient, '_setChannel').withArgs('abcde');
+            twitchClient._channel = 'abcde'
+            let joinStub = sinon.stub(twitchClient._client, 'join');
             let partStub = sinon.stub(twitchClient._client, 'part');
-            let setChannelIDStub = sinon.stub(twitchClient, '_setChannelID');
             let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
             await twitchClient.changeChannel('abcde');
             sinon.assert.notCalled(joinStub);
-            sinon.assert.notCalled(setChannelStub);
             sinon.assert.notCalled(partStub);
-            sinon.assert.notCalled(setChannelIDStub);
             sinon.assert.notCalled(updateViewerCacheStub);
+            assert.equal(twitchClient._channel, 'abcde');
         });
 
         it('from same channel from another channel', async () => {
-            sinon.stub(twitchClient, 'getChannel').returns('1111')
+            twitchClient._channel = '1111';
+            twitchClient._channelID = 1111;
             let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
-            let setChannelStub = sinon.stub(twitchClient, '_setChannel').withArgs('abcde');
             let partStub = sinon.stub(twitchClient._client, 'part').withArgs('1111');
-            let setChannelIDStub = sinon.stub(twitchClient, '_setChannelID');
             let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
-            await twitchClient.changeChannel('abcde');
+            await twitchClient.changeChannel('abcde', 5);
             sinon.assert.calledOnce(joinStub);
-            sinon.assert.calledOnce(setChannelStub);
             sinon.assert.calledOnce(partStub);
-            sinon.assert.calledOnce(setChannelIDStub);
             sinon.assert.calledOnce(updateViewerCacheStub);
+            assert.equal(twitchClient._channel, 'abcde');
+            assert.equal(twitchClient._channelID, 5);
         });
     });
 

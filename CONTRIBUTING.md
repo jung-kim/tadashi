@@ -32,9 +32,9 @@ Runs test coverage and relevant data and files will be generated at `./coverage`
 Before any developments or changes, one should be able to test basic functionalities via running local instance.
 
 1. create new [twitch application](https://dev.twitch.tv/console/apps/create) for free
-2. update `./env/.env.local` with the client id
+2. update `./env/.env.local` with the client id. (client secret is not necessary.)
 3. start the [helper proxy server](./proxy-server/README.md).
-    - `cd ./proxy-server; npm run start`
+    - `npm --prefix ./proxy-server i; npm --prefix ./proxy-server run start`
 4. build the project
     - `npm run build`
 4. navigate to the local instance

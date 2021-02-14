@@ -60,6 +60,7 @@ const navigate = async () => {
             currentTab.event = `${currentTab.tab}.cleanup`;
             signals.dispatch(currentTab);
         }
+        await twitchClient.initializeClient();
         signals.dispatch({ event: `${tabObj.tab}.load`, tab: tabObj });
     }
 
