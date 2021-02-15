@@ -21,9 +21,8 @@ jobs:
       run: npm run cov
       env: # Or as an environment variable
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
-    - uses: codecov/codecov-action@v1.0.5
+    - uses: codecov/codecov-action@v1.2.1
       with:
         flags: unittests 
         name: codecov-tadashi
-        directory: coverage
         fail_ci_if_error: true 

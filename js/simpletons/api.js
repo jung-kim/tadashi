@@ -80,12 +80,20 @@ class API {
     /**
      * make TMI endpoint query
      * does not go through rate limiting logic at _makeAPIQuery
+     * 
+     * This one probably doesn't have proper CORS configured for public consumption
+     * It is bit unfortunate that to be dependent on a public service and not sure how
+     * reliable.
+     * 
      * @param {string} path path to query
      * @returns {object} json response
      */
     async queryTmiApi(path) {
         const url = `${env.TMI_ENDPOINT}/${path}`;
-        const res = await fetch(url, { mode: 'no-cors' });
+        const isLocal = url.indexOf('127.0.0.1') > -1;
+        const wrappedUrl = `http://www.whateverorigin.org/get?url=${encodeURIComponent(url)}`;
+        const res = await fetch(isLocal ? url : wrappedUrl, { mode: 'no-cors' });
+
         return res.json();
     }
 }
