@@ -1,5 +1,6 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
+const tmi = require('tmi.js');
 const constants = require('../../js/helpers/constants');
 
 const twitchClient = require("../../js/singletons/twitchClient");
@@ -16,6 +17,54 @@ describe('twitchClient.js', () => {
     afterEach(() => {
         twitchClient._disable();
         reset();
+    });
+
+    describe('initializeClient', () => {
+        let fakeClient = twitchClient._client;
+
+        afterEach(() => {
+            twitchClient._initPromise = undefined;
+            twitchClient._client = fakeClient;
+        });
+
+        it('run while initializing', async () => {
+            twitchClient._initPromise = new Promise((resolve) => {
+                setTimeout(resolve, 500);
+            });
+
+            const start = Date.now();
+            await twitchClient.initializeClient();
+            assert.isTrue(Date.now() - start >= 500);
+        });
+
+        it('run after intialized', async () => {
+            const getChannelStub = sinon.stub(twitchClient, 'getChannel');
+
+            twitchClient._client = 'abc';
+            await twitchClient.initializeClient();
+            assert.equal(twitchClient._client, 'abc');
+            sinon.assert.notCalled(getChannelStub);
+        });
+
+        it('channel and ID is in localstorage', async () => {
+            twitchClient._client = undefined;
+            const fakeClient = { connect: sinon.stub(), on: () => { } };
+
+            sinon.stub(localStorage, 'getItem')
+                .withArgs('channel').returns('hi')
+                .withArgs('channel-id').returns('99');
+            sinon.stub(tmi, 'Client')
+                .callThroughWithNew()
+                .withArgs(sinon.match.any)
+                .returns(fakeClient);
+
+            await twitchClient.initializeClient();
+
+            assert.equal(twitchClient._channel, 'hi');
+            assert.equal(twitchClient._channelID, 99);
+            sinon.assert.calledOnce(fakeClient.connect);
+        });
+
     });
 
     describe('changeChannel()', () => {

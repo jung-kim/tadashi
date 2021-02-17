@@ -60,6 +60,12 @@ const navigate = async () => {
             currentTab.event = `${currentTab.tab}.cleanup`;
             signals.dispatch(currentTab);
         }
+
+        if (window.location.hash) {
+            const parsedHash = new URLSearchParams(window.location.hash.substr(1));
+            auth.authenticate(parsedHash);
+        }
+
         await twitchClient.initializeClient();
         signals.dispatch({ event: `${tabObj.tab}.load`, tab: tabObj });
     }
@@ -69,11 +75,6 @@ const navigate = async () => {
 
 window.getCurrentTab = () => {
     return currentTab;
-}
-
-if (window.location.hash) {
-    const parsedHash = new URLSearchParams(window.location.hash.substr(1));
-    auth.authenticate(parsedHash);
 }
 
 const setTopOfMinEvent = () => {

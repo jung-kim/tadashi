@@ -37,6 +37,9 @@ class TwitchClient {
         this._channelID = undefined;
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
+        this._emitDataChange = _.throttle(() => {
+            signals.dispatch({ event: "chats.data.update" });
+        }, 250);
     }
 
     async initializeClient() {
@@ -78,10 +81,6 @@ class TwitchClient {
             },
             channels: [this.getChannel()]
         });
-
-        this._emitDataChange = _.throttle(() => {
-            signals.dispatch({ event: "chats.data.update" });
-        }, 250);
 
         // eslint-disable-next-line no-unused-vars
         this._client.on('chat', (channel, userstate, message, self) => {
