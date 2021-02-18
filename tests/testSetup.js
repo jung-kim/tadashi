@@ -50,6 +50,7 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
 // stub out boostrap functions 
 BSN = {
     Collapse: sinon.stub(),
+    Popover: sinon.stub()
 }
 
 // disable signal dispatch
@@ -69,7 +70,7 @@ Chart = class Chart {
 
 // stub dom functions, I'm sure there is a npm package does this...
 document = {
-    getElementById: sinon.stub(),
+    getElementById: sinon.stub().withArgs(sinon.match.any).returns({ a: 3 }),
 };
 
 const users = require('../js/singletons/users');

@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const tmi = require('tmi.js');
 const constants = require('../../js/helpers/constants');
 
+const auth = require('../../js/simpletons/auth');
 const twitchClient = require("../../js/singletons/twitchClient");
 const api = require("../../js/simpletons/api");
 const dataCache = require('../../js/simpletons/dataCache');
@@ -25,6 +26,10 @@ describe('twitchClient.js', () => {
         afterEach(() => {
             twitchClient._initPromise = undefined;
             twitchClient._client = fakeClient;
+            twitchClient.channel = undefined;
+            twitchClient._channelID = undefined;
+            localStorage.clear();
+            reset();
         });
 
         it('run while initializing', async () => {
@@ -65,6 +70,49 @@ describe('twitchClient.js', () => {
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
+        it('broadcaster user init', async () => {
+            twitchClient._client = undefined;
+            const fakeClient = { connect: sinon.stub(), on: () => { } };
+
+            sinon.stub(auth, 'isBroadcaster').returns(true);
+            sinon.stub(auth, 'getLogin').returns('someone');
+            sinon.stub(auth, 'getID').returns(123);
+            sinon.stub(tmi, 'Client')
+                .callThroughWithNew()
+                .withArgs(sinon.match.any)
+                .returns(fakeClient);
+
+            await twitchClient.initializeClient();
+
+            assert.equal(twitchClient._channel, 'someone');
+            assert.equal(twitchClient._channelID, 123);
+            sinon.assert.calledOnce(fakeClient.connect);
+        });
+
+        it('featured user init', async () => {
+            twitchClient._client = undefined;
+            const fakeClient = { connect: sinon.stub(), on: () => { } };
+
+            const featuredStreamStub = sinon.stub(twitchClient, 'changeToRandomFeaturedStream')
+                .onFirstCall()
+                .returns(undefined)
+                .onSecondCall()
+                .returns('abc');
+            const getChannelStub = sinon.stub(twitchClient, 'getChannel')
+                .onFirstCall().returns(undefined)
+                .onSecondCall().returns('abc')
+            const setChannelStub = sinon.stub(twitchClient, '_setChannelID')
+            sinon.stub(tmi, 'Client')
+                .callThroughWithNew()
+                .withArgs(sinon.match.any)
+                .returns(fakeClient);
+
+            await twitchClient.initializeClient();
+
+            sinon.assert.calledOnce(fakeClient.connect);
+            sinon.assert.calledOnce(featuredStreamStub);
+            sinon.assert.calledOnce(setChannelStub);
+        });
     });
 
     describe('changeChannel()', () => {
