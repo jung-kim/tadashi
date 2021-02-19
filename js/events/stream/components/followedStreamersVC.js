@@ -3,8 +3,9 @@ const ChartRoot = require('./ChartRoot');
 
 const numStreamerToDisplay = 10;
 
-const chartFollowedStreamersHelperContent = `<p>Viewer's top followed streamers<br>
-Top 10 streamers followed among viewers.
+const chartFollowedStreamersHelperContent = `<p>Top followed streamers from viewers<br>
+Top 10 streamers followed by viewers.  </br>
+Includes some viewers who may not be watching anymore.
 </p>`
 
 class FollowedStreamersVC extends ChartRoot {

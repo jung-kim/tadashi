@@ -91,8 +91,8 @@ class API {
     async queryTmiApi(path) {
         const url = `${env.TMI_ENDPOINT}/${path}`;
         const isLocal = url.indexOf('127.0.0.1') > -1;
-        const wrappedUrl = `http://www.whateverorigin.org/get?url=${encodeURIComponent(url)}`;
-        const res = await fetch(isLocal ? url : wrappedUrl, { mode: 'no-cors' });
+        const finalUrl = isLocal ? url : `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        const res = await fetch(finalUrl, { mode: 'no-cors' });
 
         return res.json();
     }

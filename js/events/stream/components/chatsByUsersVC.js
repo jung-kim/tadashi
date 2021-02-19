@@ -2,9 +2,7 @@ const ChartRoot = require('./ChartRoot');
 const constants = require('../../../helpers/constants');
 const dataCache = require('../../../simpletons/dataCache');
 
-const chartChatsByUsersHelperContent = `<p>Chats grouped by users<br>
-Sum of chats grouped by users.
-</p>`
+const chartChatsByUsersHelperContent = `<p>Chats grouped by user name</p>`
 
 const DISPLAY_LIMIT = 10;
 
