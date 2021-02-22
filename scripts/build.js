@@ -25,6 +25,7 @@ const jsFiles = glob.sync('./js/**/*.js')
         }
     });
 
+// convert `./less/**/*.less` files to css
 const cssStep = async () => {
     console.log(`building cssStep...`);
     const lesses = glob.sync("./less/**/*.less");
@@ -37,6 +38,7 @@ const cssStep = async () => {
     return fs.writeFile('./public/styles.css', css);
 }
 
+// run eslint on `./js/**/*.js` files.
 const eslintStep = async () => {
     console.log(`building eslint...`);
     const eslint = new ESLint({
@@ -54,6 +56,7 @@ const eslintStep = async () => {
     }
 }
 
+// Browserify `./js/**/*.js` codes so it would be easier to use within browser
 const browserifyAll = async () => {
     console.log(`building browserifyAll...`);
     const b = browserify({
@@ -72,6 +75,7 @@ const browserifyAll = async () => {
         .pipe(fsSync.createWriteStream(`./public/script.js`))
 }
 
+// Browserify external 3rd party libraries
 const browserifyExternal = async () => {
     console.log(`building browserifyExternal...`);
     const pkgs = ['tmi.js', 'micro-signals', 'material-color-hash', 'http-status-codes'];
@@ -85,6 +89,7 @@ const browserifyExternal = async () => {
         .pipe(fsSync.createWriteStream('./public/bundle.js'));
 }
 
+// Minimize generated html
 const htmlminStep = async () => {
     console.log(`building htmlMinStep...`);
     const html = (await fs.readFile('./html/index.html')).toString()
@@ -97,6 +102,7 @@ const htmlminStep = async () => {
     return fs.writeFile('./public/index.html', minifiedHtml);
 }
 
+// copy over some of the assets such as images and etc.
 const copyOverAssetsStep = async () => {
     console.log(`building copyOverAssetsStep...`);
     const assets = glob.sync('./assets/**/*');
@@ -106,6 +112,7 @@ const copyOverAssetsStep = async () => {
     }));
 }
 
+// 
 const handlebarsStep = async () => {
     console.log(`building handlebarsStep...`);
     const handlebars = glob.sync("./hbs/**/*.hbs");

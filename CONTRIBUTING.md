@@ -58,9 +58,11 @@ Code coverages are automatically posted to [codecov.io](https://codecov.io/gh/ju
 
 1. create new [twitch application](https://dev.twitch.tv/console/apps/create) for free and get the `CLIENT_ID`
 2. Build the project
-    - `npm run install; CLIENT_ID=${CLIENT_ID} npm run build`
+    - `npm run install`
+    - `CLIENT_ID=${CLIENT_ID} npm run build`
 3. start the [helper proxy server](./proxy-server/README.md).
-    - `npm --prefix ./proxy-server i; npm --prefix ./proxy-server run start` 
+    - `npm --prefix ./proxy-server i` 
+    - `npm --prefix ./proxy-server run start`
 4. navigate to the local instance
     - `open ./public/index.html`
 
