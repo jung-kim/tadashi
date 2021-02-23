@@ -23,103 +23,130 @@ describe('api.js', () => {
         testUtils.unsetFakeNow();
     });
 
-    it('_makeAPIQuery()', async () => {
-        // make sure 200 works
-        fetchMock.getOnce(testRoutePath, {
-            status: statusCodes.OK,
-            body: testBody,
-        }, {
-            overwriteRoutes: true,
+    describe('_makeAPIQuery', () => {
+        it('make sure 200 works', async () => {
+            fetchMock.getOnce(testRoutePath, {
+                status: statusCodes.OK,
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+            assert.deepEqual(await api._makeAPIQuery(testURL, undefined), testBody);
+            assert.isNull(api.waitForReset);
         });
-        assert.deepEqual(await api._makeAPIQuery(testURL, undefined), testBody);
-        assert.isNull(api.waitForReset);
 
-        // all 2xx should work
-        fetchMock.getOnce(testRoutePath, {
-            status: statusCodes.ACCEPTED,
-            body: testBody,
-        }, {
-            overwriteRoutes: true,
+        it('2xx should work', async () => {
+            fetchMock.getOnce(testRoutePath, {
+                status: statusCodes.ACCEPTED,
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+            assert.deepEqual(await api._makeAPIQuery(testURL, undefined), testBody);
+            assert.isNull(api.waitForReset);
         });
-        assert.deepEqual(await api._makeAPIQuery(testURL, undefined), testBody);
-        assert.isNull(api.waitForReset);
 
-        // 5xx should throw exception
-        fetchMock.getOnce(testRoutePath, {
-            status: statusCodes.INTERNAL_SERVER_ERROR,
-            body: testBody,
-        }, {
-            overwriteRoutes: true,
-        });
-        try {
-            await api._makeAPIQuery(testURL, undefined);
-            assert.fail("should not be called");
-        } catch (err) {
-            assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'query failed', resetAt: testUtils.fakeNow + constants.MAX_AWAIT_DURATION_SEC });
-        }
-        assert.isNull(api.waitForReset);
-
-        // 5xx with 0 allowance should set timer
-        let t = testUtils.fakeNow + 10;
-        fetchMock.getOnce(testRoutePath, {
-            status: statusCodes.INTERNAL_SERVER_ERROR,
-            body: testBody,
-            headers: {
-                [constants.RATELIMIT_REMAINING]: 0,
-                [constants.RATELIMIT_RESET]: t,
+        it('5xx should throw exception', async () => {
+            fetchMock.getOnce(testRoutePath, {
+                status: statusCodes.INTERNAL_SERVER_ERROR,
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+            try {
+                await api._makeAPIQuery(testURL, undefined);
+                assert.fail("should not be called");
+            } catch (err) {
+                assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'query failed', resetAt: testUtils.fakeNow + constants.MAX_AWAIT_DURATION_SEC });
             }
-        }, {
-            overwriteRoutes: true,
+            assert.isNull(api.waitForReset);
         });
-        try {
-            await api._makeAPIQuery(testURL, undefined);
-            assert.fail("should not be called");
-        } catch (err) {
-            assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'too many requests', resetAt: t });
-        }
-        assert.isNotNull(api.waitForReset);
-        api.reset();
 
-        // 5xx with over limit max await duration should set to max await duration
-        t = testUtils.fakeNow + constants.MAX_AWAIT_DURATION_MS + 2000;
-        fetchMock.getOnce(testRoutePath, {
-            status: statusCodes.INTERNAL_SERVER_ERROR,
-            body: testBody,
-            headers: {
-                [constants.RATELIMIT_REMAINING]: 0,
-                [constants.RATELIMIT_RESET]: t,
+        it('5xx with 0 allowance should set timer', async () => {
+            let t = testUtils.fakeNow + 10;
+            fetchMock.getOnce(testRoutePath, {
+                status: statusCodes.INTERNAL_SERVER_ERROR,
+                body: testBody,
+                headers: {
+                    [constants.RATELIMIT_REMAINING]: 0,
+                    [constants.RATELIMIT_RESET]: t,
+                }
+            }, {
+                overwriteRoutes: true,
+            });
+            try {
+                await api._makeAPIQuery(testURL, undefined);
+                assert.fail("should not be called");
+            } catch (err) {
+                assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'too many requests', resetAt: t });
             }
-        }, {
-            overwriteRoutes: true,
+            assert.isNotNull(api.waitForReset);
+            api.reset();
         });
-        try {
-            await api._makeAPIQuery(testURL, undefined);
-            assert.fail("should not be called");
-        } catch (err) {
-            assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'too many requests', resetAt: testUtils.fakeNow + constants.MAX_AWAIT_DURATION_MS });
-        }
-        assert.isNotNull(api.waitForReset);
-        api.reset();
 
-        // too many requests should trigger throttling despite with reamining
-        fetchMock.getOnce(testRoutePath, {
-            status: statusCodes.TOO_MANY_REQUESTS,
-            body: testBody,
-            headers: {
-                [constants.RATELIMIT_REMAINING]: 2,
-                [constants.RATELIMIT_RESET]: testUtils.fakeNow + 12,
+        it('5xx with over limit max await duration should set to max await duration', async () => {
+            t = testUtils.fakeNow + constants.MAX_AWAIT_DURATION_MS + 2000;
+            fetchMock.getOnce(testRoutePath, {
+                status: statusCodes.INTERNAL_SERVER_ERROR,
+                body: testBody,
+                headers: {
+                    [constants.RATELIMIT_REMAINING]: 0,
+                    [constants.RATELIMIT_RESET]: t,
+                }
+            }, {
+                overwriteRoutes: true,
+            });
+            try {
+                await api._makeAPIQuery(testURL, undefined);
+                assert.fail("should not be called");
+            } catch (err) {
+                assert.deepEqual(err, {
+                    status: statusCodes.INTERNAL_SERVER_ERROR,
+                    msg: 'too many requests',
+                    resetAt: testUtils.fakeNow + constants.MAX_AWAIT_DURATION_MS
+                });
             }
-        }, {
-            overwriteRoutes: true,
+            assert.isNotNull(api.waitForReset);
+            api.reset();
         });
-        try {
-            await api._makeAPIQuery(testURL, undefined);
-            assert.fail("should not be called");
-        } catch (err) {
-            assert.deepEqual(err, { status: statusCodes.TOO_MANY_REQUESTS, msg: 'too many requests', resetAt: testUtils.fakeNow + 12 });
-        }
-        assert.isNotNull(api.waitForReset);
-        api.reset();
+
+        it('too many requests should trigger throttling despite with reamining', async () => {
+            fetchMock.getOnce(testRoutePath, {
+                status: statusCodes.TOO_MANY_REQUESTS,
+                body: testBody,
+                headers: {
+                    [constants.RATELIMIT_REMAINING]: 2,
+                    [constants.RATELIMIT_RESET]: testUtils.fakeNow + 1,
+                }
+            }, {
+                overwriteRoutes: true,
+            });
+            try {
+                await api._makeAPIQuery(testURL, undefined);
+                assert.fail("should not be called");
+            } catch (err) {
+                assert.deepEqual(err, {
+                    status: statusCodes.TOO_MANY_REQUESTS,
+                    msg: 'too many requests',
+                    resetAt: testUtils.fakeNow + 1
+                });
+            }
+            assert.isNotNull(api.waitForReset);
+
+            // next call should be blocked
+            fetchMock.getOnce(testRoutePath, {
+                status: statusCodes.ACCEPTED,
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+            const start = Date.now();
+            assert.deepEqual(await api._makeAPIQuery(testURL, undefined), testBody);
+            assert.isTrue((Date.now() - start) > 1000);
+            assert.isNull(api.waitForReset);
+
+            api.reset();
+        });
     });
 
     it('queryTmiApi', async () => {
