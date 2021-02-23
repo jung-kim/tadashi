@@ -2,7 +2,7 @@ const ChartRoot = require('./ChartRoot');
 const constants = require('../../../helpers/constants');
 const dataCache = require('../../../simpletons/dataCache');
 
-const chartProceedsHelpContent = `<p>Displays overall proceeds<br>
+const chartProceedsHelpContent = `<p>Proceeds by type<br>
 <ul>
 <li>100 Cheers count</li>
 <li>Subscription count</li>

@@ -102,4 +102,61 @@ describe('ChartRoot.js', () => {
 
         assert.deepEqual(chartRoot._getBorderColor(), ['#E6EE9CFF', '#FFCC80FF']);
     });
+
+    describe('_updateChartObject', () => {
+        it('_chartObject initialized', () => {
+            const chartRoot = new ChartRoot({});
+            chartRoot._datasets = [5, 6];
+            chartRoot._labels = ['a', 'b'];
+            chartRoot._chartObject = {
+                data: {
+                    labels: [],
+                    datasets: [{}]
+                },
+                update: sinon.stub()
+            }
+
+            chartRoot._updateChartObject();
+
+            assert.deepEqual(chartRoot._chartObject.data.labels, ['a', 'b']);
+            assert.deepEqual(chartRoot._chartObject.data.datasets[0].backgroundColor, ['#E6EE9C4D', '#FFCC804D']);
+            assert.deepEqual(chartRoot._chartObject.data.datasets[0].borderColor, ['#E6EE9CFF', '#FFCC80FF']);
+            assert.deepEqual(chartRoot._chartObject.data.datasets[0].data, [5, 6]);
+
+            sinon.assert.calledOnce(chartRoot._chartObject.update);
+        });
+
+        it('_chartObject is not initialized', () => {
+            const chartRoot = new ChartRoot({ type: 'horizontalBar', chartDomSelector: 'dom-selector' });
+            chartRoot._datasets = [5, 6];
+            chartRoot._labels = ['a', 'b'];
+
+            document.getElementById.reset();
+            document.getElementById = sinon.stub().withArgs(sinon.match.any).returns({ a: 1 })
+            chartRoot._updateChartObject();
+
+            console.log(88)
+
+            assert.equal(chartRoot._chartObject.type, 'bar');
+            assert.deepEqual(chartRoot._chartObject.data, {
+                labels: ['a', 'b'],
+                datasets: [{
+                    backgroundColor: [
+                        "#E6EE9C4D",
+                        "#FFCC804D",
+                    ],
+                    borderColor: [
+                        "#E6EE9CFF",
+                        "#FFCC80FF",
+                    ],
+                    borderWidth: 1,
+                    data: [
+                        5,
+                        6
+                    ],
+                    indexAxis: 'y'
+                }],
+            });
+        });
+    });
 });

@@ -67,10 +67,9 @@ class ChattersTableVC {
 
         this._helpDom = new BSN.Popover(document.getElementById(`chatters-help`), {
             title: 'Chatters View',
-            content: `Displays current chatters in the channel synchrnonized at every minute.</br>
+            content: `Displays current chatters in the channel refreshed at every minute.</br>
             </br>
             Chatters search can search via chatters name or any of the following flags.</br>
-            Search is case insensitive.</br>
             <ul>
                 <li><code>:following</code></li>
                 <li><code>:notfollowing</code></li>
