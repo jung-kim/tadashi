@@ -9,6 +9,12 @@ const HOST = "localhost";
 const twitchAPIEndpoint = "https://api.twitch.tv"
 const tmiAPIEndpoint = "https://tmi.twitch.tv"
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 app.use('/', createProxyMiddleware({
     target: twitchAPIEndpoint,
     changeOrigin: true,

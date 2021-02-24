@@ -5,10 +5,6 @@ class Common {
         this.displayName = userstate['display-name'] || userstate.displayName;
         this.timestamp = parseInt(userstate['tmi-sent-ts']) || userstate.timestamp;
     }
-
-    getDisplayName() {
-        return this.displayName;
-    }
 }
 
 module.exports = Common;

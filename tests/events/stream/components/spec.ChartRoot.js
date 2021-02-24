@@ -135,8 +135,6 @@ describe('ChartRoot.js', () => {
             document.getElementById = sinon.stub().withArgs(sinon.match.any).returns({ a: 1 })
             chartRoot._updateChartObject();
 
-            console.log(88)
-
             assert.equal(chartRoot._chartObject.type, 'bar');
             assert.deepEqual(chartRoot._chartObject.data, {
                 labels: ['a', 'b'],

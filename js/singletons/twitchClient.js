@@ -13,9 +13,6 @@ const CHANNEL_LS_ID_KEY = 'channel-id';
 
 signals.add((payload) => {
     switch (payload.event) {
-        case 'chatters.data.fetch':
-            twitchClient.updateViewersCache();
-            break;
         case 'main.minute':
             twitchClient.updateViewersCache();
             break;
@@ -175,7 +172,7 @@ class TwitchClient {
 
         signals.dispatch({
             event: "chatters.data.update",
-            data: payload.data[constants.KEY_CHATTERS],
+            data: payload[constants.KEY_CHATTERS],
             channelID: this.getChannelID(),
         });
     }

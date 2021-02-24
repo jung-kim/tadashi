@@ -93,8 +93,9 @@ class API {
         const isLocal = url.indexOf('127.0.0.1') > -1;
         const finalUrl = isLocal ? url : `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
         const res = await fetch(finalUrl);
+        const json = await res.json();
 
-        return res.json();
+        return isLocal ? json : JSON.parse(json.contents);
     }
 }
 

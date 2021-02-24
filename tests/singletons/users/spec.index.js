@@ -159,6 +159,34 @@ describe('users.js', () => {
                     _follows: new Set([11, 22]),
                 }
             });
+
+            assert.deepEqual(users._viewers, {
+                broadcaster: [
+                    {
+                        _follows: new Set([11, 22]),
+                        _id: 1,
+                        _userName: 'a',
+                        userNameCSSClass: 'text-muted'
+                    }
+                ],
+                viewers: [
+                    {
+                        _id: undefined,
+                        _userName: 'b',
+                        userNameCSSClass: 'text-muted'
+                    },
+                    {
+                        _id: undefined,
+                        _userName: 'c',
+                        userNameCSSClass: 'text-muted'
+                    },
+                    {
+                        _id: undefined,
+                        _userName: 'd',
+                        userNameCSSClass: 'text-muted'
+                    }
+                ]
+            });
             sinon.assert.calledOnce(idFetcherAddStub);
         });
 

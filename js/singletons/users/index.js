@@ -76,7 +76,7 @@ class Users {
                     }
                 }
 
-                return this.getUserByName[lowerCaseName];
+                return this.getUserByName(lowerCaseName);
             });
         }
 
