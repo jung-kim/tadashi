@@ -24,7 +24,7 @@ signals.add(async (payload) => {
             chattersTableVC.loadChattersTable();
             break;
         case 'filter.change':
-            if (payload.changed && payload.changed.searchValue) {
+            if (payload.changed && payload.changed.filter) {
                 chattersTableVC.loadChattersTable();
             }
             if (payload.changed && payload.changed.channel && getCurrentTab().tab === 'stream') {

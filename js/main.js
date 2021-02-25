@@ -7,6 +7,7 @@ const moment = require('./helpers/moment');
 const twitchClient = require('./singletons/twitchClient');
 const auth = require('./simpletons/auth');
 const users = require('./singletons/users');
+const chartFilter = require('./events/shared/chartFilter');
 
 let currentTab = {};
 
@@ -87,7 +88,12 @@ const setTopOfMinEvent = () => {
 setTopOfMinEvent();
 
 window.minIntervalEvent = setInterval(() => {
-    signals.dispatch({ event: 'main.minute', currentTab: currentTab, channel: twitchClient.getChannel() });
+    signals.dispatch({
+        event: 'main.minute',
+        currentTab: currentTab,
+        channel: twitchClient.getChannel(),
+        filter: chartFilter.getFilter(),
+    });
     setTopOfMinEvent();
 }, 60 * 1000);
 

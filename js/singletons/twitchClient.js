@@ -14,7 +14,9 @@ const CHANNEL_LS_ID_KEY = 'channel-id';
 signals.add((payload) => {
     switch (payload.event) {
         case 'main.minute':
-            twitchClient.updateViewersCache();
+            if (!payload.filter) {
+                twitchClient.updateViewersCache();
+            }
             break;
         case 'stream.cleanup':
             twitchClient._disable();
@@ -164,15 +166,15 @@ class TwitchClient {
     }
 
     async _updateViewersCache() {
-        if (!this._enabled || !(this.getChannel())) {
+        if (!this._enabled || !this.getChannel()) {
             return;
         }
 
-        const payload = await api.queryTmiApi(`group/user/${this.getChannel()}/chatters`);
+        const json = await api.queryTmiApi(`group/user/${this.getChannel()}/chatters`);
 
         signals.dispatch({
             event: "chatters.data.update",
-            data: payload[constants.KEY_CHATTERS],
+            data: json[constants.KEY_CHATTERS],
             channelID: this.getChannelID(),
         });
     }
