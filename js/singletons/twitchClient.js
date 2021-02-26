@@ -57,7 +57,7 @@ class TwitchClient {
                 this._setChannel(auth.getLogin());
                 this._setChannelID(auth.getID());
             } else {
-                await this.changeToRandomFeaturedStream();
+                this.changeChannel(constants.DEFAULT_CHANNEL, constants.DEFAULT_CHANNEL_ID);
             }
         }
 
@@ -187,7 +187,6 @@ class TwitchClient {
      */
     _setChannel(channel) {
         this._channel = channel;
-        localStorage.setItem(CHANNEL_LS_KEY, channel);
     }
 
     /**
@@ -204,8 +203,6 @@ class TwitchClient {
         } else {
             return;
         }
-
-        localStorage.setItem(CHANNEL_LS_ID_KEY, this._channelID);
     }
 
     async changeToRandomFeaturedStream() {
@@ -230,6 +227,11 @@ class TwitchClient {
 
     getChannelID() {
         return this._channelID;
+    }
+
+    saveChannel() {
+        localStorage.setItem(CHANNEL_LS_KEY, this._channel);
+        localStorage.setItem(CHANNEL_LS_ID_KEY, this._channelID);
     }
 }
 

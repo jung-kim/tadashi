@@ -50,7 +50,6 @@ class UserFollowsFetcher {
 
             try {
                 for (; ;) {
-
                     const path = `helix/users/follows?first=100&from_id=${userID}`;
                     const resp = await api.queryTwitchApi(
                         this._paginations[userID] ? `${path}&after=${this._paginations[userID]}` : path, authObj);

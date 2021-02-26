@@ -26,6 +26,15 @@ require('../../helpers/signals').domSignals.add((payload) => {
                 twitchClient.changeToRandomFeaturedStream();
                 break;
         }
+    } else if (payload.id === 'channel-save') {
+        switch (payload.type) {
+            case 'click':
+                twitchClient.saveChannel();
+                signals.dispatch({
+                    alert: { body: `Successfully saved channel` }
+                });
+                break;
+        }
     }
 });
 
@@ -141,8 +150,15 @@ class NavOptionVC {
         }));
         // set helpful popover messages
         this.toDsipose.push(new BSN.Popover(document.getElementById(`channel-refresh-help`), {
-            title: "Randomize channel ",
+            title: "Randomize channel",
             content: "Randomize channel based on featured streams API call.",
+            delay: 500,
+            placement: 'bottom'
+        }));
+        // set helpful popover messages
+        this.toDsipose.push(new BSN.Popover(document.getElementById(`channel-save-help`), {
+            title: "Save channel",
+            content: "Cache channel to be used on next page time page loads.",
             delay: 500,
             placement: 'bottom'
         }));
