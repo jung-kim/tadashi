@@ -1,24 +1,25 @@
 const users = require('../../../singletons/users');
 const twitchClient = require('../../../singletons/twitchClient');
 
+const followingFlag = ':following';
+const notFollowingFlag = ':notfollowing';
+
 class Filter {
     constructor(searchString) {
+        this.changeSearchString(searchString);
+    }
+
+    changeSearchString(searchString) {
         this._searchString = (searchString || '').trim().toLowerCase();
 
-        if (this._searchString.startsWith(':')) {
-            switch (this._searchString) {
-                case ':following':
-                    this.isApplicable = this._isFollowing;
-                    break;
-                case ':notfollowing':
-                    this.isApplicable = this._isNotFollowing;
-                    break;
-                default:
-                    this.isApplicable = () => true;
-                    break;
-            }
-        } else {
+        if (this._searchString === followingFlag) {
+            this.isApplicable = this._isFollowing;
+        } else if (this._searchString === notFollowingFlag) {
+            this.isApplicable = this._isNotFollowing;
+        } else if (this.isValid()) {
             this.isApplicable = this._isStringIncluded;
+        } else {
+            this.isApplicable = () => true;
         }
     }
 
@@ -48,9 +49,14 @@ class Filter {
         return name.toLowerCase().indexOf(this._searchString) > -1;
     }
 
-    isEqual(that) {
-        return that && this._searchString === that._searchString;
+    isSameSearchString(newSearchString) {
+        return newSearchString === this._searchString;
+    }
+
+    isValid() {
+        return Boolean(this._searchString);
     }
 }
 
-module.exports = Filter;
+const filter = new Filter();
+module.exports = filter;

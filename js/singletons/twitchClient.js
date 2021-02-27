@@ -14,7 +14,7 @@ const CHANNEL_LS_ID_KEY = 'channel-id';
 signals.add((payload) => {
     switch (payload.event) {
         case 'main.minute':
-            if (!payload.filter) {
+            if (!payload.filter.isValid()) {
                 twitchClient.updateViewersCache();
             }
             break;

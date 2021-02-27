@@ -58,7 +58,7 @@ class FollowedStreamersVC extends ChartRoot {
         const filter = chartFilter.getFilter();
 
         for (const [name, value] of Object.entries(this._map)) {
-            if (filter && !filter.isApplicable(name)) {
+            if (filter.isValid() && !filter.isApplicable(name)) {
                 // searching and this one doesn't meet search criteria
                 continue;
             }

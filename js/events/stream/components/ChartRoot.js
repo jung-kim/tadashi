@@ -19,7 +19,7 @@ class ChartRoot {
         this.update = _.throttle(() => {
             this._update();
             this._updateChartObject();
-        }, obj.updateThrottleTime || 1000);
+        }, obj.updateThrottleTime || 500);
 
         signals.add(obj.signalListener || ((payload) => {
             switch (payload.event) {

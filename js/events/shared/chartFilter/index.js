@@ -2,7 +2,7 @@ const constants = require('../../../helpers/constants');
 const signals = require('../../../helpers/signals').signals;
 const moment = require('../../../helpers/moment');
 const utils = require('../../../helpers/utils');
-const Filter = require('./Filter');
+const filter = require('./Filter');
 
 /**
  * Represents various filter settings
@@ -41,10 +41,8 @@ class ChartFilter {
         }
 
         if ('searchValue' in payload) {
-            const filter = new Filter(payload.searchValue);
-
-            if (!filter.isEqual(this._filter)) {
-                this._filter = filter;
+            if (!filter.isSameSearchString(payload.searchValue)) {
+                filter.changeSearchString(payload.searchValue);
                 changed.filter = filter;
             }
         }
@@ -71,7 +69,7 @@ class ChartFilter {
     }
 
     getFilter() {
-        return this._filter;
+        return filter;
     }
 
     getIntervalLevel() {
