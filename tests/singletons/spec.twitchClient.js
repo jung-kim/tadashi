@@ -298,7 +298,7 @@ describe('twitchClient.js', () => {
     it('saveChannel', () => {
         twitchClient._channelID = 111;
         twitchClient._channel = 'abc'
-        twitchClient.saveChannel();
+        twitchClient._saveChannel();
 
         localStorage.getItem('channel', 'abc');
         localStorage.getItem('channel-id', 111);

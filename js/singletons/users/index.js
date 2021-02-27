@@ -85,6 +85,7 @@ class Users {
             this._channelWarned[channelID] = true;
             signals.dispatch({
                 alert: {
+                    type: 'warning',
                     body: `This channel has higher than ${constants.MAX_VIEWERS_COUNTS_FOR_PROCESS} viewers.  Halting some data gatherings to conserve API requests.`
                 }
             });

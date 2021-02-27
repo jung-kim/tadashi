@@ -36,6 +36,7 @@ class TwitchClient {
         this._channelID = undefined;
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
+        this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
         this._emitDataChange = _.throttle(() => {
             signals.dispatch({ event: "chats.data.update" });
         }, 250);
@@ -229,9 +230,15 @@ class TwitchClient {
         return this._channelID;
     }
 
-    saveChannel() {
+    _saveChannel() {
         localStorage.setItem(CHANNEL_LS_KEY, this._channel);
         localStorage.setItem(CHANNEL_LS_ID_KEY, this._channelID);
+        signals.dispatch({
+            alert: {
+                type: 'success',
+                body: `Successfully saved channel`
+            }
+        });
     }
 }
 

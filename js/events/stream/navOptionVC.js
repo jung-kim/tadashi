@@ -30,9 +30,6 @@ require('../../helpers/signals').domSignals.add((payload) => {
         switch (payload.type) {
             case 'click':
                 twitchClient.saveChannel();
-                signals.dispatch({
-                    alert: { body: `Successfully saved channel` }
-                });
                 break;
         }
     }
@@ -90,6 +87,7 @@ class NavOptionVC {
         } catch (err) {
             signals.dispatch({
                 alert: {
+                    type: 'warning',
                     body: `Requested ${this.lastSearchedChannel} is not a valid channel.`
                 }
             });

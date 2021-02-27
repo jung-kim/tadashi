@@ -24,6 +24,7 @@ class FollowedStreamersVC extends ChartRoot {
                     case 'stream.load.ready':
                         this.enable();
                         this.reset();
+                        this._updateChartObject();
                         break;
                     case 'stream.cleanup':
                         this.disable();
