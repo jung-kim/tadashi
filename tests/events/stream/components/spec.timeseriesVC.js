@@ -6,7 +6,6 @@ const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 const timeseriesVC = require('../../../../js/events/stream/components/timeseriesVC');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
-const Filter = require('../../../../js/events/shared/chartFilter/Filter');
 
 const getDummyData = ((sum, users) => {
     return {
@@ -263,11 +262,11 @@ describe('timeseriesVC.js', () => {
 
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 0 }));
 
-        sinon.stub(chartFilter, 'getFilter').returns(undefined);
+        chartFilter.getFilter().changeSearchString();
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 1 }));
 
         sinon.verifyAndRestore();
-        sinon.stub(chartFilter, 'getFilter').returns(new Filter('aa'));
+        chartFilter.getFilter().changeSearchString('aa');
         timeseriesVC._chartDatasets = {
             1: { users: [{}, {}, {}, { 'aaa': 4, 'caaa': 5 }, {}] }
         }

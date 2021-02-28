@@ -2,7 +2,7 @@ const constants = require('../../../helpers/constants');
 const signals = require('../../../helpers/signals').signals;
 const moment = require('../../../helpers/moment');
 const utils = require('../../../helpers/utils');
-const filter = require('./Filter');
+const filter = require('./filter');
 
 /**
  * Represents various filter settings

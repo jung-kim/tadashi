@@ -33,7 +33,6 @@ class TimeseriesVC extends ChartRoot {
     }
 
     async _update() {
-        console.log(882)
         const { interval, startBucket, channel, filter, length } = await this._getParameters();
 
         for (let i = 0; i < length; i++) {

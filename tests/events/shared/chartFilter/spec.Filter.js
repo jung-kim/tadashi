@@ -1,6 +1,6 @@
 const { assert } = require("chai");
 
-const Filter = require("../../../../js/events/shared/chartFilter/Filter");
+const filter = require("../../../../js/events/shared/chartFilter/filter");
 const users = require("../../../../js/singletons/users");
 const sinon = require('sinon');
 const User = require("../../../../js/singletons/users/User");
@@ -9,16 +9,15 @@ const twitchClient = require("../../../../js/singletons/twitchClient");
 describe('Filter.js', () => {
     afterEach(() => {
         sinon.verifyAndRestore();
+        filter.changeSearchString('');
     })
 
     it('_isStringIncluded', () => {
-        let filter = new Filter();
-
         assert.isTrue(filter.isApplicable('abc'));
         assert.isTrue(filter.isApplicable('ZZZZ'));
         assert.isTrue(filter.isApplicable('ABc'));
 
-        filter = new Filter('AAa');
+        filter.changeSearchString('AAa');
         assert.isTrue(filter.isApplicable('AaA'));
         assert.isTrue(filter.isApplicable('aaa'));
         assert.isTrue(filter.isApplicable('fjwAaAfwo'));
@@ -27,8 +26,7 @@ describe('Filter.js', () => {
     });
 
     it('_isFollowing', () => {
-        const filter = new Filter(':following');
-
+        filter.changeSearchString(':following');
         sinon.stub(users, 'getUserByName').withArgs('a').returns(undefined);
         assert.isUndefined(filter.isApplicable('a'));
 
@@ -49,8 +47,7 @@ describe('Filter.js', () => {
     });
 
     it('_isNotFollowing', () => {
-        const filter = new Filter(':notFollowing');
-
+        filter.changeSearchString(':notFollowing');
         sinon.stub(users, 'getUserByName').withArgs('a').returns(undefined);
         assert.isUndefined(filter.isApplicable('a'));
 
@@ -70,31 +67,35 @@ describe('Filter.js', () => {
         assert.isTrue(filter.isApplicable('a'));
     });
 
-    it('isEqual', () => {
-        let filter = new Filter();
-        assert.isTrue(filter.isEqual(new Filter()));
-        assert.isFalse(filter.isEqual(new Filter('a')));
-        assert.isFalse(filter.isEqual(new Filter(':following')));
-
-        filter = new Filter('a');
-        assert.isFalse(filter.isEqual(new Filter()));
-        assert.isTrue(filter.isEqual(new Filter('a')));
-        assert.isTrue(filter.isEqual(new Filter('A')));
-        assert.isFalse(filter.isEqual(new Filter('aaaa')));
-        assert.isFalse(filter.isEqual(new Filter(':following')));
-
-
-        filter = new Filter(':following');
-        assert.isFalse(filter.isEqual(new Filter()));
-        assert.isFalse(filter.isEqual(new Filter('a')));
-        assert.isFalse(filter.isEqual(new Filter('A')));
-        assert.isFalse(filter.isEqual(new Filter('aaaa')));
-        assert.isTrue(filter.isEqual(new Filter(':following')));
-    });
-
     it('invalid flag', () => {
-        let filter = new Filter(':abc');
+        filter.changeSearchString(':abc');
         assert.isTrue(filter.isApplicable());
         assert.isTrue(filter.isApplicable('!F@dfox@fwR??'));
+    });
+
+    it('isSameSearchString', () => {
+        filter.changeSearchString('abc')
+        assert.isTrue(filter.isSameSearchString(' AbC '));
+        assert.isFalse(filter.isSameSearchString(' aa '));
+    });
+
+    it('_getCleanedSearchString', () => {
+        assert.equal(filter._getCleanedSearchString(), '');
+        assert.equal(filter._getCleanedSearchString(''), '');
+        assert.equal(filter._getCleanedSearchString('  aAa '), 'aaa');
+    });
+
+    it('isValid', () => {
+        filter.changeSearchString();
+        assert.isFalse(filter.isValid());
+
+        filter.changeSearchString('');
+        assert.isFalse(filter.isValid());
+
+        filter.changeSearchString('afw');
+        assert.isTrue(filter.isValid());
+
+        filter.changeSearchString(':following');
+        assert.isTrue(filter.isValid());
     });
 });

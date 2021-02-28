@@ -5,7 +5,6 @@ const sinon = require('sinon');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const signals = require('../../../../js/helpers/signals').signals;
 const constants = require('../../../../js/helpers/constants');
-const Filter = require('../../../../js/events/shared/chartFilter/Filter');
 
 describe('chartFilter.js', () => {
     it('update', () => {
@@ -85,7 +84,7 @@ describe('chartFilter.js', () => {
         });
         sinon.assert.calledOnce(signals.dispatch.withArgs({
             event: "filter.change",
-            changed: { filter: new Filter('aaa') },
+            changed: { filter: chartFilter.getFilter() },
         }));
 
         signals.dispatch.reset();

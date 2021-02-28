@@ -10,13 +10,13 @@ class Filter {
     }
 
     changeSearchString(searchString) {
-        this._searchString = (searchString || '').trim().toLowerCase();
+        this._searchString = this._getCleanedSearchString(searchString);
 
         if (this._searchString === followingFlag) {
             this.isApplicable = this._isFollowing;
         } else if (this._searchString === notFollowingFlag) {
             this.isApplicable = this._isNotFollowing;
-        } else if (this.isValid()) {
+        } else if (this._searchString.indexOf(':') !== 0 && this.isValid()) {
             this.isApplicable = this._isStringIncluded;
         } else {
             this.isApplicable = () => true;
@@ -49,8 +49,12 @@ class Filter {
         return name.toLowerCase().indexOf(this._searchString) > -1;
     }
 
+    _getCleanedSearchString(searchString) {
+        return (searchString || '').trim().toLowerCase();
+    }
+
     isSameSearchString(newSearchString) {
-        return newSearchString === this._searchString;
+        return this._getCleanedSearchString(newSearchString) === this._searchString;
     }
 
     isValid() {

@@ -75,6 +75,7 @@ document = {
 
 const users = require('../js/singletons/users');
 const auth = require('../js/simpletons/auth');
+const filter = require('../js/events/shared/chartFilter/filter');
 
 // setup `userFollowsCSS` helper, remove this once we can include main.js
 Handlebars.registerHelper('userFollowsCSS', (userName) => {
@@ -99,4 +100,5 @@ reset = () => {
     sinon.verifyAndRestore();
     document.getElementById.reset();
     auth._authToken = undefined;
+    filter.changeSearchString();
 }
