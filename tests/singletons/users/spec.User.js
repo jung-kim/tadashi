@@ -54,13 +54,6 @@ describe('User.js', () => {
         assert.isFalse(u1.isFollowing(4));
     });
 
-    it('isApplicable', () => {
-        const u1 = new User(123, 'abc');
-        assert.isFalse(u1.isApplicable('aaa'));
-
-        assert.isTrue(u1.isApplicable('a'));
-    });
-
     it('gets', () => {
         const u1 = new User(123, 'abc');
         assert.equal(u1.getID(), 123);

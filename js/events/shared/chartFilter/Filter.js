@@ -53,6 +53,14 @@ class Filter {
         return (searchString || '').trim().toLowerCase();
     }
 
+    /**
+     * Filter array of users based on user Name
+     * @param {User} users 
+     */
+    filterUsers(users) {
+        return this.isValid() ? users.filter(user => this.isApplicable(user._userName)) : users;
+    }
+
     isSameSearchString(newSearchString) {
         return this._getCleanedSearchString(newSearchString) === this._searchString;
     }

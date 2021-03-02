@@ -5,6 +5,7 @@ const users = require("../../../../js/singletons/users");
 const sinon = require('sinon');
 const User = require("../../../../js/singletons/users/User");
 const twitchClient = require("../../../../js/singletons/twitchClient");
+const { filterUsers } = require("../../../../js/events/shared/chartFilter/filter");
 
 describe('Filter.js', () => {
     afterEach(() => {
@@ -97,5 +98,44 @@ describe('Filter.js', () => {
 
         filter.changeSearchString(':following');
         assert.isTrue(filter.isValid());
+    });
+
+    it('filterUsers', () => {
+        filter.changeSearchString();
+        assert.deepEqual(filter.filterUsers([
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+            new User(11, 'bb'),
+        ]), [
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+            new User(11, 'bb'),
+        ]);
+
+        filter.changeSearchString('a');
+        assert.deepEqual(filter.filterUsers([
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+            new User(11, 'bb'),
+        ]), [
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+        ]);
+
+        filter.changeSearchString('bb');
+        assert.deepEqual(filter.filterUsers([
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+            new User(11, 'bb'),
+        ]), [
+            new User(11, 'bb'),
+        ]);
+
+        filter.changeSearchString('bbb');
+        assert.deepEqual(filter.filterUsers([
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+            new User(11, 'bb'),
+        ]), []);
     });
 });
