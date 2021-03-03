@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
-const filter = chartFilter.getFilter();
+const filter = chartFilter.getUserFilter();
 
 const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
 

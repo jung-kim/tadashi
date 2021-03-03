@@ -2,7 +2,7 @@ const constants = require('../../../helpers/constants');
 const signals = require('../../../helpers/signals').signals;
 const moment = require('../../../helpers/moment');
 const utils = require('../../../helpers/utils');
-const filter = require('./filter');
+const filter = require('./userFilter');
 
 /**
  * Represents various filter settings
@@ -68,7 +68,7 @@ class ChartFilter {
         return this._end;
     }
 
-    getFilter() {
+    getUserFilter() {
         return filter;
     }
 

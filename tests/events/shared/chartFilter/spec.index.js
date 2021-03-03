@@ -84,7 +84,7 @@ describe('chartFilter.js', () => {
         });
         sinon.assert.calledOnce(signals.dispatch.withArgs({
             event: "filter.change",
-            changed: { filter: chartFilter.getFilter() },
+            changed: { filter: chartFilter.getUserFilter() },
         }));
 
         signals.dispatch.reset();

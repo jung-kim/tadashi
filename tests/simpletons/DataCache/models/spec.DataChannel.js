@@ -7,7 +7,7 @@ const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
 const DataChannel = require('../../../../js/simpletons/dataCache/models/DataChannel');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
-const filter = chartFilter.getFilter();
+const filter = chartFilter.getUserFilter();
 
 describe('DataChannel.js', () => {
 

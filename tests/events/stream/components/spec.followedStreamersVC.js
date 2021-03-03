@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 
 const followedStreamersVC = require('../../../../js/events/stream/components/followedStreamersVC');
-const filter = require('../../../../js/events/shared/chartFilter/filter');
+const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
 
 
 describe('followedStreamersVC.js', () => {

@@ -55,7 +55,7 @@ class FollowedStreamersVC extends ChartRoot {
     _update() {
         this._labels = [];
         this._datasets = [];
-        const filter = chartFilter.getFilter();
+        const filter = chartFilter.getUserFilter();
 
         for (const [name, value] of Object.entries(this._map)) {
             if (filter.isValid() && !filter.isApplicable(name)) {

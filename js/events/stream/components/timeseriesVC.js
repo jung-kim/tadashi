@@ -62,7 +62,7 @@ class TimeseriesVC extends ChartRoot {
         }
         const chartDatasetsMsgType = this._chartDatasets[tooltipItem.datasetIndex];
         if (tooltipItem.yLabel === 0
-            || !chartFilter.getFilter().isValid()
+            || !chartFilter.getUserFilter().isValid()
             || !chartDatasetsMsgType.users
             || !chartDatasetsMsgType.users[tooltipItem.dataIndex]) {
             return;

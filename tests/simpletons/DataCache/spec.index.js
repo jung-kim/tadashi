@@ -5,7 +5,7 @@ const constants = require('../../../js/helpers/constants');
 const Chat = require('../../../js/models/events/Chat');
 const dataCache = require("../../../js/simpletons/dataCache");
 const { blankDataBucket, blankDataNode } = require('../../../js/simpletons/dataCache/models/blanks');
-const filter = require('../../../js/events/shared/chartFilter').getFilter();
+const filter = require('../../../js/events/shared/chartFilter').getUserFilter();
 
 
 describe('dataCache/index.js', () => {

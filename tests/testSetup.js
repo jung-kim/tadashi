@@ -75,7 +75,7 @@ document = {
 
 const users = require('../js/singletons/users');
 const auth = require('../js/simpletons/auth');
-const filter = require('../js/events/shared/chartFilter/filter');
+const filter = require('../js/events/shared/chartFilter').getUserFilter();
 
 // setup `userFollowsCSS` helper, remove this once we can include main.js
 Handlebars.registerHelper('userFollowsCSS', (userName) => {

@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const { assert } = require('chai');
 
 const Chatters = require('../../../../js/events/stream/components/Chatters');
-const filter = require('../../../../js/events/shared/chartFilter/filter');
+const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
 const User = require('../../../../js/singletons/users/User');
 
 const setStubs = () => {

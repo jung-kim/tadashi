@@ -98,8 +98,8 @@ describe('DataBucket.js', () => {
             },
         });
 
-        chartFilter.getFilter().changeSearchString('a');
-        got = dataBucket.getCopy(chartFilter.getFilter());
+        chartFilter.getUserFilter().changeSearchString('a');
+        got = dataBucket.getCopy(chartFilter.getUserFilter());
         assert.deepEqual(got, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {
@@ -112,8 +112,8 @@ describe('DataBucket.js', () => {
             },
         });
 
-        chartFilter.getFilter().changeSearchString('aa');
-        got = dataBucket.getCopy(chartFilter.getFilter());
+        chartFilter.getUserFilter().changeSearchString('aa');
+        got = dataBucket.getCopy(chartFilter.getUserFilter());
         assert.deepEqual(got, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {

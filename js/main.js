@@ -92,7 +92,7 @@ window.minIntervalEvent = setInterval(() => {
         event: 'main.minute',
         currentTab: currentTab,
         channel: twitchClient.getChannel(),
-        filter: chartFilter.getFilter(),
+        filter: chartFilter.getUserFilter(),
     });
     setTopOfMinEvent();
 }, 60 * 1000);

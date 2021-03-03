@@ -25,7 +25,7 @@ describe('ChartRoot.js', () => {
             endBucket: 1577902020,
             interval: constants.BUCKET_MIN,
             length: 8,
-            filter: chartFilter.getFilter(),
+            filter: chartFilter.getUserFilter(),
             startBucket: 1577901600,
         });
         assert.equal((1577902020 - 1577901600) % constants.BUCKET_MIN, 0);
@@ -39,7 +39,7 @@ describe('ChartRoot.js', () => {
             endBucket: 1577901900,
             interval: constants.BUCKET_FIVE,
             length: 2,
-            filter: chartFilter.getFilter(),
+            filter: chartFilter.getUserFilter(),
             startBucket: 1577901600,
         });
         assert.equal((1577901900 - 1577901600) % constants.BUCKET_FIVE, 0);
@@ -53,7 +53,7 @@ describe('ChartRoot.js', () => {
             endBucket: 1577988000,
             interval: constants.BUCKET_HOUR,
             length: 25,
-            filter: chartFilter.getFilter(),
+            filter: chartFilter.getUserFilter(),
             startBucket: 1577901600,
         });
         assert.equal((1577988000 - 1577901600) % constants.BUCKET_HOUR, 0);
@@ -68,7 +68,7 @@ describe('ChartRoot.js', () => {
             endBucket: 1767340800,
             interval: constants.BUCKET_DAY,
             length: 2194,
-            filter: chartFilter.getFilter(),
+            filter: chartFilter.getUserFilter(),
             startBucket: 1577865600,
         });
     });

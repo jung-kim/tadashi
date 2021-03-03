@@ -15,9 +15,9 @@ class Chatters {
     }
 
     _update(key, allChatters) {
-        const filter = chartFilter.getFilter();
+        const filter = chartFilter.getUserFilter();
         // @todo search
-        this.allChatters = chartFilter.getFilter().filterUsers(allChatters);
+        this.allChatters = chartFilter.getUserFilter().filterUsers(allChatters);
         this._validatePageNumber();
         this._key = key
 

@@ -262,11 +262,11 @@ describe('timeseriesVC.js', () => {
 
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 0 }));
 
-        chartFilter.getFilter().changeSearchString();
+        chartFilter.getUserFilter().changeSearchString();
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 1 }));
 
         sinon.verifyAndRestore();
-        chartFilter.getFilter().changeSearchString('aa');
+        chartFilter.getUserFilter().changeSearchString('aa');
         timeseriesVC._chartDatasets = {
             1: { users: [{}, {}, {}, { 'aaa': 4, 'caaa': 5 }, {}] }
         }

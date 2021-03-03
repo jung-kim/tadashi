@@ -85,7 +85,7 @@ class ChartRoot {
             startBucket: startBucket,
             endBucket: endBucket,
             channel: twitchClient.getChannel(),
-            filter: chartFilter.getFilter(),
+            filter: chartFilter.getUserFilter(),
             length: length,
         }
     }
