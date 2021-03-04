@@ -33,6 +33,11 @@ class Auth {
     }
 
     async authenticate(parsedHash) {
+        if (this.isAuthenticated()) {
+            // Valid auth, just return
+            return;
+        }
+
         if (parsedHash) {
             this._setAuthToken(parsedHash.get('access_token'));
         } else if (env.CLIENT_SECRET) {
@@ -76,6 +81,10 @@ class Auth {
     }
 
     logout() {
+        if (!this.isAuthenticated()) {
+            return;
+        }
+
         this._authToken = undefined;
         this._user = undefined;
         localStorage.removeItem(localstorageKey);

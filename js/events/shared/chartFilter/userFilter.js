@@ -43,9 +43,6 @@ class Filter {
     }
 
     _isStringIncluded(name) {
-        if (!this._searchString) {
-            return true;
-        }
         return name.toLowerCase().indexOf(this._searchString) > -1;
     }
 
@@ -55,7 +52,8 @@ class Filter {
 
     /**
      * Filter array of users based on user Name
-     * @param {User} users 
+     * @param {Array.<User>} users list of users to be filtered
+     * @returns {Array.<User>} filtered users
      */
     filterUsers(users) {
         return this.isValid() ? users.filter(user => this.isApplicable(user._userName)) : users;

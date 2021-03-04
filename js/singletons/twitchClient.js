@@ -37,9 +37,6 @@ class TwitchClient {
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
         this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
-        this._emitDataChange = _.throttle(() => {
-            signals.dispatch({ event: "chats.data.update" });
-        }, 250);
     }
 
     async initializeClient() {
@@ -147,10 +144,6 @@ class TwitchClient {
             dataCache.add(channel.substring(1), raw);
         } else {
             dataCache.add(channel, raw);
-        }
-
-        if (this._enabled) {
-            this._emitDataChange();
         }
     }
 

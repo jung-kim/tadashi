@@ -6,13 +6,14 @@ const sinon = require('sinon');
 const User = require("../../../../js/singletons/users/User");
 const twitchClient = require("../../../../js/singletons/twitchClient");
 
-describe('Filter.js', () => {
+describe('userFilter.js', () => {
     afterEach(() => {
         sinon.verifyAndRestore();
         filter.changeSearchString('');
     })
 
     it('_isStringIncluded', () => {
+        filter.changeSearchString();
         assert.isTrue(filter.isApplicable('abc'));
         assert.isTrue(filter.isApplicable('ZZZZ'));
         assert.isTrue(filter.isApplicable('ABc'));

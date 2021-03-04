@@ -27,7 +27,7 @@ signals.add(async (payload) => {
             if (payload.changed && payload.changed.filter) {
                 chattersTableVC.loadChattersTable();
             }
-            if (payload.changed && payload.changed.channel && getCurrentTab().tab === 'stream') {
+            if (payload.changed && payload.changed.channel) {
                 navOptionVC.populateStreamInfo();
             }
             break;
