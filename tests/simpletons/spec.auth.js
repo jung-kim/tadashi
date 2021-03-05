@@ -103,12 +103,20 @@ describe('auth.js', () => {
     });
 
     describe('authenticate', async () => {
+        beforeEach(() => {
+            auth.logout();
+            reset();
+        });
         it('parsedHash', async () => {
-            const stub = sinon.stub(auth, 'isAuthenticated').returns(false);
+            let stub = sinon.stub(auth, 'isAuthenticated').returns(false);
             let searchParam = new URLSearchParams('');
             await auth.authenticate(searchParam);
             assert.isUndefined(auth._authToken);
+            sinon.assert.calledTwice(stub);
 
+            sinon.verifyAndRestore();
+
+            stub = sinon.stub(auth, 'isAuthenticated').returns(false);
             searchParam = new URLSearchParams('access_token=1111');
             await auth.authenticate(searchParam);
             assert.equal(auth._authToken, '1111');
@@ -120,7 +128,7 @@ describe('auth.js', () => {
             const stub = sinon.stub(auth, 'isAuthenticated').returns(false);
             const authWithSecretStub = sinon.stub(auth, '_authWithSecret');
             await auth.authenticate();
-            sinon.assert.calledOnce(stub);
+            sinon.assert.calledTwice(stub);
             sinon.assert.calledOnce(authWithSecretStub);
         });
 
@@ -129,7 +137,7 @@ describe('auth.js', () => {
         });
 
         it('after auth', async () => {
-            searchParam = new URLSearchParams('access_token=1111');
+            const searchParam = new URLSearchParams('access_token=1111');
 
             fetchMock.getOnce(`end:/helix/users`, {
                 status: statusCodes.OK,
@@ -151,7 +159,7 @@ describe('auth.js', () => {
         });
 
         it('user fetch fail', async () => {
-            searchParam = new URLSearchParams('access_token=1111');
+            const searchParam = new URLSearchParams('access_token=1111');
 
             fetchMock.getOnce(`end:/helix/users`, {
                 status: statusCodes.OK,

@@ -81,10 +81,6 @@ class Auth {
     }
 
     logout() {
-        if (!this.isAuthenticated()) {
-            return;
-        }
-
         this._authToken = undefined;
         this._user = undefined;
         localStorage.removeItem(localstorageKey);

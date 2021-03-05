@@ -156,20 +156,16 @@ describe('twitchClient.js', () => {
 
         it('enabled', () => {
             twitchClient._enable();
-            const emitStub = sinon.stub(twitchClient, '_emitDataChange');
             const cacheAddStub = sinon.stub(dataCache, 'add').withArgs('abc', new test(1, 2, 3));
             twitchClient._processChatMessage('#abc', test, 1, 2, 3);
             sinon.assert.calledOnce(cacheAddStub);
-            sinon.assert.calledOnce(emitStub);
         });
 
         it('disabled', () => {
             twitchClient._disable();
-            const emitStub = sinon.stub(twitchClient, '_emitDataChange');
             const cacheAddStub = sinon.stub(dataCache, 'add').withArgs('abc', new test(1));
             twitchClient._processChatMessage('abc', test, 1);
             sinon.assert.calledOnce(cacheAddStub);
-            sinon.assert.notCalled(emitStub);
         });
     });
 
