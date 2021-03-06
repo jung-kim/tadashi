@@ -299,4 +299,48 @@ describe('twitchClient.js', () => {
         localStorage.getItem('channel', 'abc');
         localStorage.getItem('channel-id', 111);
     });
+
+    describe('_eventSignalFunc', () => {
+        describe('main.minute', () => {
+            it('valid filter', () => {
+                const updateViewersCache = sinon.stub(twitchClient, 'updateViewersCache');
+                twitchClient._eventSignalFunc({
+                    event: 'main.minute',
+                    filter: {
+                        isValid: () => false
+                    }
+                });
+                sinon.assert.calledOnce(updateViewersCache);
+            });
+
+            it('invalid filter', () => {
+                const updateViewersCache = sinon.stub(twitchClient, 'updateViewersCache');
+                twitchClient._eventSignalFunc({
+                    event: 'main.minute',
+                    filter: {
+                        isValid: () => true
+                    }
+                });
+                sinon.assert.notCalled(updateViewersCache);
+            });
+        });
+
+        describe('stream.cleanup', () => {
+            const _disable = sinon.stub(twitchClient, '_disable');
+            twitchClient._eventSignalFunc({ event: 'stream.cleanup' });
+            sinon.assert.calledOnce(_disable);
+        });
+
+        describe('stream.load.ready', () => {
+            const _enable = sinon.stub(twitchClient, '_enable');
+            twitchClient._eventSignalFunc({ event: 'stream.load.ready' });
+            sinon.assert.calledOnce(_enable);
+        });
+
+        describe('channel.changed', () => {
+            const changeChannel = sinon.stub(twitchClient, 'changeChannel').withArgs('new_channel');
+            twitchClient._eventSignalFunc({ event: 'channel.changed', channel: 'new_channel' });
+            sinon.assert.calledOnce(changeChannel);
+        });
+    })
 });

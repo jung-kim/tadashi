@@ -6,6 +6,7 @@ const users = require("../../../js/singletons/users");
 const User = require('../../../js/singletons/users/User');
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
+const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 
 describe('users.js', () => {
@@ -255,6 +256,50 @@ describe('users.js', () => {
             _userName: 'cCc',
             _follows: new Set([999]),
             userNameCSSClass: 'text-muted'
+        });
+    });
+
+    describe('_eventSignalFunc', () => {
+        it('chatters.data.update', () => {
+            const processChattersData = sinon.stub(users, 'processChattersData').withArgs(["abc"], 123);
+            const dispatch = eventSignals.dispatch.withArgs({ event: 'chatters.data.update.data' });
+            users._eventSignalFunc({ event: 'chatters.data.update', data: ["abc"], channelID: 123 });
+            sinon.assert.calledOnce(processChattersData);
+            sinon.assert.calledOnce(dispatch);
+        });
+
+        it('fetch.user.ids.resp', () => {
+            const processUserIDsResp = sinon.stub(users, 'processUserIDsResp').withArgs(["abc"]);
+            users._eventSignalFunc({ event: 'fetch.user.ids.resp', data: ["abc"] });
+            sinon.assert.calledOnce(processUserIDsResp);
+        });
+
+        it('fetch.user.follows.resp', () => {
+            const processUserIDsResp = sinon.stub(users, 'processUserFollowsResp').withArgs(888, ["abc"]);
+            users._eventSignalFunc({ event: 'fetch.user.follows.resp', data: ["abc"], userID: 888 });
+            sinon.assert.calledOnce(processUserIDsResp);
+        });
+
+        it('api.unthrottled', () => {
+            const userIDFetch = sinon.stub(userIDFetcher, 'fetch').withArgs();
+            const userFollowsFetch = sinon.stub(userFollowsFetcher, 'fetch').withArgs();
+            users._eventSignalFunc({ event: 'api.unthrottled', data: ["abc"] });
+            sinon.assert.calledOnce(userIDFetch);
+            sinon.assert.calledOnce(userFollowsFetch);
+        });
+
+        it('channel.input.update', () => {
+            const userIDFetch = sinon.stub(userIDFetcher, 'reset').withArgs();
+            const userFollowsFetch = sinon.stub(userFollowsFetcher, 'reset').withArgs();;
+            users._eventSignalFunc({ event: 'channel.input.update', data: { id: 1111 } });
+            sinon.assert.calledOnce(userIDFetch);
+            sinon.assert.calledOnce(userFollowsFetch);
+        });
+
+        it('fetch.channel.follows.resp', () => {
+            const processChannelFollows = sinon.stub(users, 'processChannelFollows').withArgs(123, ["abc"]);
+            users._eventSignalFunc({ event: 'fetch.channel.follows.resp', data: ["abc"], channelID: 123 });
+            sinon.assert.calledOnce(processChannelFollows);
         });
     });
 });

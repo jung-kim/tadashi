@@ -11,25 +11,6 @@ const dataCache = require('../simpletons/dataCache');
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';
 
-eventSignals.add((payload) => {
-    switch (payload.event) {
-        case 'main.minute':
-            if (!payload.filter.isValid()) {
-                twitchClient.updateViewersCache();
-            }
-            break;
-        case 'stream.cleanup':
-            twitchClient._disable();
-            break;
-        case 'stream.load.ready':
-            twitchClient._enable();
-            break;
-        case 'channel.changed':
-            twitchClient.changeChannel(payload.channel);
-            break;
-    }
-});
-
 class TwitchClient {
     constructor() {
         this._channel = undefined;
@@ -37,6 +18,26 @@ class TwitchClient {
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
         this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
+        eventSignals.add(this._eventSignalFunc);
+    }
+
+    _eventSignalFunc(payload) {
+        switch (payload.event) {
+            case 'main.minute':
+                if (!payload.filter.isValid()) {
+                    twitchClient.updateViewersCache();
+                }
+                break;
+            case 'stream.cleanup':
+                twitchClient._disable();
+                break;
+            case 'stream.load.ready':
+                twitchClient._enable();
+                break;
+            case 'channel.changed':
+                twitchClient.changeChannel(payload.channel);
+                break;
+        }
     }
 
     async initializeClient() {
