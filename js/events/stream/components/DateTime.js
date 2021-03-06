@@ -1,5 +1,5 @@
 const constants = require('../../../helpers/constants');
-const signals = require('../../../helpers/signals').signals;
+const eventSignals = require('../../../helpers/signals').eventSignals;
 
 const moment = require('../../../helpers/moment');
 
@@ -15,7 +15,7 @@ class DateTime {
             time_24hr: true,
             minDate: "2020-01-01 00:00",
             defaultDate: moment().toDate(),
-            onValueUpdate: _.debounce(() => signals.dispatch({ event: 'date.change' }, 1000)),
+            onValueUpdate: _.debounce(() => eventSignals.dispatch({ event: 'date.change' }, 1000)),
         });
     }
 

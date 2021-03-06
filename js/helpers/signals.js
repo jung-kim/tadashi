@@ -1,6 +1,6 @@
 const microSignals = require('micro-signals').Signal;
 
 module.exports = {
-    signals: new microSignals(),
+    eventSignals: new microSignals(),
     domSignals: new microSignals(),
 }

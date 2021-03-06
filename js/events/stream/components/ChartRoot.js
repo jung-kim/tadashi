@@ -1,4 +1,4 @@
-const signals = require('../../../helpers/signals').signals;
+const eventSignals = require('../../../helpers/signals').eventSignals;
 const chartFilter = require('../../shared/chartFilter');
 const twitchClient = require('../../../singletons/twitchClient');
 const utils = require('../../../helpers/utils');
@@ -21,7 +21,7 @@ class ChartRoot {
             this._updateChartObject();
         }, obj.updateThrottleTime || 500);
 
-        signals.add(obj.signalListener || ((payload) => {
+        eventSignals.add(obj.signalListener || ((payload) => {
             switch (payload.event) {
                 case 'channel.input.update':
                     this.reset();

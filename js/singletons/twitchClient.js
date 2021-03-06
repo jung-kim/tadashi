@@ -1,7 +1,7 @@
 const tmi = require('tmi.js');
 const _ = require('lodash');
 const events = require('../models/events');
-const signals = require('../helpers/signals').signals;
+const eventSignals = require('../helpers/signals').eventSignals;
 const constants = require('../helpers/constants');
 
 const auth = require('../simpletons/auth');
@@ -11,7 +11,7 @@ const dataCache = require('../simpletons/dataCache');
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';
 
-signals.add((payload) => {
+eventSignals.add((payload) => {
     switch (payload.event) {
         case 'main.minute':
             if (!payload.filter.isValid()) {
@@ -108,7 +108,7 @@ class TwitchClient {
         });
 
         this._client.connect();
-        signals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
+        eventSignals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
         this._initPromise = undefined;
     }
 
@@ -128,7 +128,7 @@ class TwitchClient {
         await this._client.join(this.getChannel());
 
         this.updateViewersCache();
-        signals.dispatch({
+        eventSignals.dispatch({
             event: 'channel.input.update',
             data: {
                 id: this.getChannelID(),
@@ -166,7 +166,7 @@ class TwitchClient {
 
         const json = await api.queryTmiApi(`group/user/${this.getChannel()}/chatters`);
 
-        signals.dispatch({
+        eventSignals.dispatch({
             event: "chatters.data.update",
             data: json[constants.KEY_CHATTERS],
             channelID: this.getChannelID(),
@@ -226,7 +226,7 @@ class TwitchClient {
     _saveChannel() {
         localStorage.setItem(CHANNEL_LS_KEY, this._channel);
         localStorage.setItem(CHANNEL_LS_ID_KEY, this._channelID);
-        signals.dispatch({
+        eventSignals.dispatch({
             alert: {
                 type: 'success',
                 body: `Successfully saved channel`

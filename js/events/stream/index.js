@@ -1,13 +1,13 @@
 /*eslint complexity: ["error", 25]*/
 
-const signals = require('../../helpers/signals').signals;
+const eventSignals = require('../../helpers/signals').eventSignals;
 const chattersTableVC = require('./chattersTableVC');
 const twitchEmbededVC = require('./twitchEmbededVC');
 const navOptionVC = require('./navOptionVC');
 const dateTimeRangeVC = require('./dateTimeRangeVC');
 const chartFilter = require('../shared/chartFilter');
 
-signals.add(async (payload) => {
+eventSignals.add(async (payload) => {
     switch (payload.event) {
         case 'stream.load':
             document.getElementById("main").innerHTML = templates[`./hbs/stream/index.hbs`]();
@@ -18,7 +18,7 @@ signals.add(async (payload) => {
             twitchEmbededVC.initialize();
             dateTimeRangeVC.initialize();
 
-            signals.dispatch({ event: 'stream.load.ready' });
+            eventSignals.dispatch({ event: 'stream.load.ready' });
             break;
         case 'chatters.data.update.data':
             chattersTableVC.loadChattersTable();

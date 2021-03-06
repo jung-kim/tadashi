@@ -1,4 +1,4 @@
-const signals = require('../../helpers/signals').signals;
+const eventSignals = require('../../helpers/signals').eventSignals;
 const twitchClient = require('../../singletons/twitchClient');
 const twitchAPI = require('../../singletons/twitchAPI');
 const constants = require('../../helpers/constants');
@@ -85,7 +85,7 @@ class NavOptionVC {
             await twitchClient.changeChannel(this.lastSearchedChannel);
             this.populateStreamInfo();
         } catch (err) {
-            signals.dispatch({
+            eventSignals.dispatch({
                 alert: {
                     type: 'warning',
                     body: `Requested ${this.lastSearchedChannel} is not a valid channel.`

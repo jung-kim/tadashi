@@ -1,5 +1,5 @@
 const constants = require('../../../helpers/constants');
-const signals = require('../../../helpers/signals').signals;
+const eventSignals = require('../../../helpers/signals').eventSignals;
 const moment = require('../../../helpers/moment');
 const utils = require('../../../helpers/utils');
 const filter = require('./userFilter');
@@ -53,7 +53,7 @@ class ChartFilter {
         }
 
         if (Object.keys(changed).length > 0) {
-            signals.dispatch({
+            eventSignals.dispatch({
                 event: "filter.change",
                 changed: changed,
             });

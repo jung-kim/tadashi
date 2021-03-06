@@ -1,4 +1,4 @@
-const signals = require('./helpers/signals').signals;
+const eventSignals = require('./helpers/signals').eventSignals;
 const domSignals = require('./helpers/signals').domSignals;
 const utils = require('./helpers/utils');
 const constants = require('./helpers/constants');
@@ -33,7 +33,7 @@ window.onload = async () => {
     await twitchClient.initializeClient();
 
     document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth);
-    signals.dispatch({ event: `stream.load` });
+    eventSignals.dispatch({ event: `stream.load` });
 };
 
 window.authenticate = async () => {
@@ -49,7 +49,7 @@ window.authLogout = () => {
 }
 
 window.minIntervalEvent = setInterval(() => {
-    signals.dispatch({
+    eventSignals.dispatch({
         event: 'main.minute',
         channel: twitchClient.getChannel(),
         filter: chartFilter.getUserFilter(),
@@ -58,7 +58,7 @@ window.minIntervalEvent = setInterval(() => {
     const nextTopOfMin = utils.getNow().add(1, 'minute').valueOf();
     const tickAt = nextTopOfMin - moment.now();
     window.minTopTimeoutEvent = setTimeout(() => {
-        signals.dispatch({ event: 'main.minute.top' });
+        eventSignals.dispatch({ event: 'main.minute.top' });
     }, tickAt + 5);
 }, 60 * 1000);
 
@@ -83,7 +83,7 @@ Handlebars.registerHelper('userFollowsCSS', (userName) => {
     }
 });
 
-signals.add((payload) => {
+eventSignals.add((payload) => {
     if (payload.alert && payload.alert.body) {
         document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
         new BSN.Alert(document.querySelector('.alert'));

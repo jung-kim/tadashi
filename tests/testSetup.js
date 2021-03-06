@@ -1,4 +1,4 @@
-const signals = require('../js/helpers/signals');
+const eventSignals = require('../js/helpers/signals').eventSignals;
 const sinon = require('sinon');
 const Handlebars = require('handlebars');
 const glob = require('glob');
@@ -54,7 +54,7 @@ BSN = {
 }
 
 // disable signal dispatch
-signals.signals.dispatch = sinon.stub();
+eventSignals.dispatch = sinon.stub();
 
 // mock chart for chart.js
 Chart = class Chart {

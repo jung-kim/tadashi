@@ -1,5 +1,5 @@
 const env = require('../env');
-const signals = require('../helpers/signals').signals;
+const eventSignals = require('../helpers/signals').eventSignals;
 
 const localstorageKey = 'auth';
 const scope = 'scope=user:read:email+bits:read+moderation:read+channel:read:subscriptions+analytics:read:games'
@@ -47,7 +47,7 @@ class Auth {
         }
 
         if (this.isAuthenticated()) {
-            signals.dispatch({ 'event': 'draw.nav.auth' });
+            eventSignals.dispatch({ 'event': 'draw.nav.auth' });
             try {
                 const res = await fetch(`${env.TWITCH_ENDPOINT}/helix/users`, this.getAuthObj());
                 const json = await res.json();
@@ -59,7 +59,7 @@ class Auth {
             }
 
             if (this.isBroadcaster()) {
-                signals.dispatch({ 'event': 'channel.changed', channel: this.getLogin() });
+                eventSignals.dispatch({ 'event': 'channel.changed', channel: this.getLogin() });
             }
         }
     }
@@ -84,7 +84,7 @@ class Auth {
         this._authToken = undefined;
         this._user = undefined;
         localStorage.removeItem(localstorageKey);
-        signals.dispatch({ 'event': 'draw.nav.auth' });
+        eventSignals.dispatch({ 'event': 'draw.nav.auth' });
     }
 
     getAuthObj() {
