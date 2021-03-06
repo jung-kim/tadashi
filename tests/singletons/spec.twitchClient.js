@@ -89,29 +89,19 @@ describe('twitchClient.js', () => {
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
-        it('featured user init', async () => {
+        it('default user init', async () => {
             twitchClient._client = undefined;
             const fakeClient = { connect: sinon.stub(), on: () => { } };
 
-            const featuredStreamStub = sinon.stub(twitchClient, 'changeToRandomFeaturedStream')
-                .onFirstCall()
-                .returns(undefined)
-                .onSecondCall()
-                .returns('abc');
-            const getChannelStub = sinon.stub(twitchClient, 'getChannel')
-                .onFirstCall().returns(undefined)
-                .onSecondCall().returns('abc')
-            const setChannelStub = sinon.stub(twitchClient, '_setChannelID')
             sinon.stub(tmi, 'Client')
                 .callThroughWithNew()
                 .withArgs(sinon.match.any)
                 .returns(fakeClient);
-
             await twitchClient.initializeClient();
 
             sinon.assert.calledOnce(fakeClient.connect);
-            sinon.assert.calledOnce(featuredStreamStub);
-            sinon.assert.calledOnce(setChannelStub);
+            assert.equal(twitchClient._channel, constants.DEFAULT_CHANNEL);
+            assert.equal(twitchClient._channelID, constants.DEFAULT_CHANNEL_ID);
         });
     });
 
@@ -166,20 +156,16 @@ describe('twitchClient.js', () => {
 
         it('enabled', () => {
             twitchClient._enable();
-            const emitStub = sinon.stub(twitchClient, '_emitDataChange');
             const cacheAddStub = sinon.stub(dataCache, 'add').withArgs('abc', new test(1, 2, 3));
             twitchClient._processChatMessage('#abc', test, 1, 2, 3);
             sinon.assert.calledOnce(cacheAddStub);
-            sinon.assert.calledOnce(emitStub);
         });
 
         it('disabled', () => {
             twitchClient._disable();
-            const emitStub = sinon.stub(twitchClient, '_emitDataChange');
             const cacheAddStub = sinon.stub(dataCache, 'add').withArgs('abc', new test(1));
             twitchClient._processChatMessage('abc', test, 1);
             sinon.assert.calledOnce(cacheAddStub);
-            sinon.assert.notCalled(emitStub);
         });
     });
 
@@ -220,13 +206,12 @@ describe('twitchClient.js', () => {
 
     it('_setChannel', () => {
         twitchClient._setChannel('abc');
-        assert.equal(localStorage.getItem('channel'), 'abc');
+        assert.equal(twitchClient._channel, 'abc');
     });
 
     it('_setChannelID', async () => {
         await twitchClient._setChannelID(123);
         assert.equal(twitchClient._channelID, 123);
-        assert.equal(localStorage.getItem('channel-id'), 123);
 
 
         sinon.stub(twitchClient, 'getChannel').returns('abc');
@@ -235,14 +220,12 @@ describe('twitchClient.js', () => {
             .returns({ users: [{ _id: '111' }] });
         await twitchClient._setChannelID();
         assert.equal(twitchClient._channelID, 111);
-        assert.equal(localStorage.getItem('channel-id'), 111);
 
         sinon.verifyAndRestore();
 
         sinon.stub(twitchClient, 'getChannel').returns(undefined);
         await twitchClient._setChannelID();
         assert.equal(twitchClient._channelID, 111);
-        assert.equal(localStorage.getItem('channel-id'), 111);
     });
 
     describe('changeToRandomFeaturedStream', () => {
@@ -306,5 +289,14 @@ describe('twitchClient.js', () => {
     it('getChannelID', () => {
         twitchClient._channel = 77
         assert.equal(twitchClient.getChannel(), 77);
+    });
+
+    it('saveChannel', () => {
+        twitchClient._channelID = 111;
+        twitchClient._channel = 'abc'
+        twitchClient._saveChannel();
+
+        localStorage.getItem('channel', 'abc');
+        localStorage.getItem('channel-id', 111);
     });
 });

@@ -1,4 +1,4 @@
-const signals = require('../../helpers/signals').signals;
+const eventSignals = require('../../helpers/signals').eventSignals;
 
 const User = require('./User');
 const userIDFetcher = require('./userIDFetcher');
@@ -7,11 +7,11 @@ const channelFollowsFetcher = require('./channelFollowsFetcher');
 const constants = require('../../helpers/constants');
 
 
-signals.add(async (payload) => {
+eventSignals.add(async (payload) => {
     switch (payload.event) {
         case 'chatters.data.update':
             users.processChattersData(payload.data, payload.channelID);
-            signals.dispatch({ event: 'chatters.data.update.data' });
+            eventSignals.dispatch({ event: 'chatters.data.update.data' });
             break;
         case 'fetch.user.ids.resp':
             users.processUserIDsResp(payload.data);
@@ -83,8 +83,9 @@ class Users {
         if (viewersCount >= constants.MAX_VIEWERS_COUNTS_FOR_PROCESS
             && !this._channelWarned[channelID]) {
             this._channelWarned[channelID] = true;
-            signals.dispatch({
+            eventSignals.dispatch({
                 alert: {
+                    type: 'warning',
                     body: `This channel has higher than ${constants.MAX_VIEWERS_COUNTS_FOR_PROCESS} viewers.  Halting some data gatherings to conserve API requests.`
                 }
             });
@@ -96,7 +97,7 @@ class Users {
     processUserFollowsResp(id, resp) {
         // set follows for a user object
         this.getUserByID(id).addFollows(resp);
-        signals.dispatch({ event: `chatters.data.update.partial` });
+        eventSignals.dispatch({ event: `chatters.data.update.partial` });
     }
 
     processUserIDsResp(resp) {

@@ -1,7 +1,7 @@
 const tmi = require('tmi.js');
 const _ = require('lodash');
 const events = require('../models/events');
-const signals = require('../helpers/signals').signals;
+const eventSignals = require('../helpers/signals').eventSignals;
 const constants = require('../helpers/constants');
 
 const auth = require('../simpletons/auth');
@@ -11,10 +11,12 @@ const dataCache = require('../simpletons/dataCache');
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';
 
-signals.add((payload) => {
+eventSignals.add((payload) => {
     switch (payload.event) {
         case 'main.minute':
-            twitchClient.updateViewersCache();
+            if (!payload.filter.isValid()) {
+                twitchClient.updateViewersCache();
+            }
             break;
         case 'stream.cleanup':
             twitchClient._disable();
@@ -34,9 +36,7 @@ class TwitchClient {
         this._channelID = undefined;
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
-        this._emitDataChange = _.throttle(() => {
-            signals.dispatch({ event: "chats.data.update" });
-        }, 250);
+        this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
     }
 
     async initializeClient() {
@@ -55,7 +55,7 @@ class TwitchClient {
                 this._setChannel(auth.getLogin());
                 this._setChannelID(auth.getID());
             } else {
-                await this.changeToRandomFeaturedStream();
+                this.changeChannel(constants.DEFAULT_CHANNEL, constants.DEFAULT_CHANNEL_ID);
             }
         }
 
@@ -108,7 +108,7 @@ class TwitchClient {
         });
 
         this._client.connect();
-        signals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
+        eventSignals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
         this._initPromise = undefined;
     }
 
@@ -128,7 +128,7 @@ class TwitchClient {
         await this._client.join(this.getChannel());
 
         this.updateViewersCache();
-        signals.dispatch({
+        eventSignals.dispatch({
             event: 'channel.input.update',
             data: {
                 id: this.getChannelID(),
@@ -145,10 +145,6 @@ class TwitchClient {
         } else {
             dataCache.add(channel, raw);
         }
-
-        if (this._enabled) {
-            this._emitDataChange();
-        }
     }
 
     _disable() {
@@ -164,15 +160,15 @@ class TwitchClient {
     }
 
     async _updateViewersCache() {
-        if (!this._enabled || !(this.getChannel())) {
+        if (!this._enabled || !this.getChannel()) {
             return;
         }
 
-        const payload = await api.queryTmiApi(`group/user/${this.getChannel()}/chatters`);
+        const json = await api.queryTmiApi(`group/user/${this.getChannel()}/chatters`);
 
-        signals.dispatch({
+        eventSignals.dispatch({
             event: "chatters.data.update",
-            data: payload[constants.KEY_CHATTERS],
+            data: json[constants.KEY_CHATTERS],
             channelID: this.getChannelID(),
         });
     }
@@ -185,7 +181,6 @@ class TwitchClient {
      */
     _setChannel(channel) {
         this._channel = channel;
-        localStorage.setItem(CHANNEL_LS_KEY, channel);
     }
 
     /**
@@ -202,8 +197,6 @@ class TwitchClient {
         } else {
             return;
         }
-
-        localStorage.setItem(CHANNEL_LS_ID_KEY, this._channelID);
     }
 
     async changeToRandomFeaturedStream() {
@@ -228,6 +221,17 @@ class TwitchClient {
 
     getChannelID() {
         return this._channelID;
+    }
+
+    _saveChannel() {
+        localStorage.setItem(CHANNEL_LS_KEY, this._channel);
+        localStorage.setItem(CHANNEL_LS_ID_KEY, this._channelID);
+        eventSignals.dispatch({
+            alert: {
+                type: 'success',
+                body: `Successfully saved channel`
+            }
+        });
     }
 }
 

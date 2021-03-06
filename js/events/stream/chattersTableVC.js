@@ -37,7 +37,7 @@ class ChattersTableVC {
             const searchValue = document.getElementById(`chatters-search`).value;
 
             chartFilter.update({ searchValue: searchValue });
-        }, 500);
+        }, 1000);
     }
 
     _loadChattersTable() {

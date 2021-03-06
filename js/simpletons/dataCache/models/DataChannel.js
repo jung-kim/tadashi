@@ -9,7 +9,7 @@ const blanks = require("./blanks");
 class DataChannel {
     constructor() {
         this._cachedInterval = undefined;
-        this._cachedFilter = undefined;
+        this._cachedFilterString = '';
         this._cache = {}; // derived from data, cached by time bucket / type / user
         this._cacheTotalByHour = {};
         this._data = {};  // time bucket to DataBucket
@@ -58,20 +58,21 @@ class DataChannel {
     }
 
     _validateCache(interval, filter) {
-        if (this._cachedInterval === interval && this._cachedFilter === filter) {
+        if (this._cachedInterval === interval && this._cachedFilterString === filter._searchString) {
+            // cache can be used, delete cache for the updated minutes so they will be refreshed.
             this._updated.forEach((updated) => {
                 const bucket = utils.getTimeBucket(updated, interval);
                 delete this._cache[bucket];
-
                 delete this._cacheTotalByHour[utils.getTimeBucket(bucket, constants.BUCKET_HOUR)];
             });
         } else {
+            // cache cannot be used, drop all caches.
             this._cacheTotalByHour = {};
             this._cache = {};
         }
 
         this._updated.clear();
-        this._cachedFilter = filter;
+        this._cachedFilterString = filter._searchString;
         this._cachedInterval = interval;
     }
 

@@ -2,6 +2,8 @@ const sinon = require('sinon');
 const { assert } = require('chai');
 
 const Chatters = require('../../../../js/events/stream/components/Chatters');
+const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
+const User = require('../../../../js/singletons/users/User');
 
 const setStubs = () => {
     document.getElementById.reset();
@@ -14,7 +16,7 @@ const setStubs = () => {
     });
 }
 
-describe('chatsByUsersVC.js', () => {
+describe('Chatters.js', () => {
     afterEach(() => {
         reset();
         document.getElementById.reset();
@@ -22,25 +24,44 @@ describe('chatsByUsersVC.js', () => {
 
     it('Chatters', () => {
         setStubs();
-        const c = new Chatters('viewers', ['aa', 'ab', 'bb']);
+        filter.changeSearchString();
+        const c = new Chatters('viewers', [
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+            new User(11, 'bb'),
+        ]);
         delete c.toNextPage;
         delete c.toPreviousPage;
         assert.deepOwnInclude(c, {
             _chatterContainerDom: 'insertAdjacentHTMLCall',
             _key: 'viewers',
             _pageNumber: 0,
-            allChatters: ['aa', 'ab', 'bb']
+            allChatters: [
+                new User(undefined, 'aa'),
+                new User(undefined, 'ab'),
+                new User(11, 'bb'),
+            ]
         });
         sinon.assert.callCount(document.getElementById, 5);
 
         setStubs();
         c._pageNumber = 16
-        c.update(['aa', 'ab', 'bb', 'abc']);
+        c.update([
+            new User(undefined, 'aa'),
+            new User(undefined, 'ab'),
+            new User(11, 'bb'),
+            new User(undefined, 'abc'),
+        ]);
         assert.deepOwnInclude(c, {
             _chatterContainerDom: 'insertAdjacentHTMLCall',
             _key: 'viewers',
             _pageNumber: 0,
-            allChatters: ['aa', 'ab', 'bb', 'abc'],
+            allChatters: [
+                new User(undefined, 'aa'),
+                new User(undefined, 'ab'),
+                new User(11, 'bb'),
+                new User(undefined, 'abc'),
+            ],
         });
         sinon.assert.callCount(document.getElementById, 3);
 

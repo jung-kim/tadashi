@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const auth = require('../../../js/simpletons/auth');
 const api = require('../../../js/simpletons/api');
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
-const signals = require('../../../js/helpers/signals').signals;
+const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 const fetchUserFollowsBackup = userFollowsFetcher._fetchUserFollows;
 
@@ -106,7 +106,7 @@ describe('userFollowsFetcher.js', () => {
             assert.equal(userFollowsFetcher._running, 0);
             assert.deepEqual(userFollowsFetcher._toFetch, new Set());
 
-            sinon.assert.calledOnce(signals.dispatch.
+            sinon.assert.calledOnce(eventSignals.dispatch.
                 withArgs({ event: 'fetch.user.follows.resp', data: payload, userID: 123 }));
         });
 
@@ -155,9 +155,9 @@ describe('userFollowsFetcher.js', () => {
             assert.deepEqual(userFollowsFetcher._toFetch, new Set());
 
             assert.equal(userFollowsFetcher._paginations[123], 'done');
-            sinon.assert.calledOnce(signals.dispatch.
+            sinon.assert.calledOnce(eventSignals.dispatch.
                 withArgs({ event: 'fetch.user.follows.resp', data: payload1, userID: 123 }));
-            sinon.assert.calledOnce(signals.dispatch.
+            sinon.assert.calledOnce(eventSignals.dispatch.
                 withArgs({ event: 'fetch.user.follows.resp', data: payload2, userID: 123 }));
         });
 
@@ -208,9 +208,9 @@ describe('userFollowsFetcher.js', () => {
             assert.equal(userFollowsFetcher._paginations[123], 'done');
             assert.equal(userFollowsFetcher._paginations[124], 'done');
 
-            sinon.assert.calledOnce(signals.dispatch.
+            sinon.assert.calledOnce(eventSignals.dispatch.
                 withArgs({ event: 'fetch.user.follows.resp', data: payload1, userID: 123 }));
-            sinon.assert.calledOnce(signals.dispatch.
+            sinon.assert.calledOnce(eventSignals.dispatch.
                 withArgs({ event: 'fetch.user.follows.resp', data: payload2, userID: 124 }));
         });
 
@@ -263,11 +263,11 @@ describe('userFollowsFetcher.js', () => {
             assert.deepEqual(userFollowsFetcher._toFetch, new Set([123]));
             assert.equal(userFollowsFetcher._paginations[123], 'hello');
 
-            sinon.assert.calledOnce(signals.dispatch.
+            sinon.assert.calledOnce(eventSignals.dispatch.
                 withArgs({ event: 'fetch.user.follows.resp', data: payload1, userID: 123 }));
 
             sinon.verifyAndRestore();
-            signals.dispatch.reset();
+            eventSignals.dispatch.reset();
 
             sinon.stub(api, 'queryTwitchApi')
                 .withArgs('helix/users/follows?first=100&from_id=123&after=hello', authObj)
@@ -281,7 +281,7 @@ describe('userFollowsFetcher.js', () => {
             assert.equal(userFollowsFetcher._running, 0);
             assert.equal(userFollowsFetcher._paginations[123], 'done');
 
-            sinon.assert.calledOnce(signals.dispatch.
+            sinon.assert.calledOnce(eventSignals.dispatch.
                 withArgs({ event: 'fetch.user.follows.resp', data: payload2, userID: 123 }));
         });
 

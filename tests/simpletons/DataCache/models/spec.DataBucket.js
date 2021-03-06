@@ -7,7 +7,7 @@ const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
 const Ban = require('../../../../js/models/events/Ban');
 const constants = require('../../../../js/helpers/constants');
-const Filter = require('../../../../js/events/shared/chartFilter/Filter');
+const chartFilter = require('../../../../js/events/shared/chartFilter');
 
 describe('DataBucket.js', () => {
 
@@ -98,7 +98,8 @@ describe('DataBucket.js', () => {
             },
         });
 
-        got = dataBucket.getCopy(new Filter('a'));
+        chartFilter.getUserFilter().changeSearchString('a');
+        got = dataBucket.getCopy(chartFilter.getUserFilter());
         assert.deepEqual(got, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {
@@ -111,7 +112,8 @@ describe('DataBucket.js', () => {
             },
         });
 
-        got = dataBucket.getCopy(new Filter('aa'));
+        chartFilter.getUserFilter().changeSearchString('aa');
+        got = dataBucket.getCopy(chartFilter.getUserFilter());
         assert.deepEqual(got, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {

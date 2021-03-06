@@ -1,5 +1,6 @@
 const { assert } = require('chai');
-const Filter = require('../../../../js/events/shared/chartFilter/Filter');
+const chartFilter = require('../../../../js/events/shared/chartFilter');
+const filter = chartFilter.getUserFilter();
 
 const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
 
@@ -63,7 +64,8 @@ describe('DataNode.js', () => {
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('a')), {
+        filter.changeSearchString('a');
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 6,
             _users: {
                 'a': 3,
@@ -71,21 +73,24 @@ describe('DataNode.js', () => {
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('aa')), {
+        filter.changeSearchString('aa');
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 3,
             _users: {
                 'aa': 3,
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('b')), {
+        filter.changeSearchString('b');
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 1,
             _users: {
                 'b': 1,
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('aaa')), {
+        filter.changeSearchString('aaa');
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 0,
             _users: {}
         });
@@ -125,7 +130,8 @@ describe('DataNode.js', () => {
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('a')), {
+        filter.changeSearchString('a');
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 3,
             _users: {
                 'a': 2,
@@ -133,21 +139,24 @@ describe('DataNode.js', () => {
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('aa')), {
+        filter.changeSearchString('aa')
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 1,
             _users: {
                 'aa': 1,
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('b')), {
+        filter.changeSearchString('b');
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 1,
             _users: {
                 'b': 1,
             }
         });
 
-        assert.deepEqual(node.getCopy(new Filter('aaa')), {
+        filter.changeSearchString('aaa');
+        assert.deepEqual(node.getCopy(filter), {
             _sum: 0,
             _users: {}
         });

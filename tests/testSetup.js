@@ -1,4 +1,4 @@
-const signals = require('../js/helpers/signals');
+const eventSignals = require('../js/helpers/signals').eventSignals;
 const sinon = require('sinon');
 const Handlebars = require('handlebars');
 const glob = require('glob');
@@ -54,7 +54,7 @@ BSN = {
 }
 
 // disable signal dispatch
-signals.signals.dispatch = sinon.stub();
+eventSignals.dispatch = sinon.stub();
 
 // mock chart for chart.js
 Chart = class Chart {
@@ -75,6 +75,7 @@ document = {
 
 const users = require('../js/singletons/users');
 const auth = require('../js/simpletons/auth');
+const filter = require('../js/events/shared/chartFilter').getUserFilter();
 
 // setup `userFollowsCSS` helper, remove this once we can include main.js
 Handlebars.registerHelper('userFollowsCSS', (userName) => {
@@ -99,4 +100,5 @@ reset = () => {
     sinon.verifyAndRestore();
     document.getElementById.reset();
     auth._authToken = undefined;
+    filter.changeSearchString();
 }

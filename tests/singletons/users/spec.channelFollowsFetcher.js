@@ -5,12 +5,12 @@ const constants = require('../../../js/helpers/constants');
 const auth = require('../../../js/simpletons/auth');
 const channelFollowsFetcher = require('../../../js/singletons/users/channelFollowsFetcher');
 const api = require('../../../js/simpletons/api');
-const signals = require('../../../js/helpers/signals').signals;
+const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 describe('channelFollowsFetcher.js', () => {
     afterEach(() => {
         channelFollowsFetcher._paginations = {};
-        signals.dispatch.reset();
+        eventSignals.dispatch.reset();
         reset();
     });
 
@@ -39,7 +39,7 @@ describe('channelFollowsFetcher.js', () => {
 
             assert.equal(channelFollowsFetcher._paginations[111], 'done');
             sinon.assert.calledOnce(
-                signals.dispatch.withArgs({ event: 'fetch.channel.follows.resp', data: { data: 'something' }, channelID: 111 }));
+                eventSignals.dispatch.withArgs({ event: 'fetch.channel.follows.resp', data: { data: 'something' }, channelID: 111 }));
         });
 
         it('pagination case', async () => {
@@ -55,13 +55,13 @@ describe('channelFollowsFetcher.js', () => {
 
             assert.equal(channelFollowsFetcher._paginations[111], 'done');
             sinon.assert.calledOnce(
-                signals.dispatch.withArgs({
+                eventSignals.dispatch.withArgs({
                     event: 'fetch.channel.follows.resp',
                     channelID: 111,
                     data: { data: 'something', pagination: { cursor: 'a_cursor' } },
                 }));
             sinon.assert.calledOnce(
-                signals.dispatch.withArgs({
+                eventSignals.dispatch.withArgs({
                     event: 'fetch.channel.follows.resp',
                     channelID: 111,
                     data: { data: 'another', pagination: {} },
@@ -82,12 +82,12 @@ describe('channelFollowsFetcher.js', () => {
 
             assert.equal(channelFollowsFetcher._paginations[111], 'a_cursor');
             sinon.assert.calledOnce(
-                signals.dispatch.withArgs({
+                eventSignals.dispatch.withArgs({
                     event: 'fetch.channel.follows.resp',
                     channelID: 111,
                     data: { data: 'something', pagination: { cursor: 'a_cursor' } },
                 }));
-            sinon.assert.calledOnce(signals.dispatch);
+            sinon.assert.calledOnce(eventSignals.dispatch);
         });
     });
 });

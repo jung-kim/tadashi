@@ -2,7 +2,7 @@ const env = require('../env');
 const moment = require('../helpers/moment');
 const statusCodes = require('http-status-codes').StatusCodes;
 const constants = require('../helpers/constants');
-const signals = require('../helpers/signals').signals;
+const eventSignals = require('../helpers/signals').eventSignals;
 const pako = require('pako');
 
 const DEFAULT_REQ_OPT = {
@@ -45,7 +45,7 @@ class API {
                 this.waitForReset = new Promise(resolve => {
                     this._waitForTimeOut = setTimeout(() => {
                         resolve();
-                        signals.dispatch({ event: 'api.unthrottled' });
+                        eventSignals.dispatch({ event: 'api.unthrottled' });
                     }, sleepForSec * 1000);
                 });
             }

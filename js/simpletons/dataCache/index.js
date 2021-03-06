@@ -1,6 +1,6 @@
 const DataChannel = require('./models/DataChannel');
 const DataNode = require('./models/DataNode');
-const signals = require('../../helpers/signals').signals;
+const eventSignals = require('../../helpers/signals').eventSignals;
 
 
 class DataCache {
@@ -40,7 +40,7 @@ class DataCache {
         this._ensureChannelExists(channel);
 
         this._data[channel].add(raw);
-        signals.dispatch({ event: 'data.cache.updated' });
+        eventSignals.dispatch({ event: 'data.cache.updated' });
     }
 
     get(channel, atBucket, interval, filter) {

@@ -31,7 +31,7 @@ Admiteddly, current solution has [limitations](./README.md#limitations) and as n
 ## disclaimers
 
 - Data is collected at browser and only lives in browser
-    - There is a [proxy server code](./proxy-server/README.md) but it is for local testing only for cors issue.
+    - There is a [proxy server code](./proxy-server/README.md) but it is for local testing only to get around the cors issues.
 - No PII (Personally Identifiable Information) is collected 
     - Visualizations are derived only from [Twitch's public API endpoints](https://dev.twitch.tv/docs/api/reference).
 

@@ -39,10 +39,6 @@ class User {
         }
         return this._follows.has(targetUserID);
     }
-
-    isApplicable(searchedValue) {
-        return this._userName.toLowerCase().indexOf(searchedValue) > -1;
-    }
 }
 
 module.exports = User;

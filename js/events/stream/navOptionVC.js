@@ -1,4 +1,4 @@
-const signals = require('../../helpers/signals').signals;
+const eventSignals = require('../../helpers/signals').eventSignals;
 const twitchClient = require('../../singletons/twitchClient');
 const twitchAPI = require('../../singletons/twitchAPI');
 const constants = require('../../helpers/constants');
@@ -24,6 +24,12 @@ require('../../helpers/signals').domSignals.add((payload) => {
         switch (payload.type) {
             case 'click':
                 twitchClient.changeToRandomFeaturedStream();
+                break;
+        }
+    } else if (payload.id === 'channel-save') {
+        switch (payload.type) {
+            case 'click':
+                twitchClient.saveChannel();
                 break;
         }
     }
@@ -79,8 +85,9 @@ class NavOptionVC {
             await twitchClient.changeChannel(this.lastSearchedChannel);
             this.populateStreamInfo();
         } catch (err) {
-            signals.dispatch({
+            eventSignals.dispatch({
                 alert: {
+                    type: 'warning',
                     body: `Requested ${this.lastSearchedChannel} is not a valid channel.`
                 }
             });
@@ -141,8 +148,15 @@ class NavOptionVC {
         }));
         // set helpful popover messages
         this.toDsipose.push(new BSN.Popover(document.getElementById(`channel-refresh-help`), {
-            title: "Randomize channel ",
+            title: "Randomize channel",
             content: "Randomize channel based on featured streams API call.",
+            delay: 500,
+            placement: 'bottom'
+        }));
+        // set helpful popover messages
+        this.toDsipose.push(new BSN.Popover(document.getElementById(`channel-save-help`), {
+            title: "Save channel",
+            content: "Cache channel to be used on next page time page loads.",
             delay: 500,
             placement: 'bottom'
         }));

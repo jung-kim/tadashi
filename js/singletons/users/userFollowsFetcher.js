@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const auth = require('../../simpletons/auth');
 const api = require('../../simpletons/api');
-const signals = require('../../helpers/signals').signals;
+const eventSignals = require('../../helpers/signals').eventSignals;
 
 const PARALLEL_THREAD_COUNT = 5;
 
@@ -50,11 +50,10 @@ class UserFollowsFetcher {
 
             try {
                 for (; ;) {
-
                     const path = `helix/users/follows?first=100&from_id=${userID}`;
                     const resp = await api.queryTwitchApi(
                         this._paginations[userID] ? `${path}&after=${this._paginations[userID]}` : path, authObj);
-                    signals.dispatch({ event: 'fetch.user.follows.resp', data: resp, userID: userID });
+                    eventSignals.dispatch({ event: 'fetch.user.follows.resp', data: resp, userID: userID });
 
                     if (!resp.pagination || !resp.pagination.cursor) {
                         this._paginations[userID] = 'done';

@@ -1,4 +1,4 @@
-const signals = require('../../../helpers/signals').signals;
+const eventSignals = require('../../../helpers/signals').eventSignals;
 const chartFilter = require('../../shared/chartFilter');
 const twitchClient = require('../../../singletons/twitchClient');
 const utils = require('../../../helpers/utils');
@@ -19,9 +19,9 @@ class ChartRoot {
         this.update = _.throttle(() => {
             this._update();
             this._updateChartObject();
-        }, obj.updateThrottleTime || 1000);
+        }, obj.updateThrottleTime || 500);
 
-        signals.add(obj.signalListener || ((payload) => {
+        eventSignals.add(obj.signalListener || ((payload) => {
             switch (payload.event) {
                 case 'channel.input.update':
                     this.reset();
@@ -29,6 +29,7 @@ class ChartRoot {
                 case 'stream.load.ready':
                     this.enable();
                     this.reset();
+                    this._updateChartObject();
                     break;
                 case 'stream.cleanup':
                     this.disable();
@@ -84,7 +85,7 @@ class ChartRoot {
             startBucket: startBucket,
             endBucket: endBucket,
             channel: twitchClient.getChannel(),
-            filter: chartFilter.getFilter(),
+            filter: chartFilter.getUserFilter(),
             length: length,
         }
     }

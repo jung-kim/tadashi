@@ -104,4 +104,7 @@ module.exports = Object.freeze({
 
     // 
     MAX_VIEWERS_COUNTS_FOR_PROCESS: 1000,
+
+    DEFAULT_CHANNEL: 'xqcow',
+    DEFAULT_CHANNE_ID: 71092938,
 });

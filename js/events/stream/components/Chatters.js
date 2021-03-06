@@ -8,16 +8,15 @@ const chattersGroupListHBS = templates[`./hbs/stream/components/chatters-group-l
 // Chatters are a data storage around array of users to help display them at the front end.
 class Chatters {
     constructor(key, allChatters) {
-        this._initialize(key, allChatters);
+        this._update(key, allChatters);
         this.toPreviousPage = _.throttle(this._toPreviousPage.bind(this), 200);
         this.toNextPage = _.throttle(this._toNextPage.bind(this), 200);
         this.updateChattersList = _.throttle(this._updateChattersList.bind(this), 2000);
     }
 
-    _initialize(key, allChatters) {
-        const filter = chartFilter.getFilter();
+    _update(key, allChatters) {
         // @todo search
-        this.allChatters = filter ? allChatters.filter(user => filter(user._userName)) : allChatters;
+        this.allChatters = chartFilter.getUserFilter().filterUsers(allChatters);
         this._validatePageNumber();
         this._key = key
 
@@ -58,7 +57,7 @@ class Chatters {
     }
 
     update(newChatters) {
-        this._initialize(this._key, newChatters);
+        this._update(this._key, newChatters);
     }
 
     getLeftIndex() {

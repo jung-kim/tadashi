@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const auth = require('../../simpletons/auth');
 const api = require('../../simpletons/api');
-const signals = require('../../helpers/signals').signals;
+const eventSignals = require('../../helpers/signals').eventSignals;
 
 const FETCH_NAMES_LIMIT = 100;
 
@@ -53,7 +53,7 @@ class UserIDFetcher {
             this._names.delete(element.login.toLowerCase());
         }
 
-        signals.dispatch({ event: 'fetch.user.ids.resp', data: json.data });
+        eventSignals.dispatch({ event: 'fetch.user.ids.resp', data: json.data });
     }
 
 }

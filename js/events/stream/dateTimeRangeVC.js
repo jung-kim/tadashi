@@ -3,13 +3,9 @@ const DateTime = require('./components/DateTime');
 
 const chartFilter = require('../shared/chartFilter');
 
-let scheduledCheckEndTimeUpdate;
-
 require('../../helpers/signals').domSignals.add((payload) => {
-    switch (payload.type) {
-        case 'click':
-            dateTimeRangeVC._timeReset();
-            break;
+    if (payload.type === 'click' && payload.id === 'time-reset') {
+        dateTimeRangeVC._timeReset();
     }
 });
 
@@ -92,10 +88,6 @@ class DateTimeRangeVC {
     }
 
     destroy() {
-        if (scheduledCheckEndTimeUpdate) {
-            clearInterval(scheduledCheckEndTimeUpdate);
-            scheduledCheckEndTimeUpdate = undefined;
-        }
         if (this.start) {
             this.start.destroy();
             this.start = undefined;

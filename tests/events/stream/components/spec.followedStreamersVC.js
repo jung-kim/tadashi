@@ -1,12 +1,10 @@
 const { assert } = require('chai');
-const sinon = require('sinon');
 
 const followedStreamersVC = require('../../../../js/events/stream/components/followedStreamersVC');
-const chartFilter = require('../../../../js/events/shared/chartFilter');
-const Filter = require('../../../../js/events/shared/chartFilter/Filter');
+const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
 
 
-describe('chatsByUsersVC.js', () => {
+describe('followedStreamersVC.js', () => {
     afterEach(() => {
         followedStreamersVC.reset();
         reset();
@@ -96,7 +94,7 @@ describe('chatsByUsersVC.js', () => {
             'Aa': 8,
             'A': 12,
         }
-        sinon.stub(chartFilter, 'getFilter').returns(new Filter('aa'));
+        filter.changeSearchString('aa')
         followedStreamersVC._update();
         assert.deepEqual(followedStreamersVC._datasets, [18, 18, 8, 1]);
         assert.deepEqual(followedStreamersVC._labels, ['aa', 'bAaA', 'Aa', 'AA']);

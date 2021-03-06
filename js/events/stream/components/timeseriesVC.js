@@ -33,13 +33,13 @@ class TimeseriesVC extends ChartRoot {
     }
 
     async _update() {
-        const { interval, startBucket, channel, searchValue, length } = await this._getParameters();
+        const { interval, startBucket, channel, filter, length } = await this._getParameters();
 
         for (let i = 0; i < length; i++) {
             const at = startBucket + (i * interval);
             this._chartLabels[i] = moment.unix(at);
 
-            const dataAt = dataCache.get(channel, at, interval, searchValue);
+            const dataAt = dataCache.get(channel, at, interval, filter);
 
             // cache is at time -> type -> data
             // timeseries charts expects type -> time -> data
@@ -50,7 +50,6 @@ class TimeseriesVC extends ChartRoot {
         }
 
         for (let type = 0; type < constants.NUM_TYPES; type++) {
-            this._chartDatasets[type].data.length = length;
             this._chartDatasets[type].data.length = length;
             this._chartDatasets[type].users.length = length;
         }
@@ -63,7 +62,7 @@ class TimeseriesVC extends ChartRoot {
         }
         const chartDatasetsMsgType = this._chartDatasets[tooltipItem.datasetIndex];
         if (tooltipItem.yLabel === 0
-            || !chartFilter.getFilter()
+            || !chartFilter.getUserFilter().isValid()
             || !chartDatasetsMsgType.users
             || !chartDatasetsMsgType.users[tooltipItem.dataIndex]) {
             return;

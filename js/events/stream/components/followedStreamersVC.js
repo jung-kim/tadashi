@@ -24,6 +24,7 @@ class FollowedStreamersVC extends ChartRoot {
                     case 'stream.load.ready':
                         this.enable();
                         this.reset();
+                        this._updateChartObject();
                         break;
                     case 'stream.cleanup':
                         this.disable();
@@ -54,10 +55,10 @@ class FollowedStreamersVC extends ChartRoot {
     _update() {
         this._labels = [];
         this._datasets = [];
-        const filter = chartFilter.getFilter();
+        const filter = chartFilter.getUserFilter();
 
         for (const [name, value] of Object.entries(this._map)) {
-            if (filter && !filter.isApplicable(name)) {
+            if (filter.isValid() && !filter.isApplicable(name)) {
                 // searching and this one doesn't meet search criteria
                 continue;
             }
