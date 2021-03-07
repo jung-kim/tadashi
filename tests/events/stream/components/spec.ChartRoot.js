@@ -151,4 +151,51 @@ describe('ChartRoot.js', () => {
             });
         });
     });
+
+    describe('_eventSignalsFunc', () => {
+        it('channel.input.update', () => {
+            const chartRoot = new ChartRoot({});
+            const reset = sinon.stub(chartRoot, 'reset');
+            chartRoot._eventSignalsFunc({ event: 'channel.input.update' });
+            sinon.assert.calledOnce(reset);
+        });
+
+        it('stream.load.ready', () => {
+            const chartRoot = new ChartRoot({});
+            const reset = sinon.stub(chartRoot, 'reset');
+            const enable = sinon.stub(chartRoot, 'enable');
+            const _updateChartObject = sinon.stub(chartRoot, '_updateChartObject');
+            chartRoot._eventSignalsFunc({ event: 'stream.load.ready' });
+            sinon.assert.calledOnce(reset);
+            sinon.assert.calledOnce(enable);
+            sinon.assert.calledOnce(_updateChartObject);
+        });
+
+        it('stream.cleanup', () => {
+            const chartRoot = new ChartRoot({});
+            const disable = sinon.stub(chartRoot, 'disable');
+            chartRoot._eventSignalsFunc({ event: 'stream.cleanup' });
+            sinon.assert.calledOnce(disable);
+        });
+
+        it('data.cache.updated', () => {
+            const chartRoot = new ChartRoot({});
+            const update = sinon.stub(chartRoot, 'update');
+            chartRoot._enabled = true;
+            chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
+            chartRoot._enabled = false;
+            chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
+            sinon.assert.calledOnce(update);
+        });
+
+        it('filter.change', () => {
+            const chartRoot = new ChartRoot({});
+            const update = sinon.stub(chartRoot, 'update');
+            chartRoot._enabled = true;
+            chartRoot._eventSignalsFunc({ event: 'filter.change' });
+            chartRoot._enabled = false;
+            chartRoot._eventSignalsFunc({ event: 'filter.change' });
+            sinon.assert.calledOnce(update);
+        });
+    });
 });

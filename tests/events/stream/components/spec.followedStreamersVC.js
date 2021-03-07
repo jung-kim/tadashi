@@ -1,4 +1,5 @@
 const { assert } = require('chai');
+const sinon = require('sinon');
 
 const followedStreamersVC = require('../../../../js/events/stream/components/followedStreamersVC');
 const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
@@ -98,6 +99,40 @@ describe('followedStreamersVC.js', () => {
         followedStreamersVC._update();
         assert.deepEqual(followedStreamersVC._datasets, [18, 18, 8, 1]);
         assert.deepEqual(followedStreamersVC._labels, ['aa', 'bAaA', 'Aa', 'AA']);
+    });
 
+    describe('_eventSignalsFunc', () => {
+        it('channel.input.update', () => {
+            const reset = sinon.stub(followedStreamersVC, 'reset');
+            followedStreamersVC._eventSignalsFunc({ event: 'channel.input.update' });
+            sinon.assert.calledOnce(reset);
+        });
+
+        it('stream.load.ready', () => {
+            const reset = sinon.stub(followedStreamersVC, 'reset');
+            const enable = sinon.stub(followedStreamersVC, 'enable');
+            const _updateChartObject = sinon.stub(followedStreamersVC, '_updateChartObject');
+            followedStreamersVC._eventSignalsFunc({ event: 'stream.load.ready' });
+            sinon.assert.calledOnce(reset);
+            sinon.assert.calledOnce(enable);
+            sinon.assert.calledOnce(_updateChartObject);
+        });
+
+        it('stream.cleanup', () => {
+            const disable = sinon.stub(followedStreamersVC, 'disable');
+            followedStreamersVC._eventSignalsFunc({ event: 'stream.cleanup' });
+            sinon.assert.calledOnce(disable);
+        });
+
+        it('fetch.user.follows.resp', () => {
+            const _pushToProcess = sinon.stub(followedStreamersVC, '_pushToProcess');
+            const update = sinon.stub(followedStreamersVC, 'update');
+            followedStreamersVC._enabled = true;
+            followedStreamersVC._eventSignalsFunc({ event: 'fetch.user.follows.resp' });
+            followedStreamersVC._enabled = false;
+            followedStreamersVC._eventSignalsFunc({ event: 'fetch.user.follows.resp' });
+            sinon.assert.calledOnce(_pushToProcess);
+            sinon.assert.calledOnce(update);
+        });
     });
 });

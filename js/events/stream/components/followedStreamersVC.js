@@ -15,30 +15,32 @@ class FollowedStreamersVC extends ChartRoot {
             title: 'Top followed streamers by viewers',
             chartDomSelector: 'pie-followed-streamers',
             helpContent: chartFollowedStreamersHelperContent,
-            updateThrottleTime: 5000,
-            signalListener: (payload) => {
-                switch (payload.event) {
-                    case 'channel.input.update':
-                        this.reset();
-                        break;
-                    case 'stream.load.ready':
-                        this.enable();
-                        this.reset();
-                        this._updateChartObject();
-                        break;
-                    case 'stream.cleanup':
-                        this.disable();
-                        break;
-                    case 'fetch.user.follows.resp':
-                        if (this._enabled) {
-                            this._pushToProcess(payload.data);
-                            this.update();
-                        }
-                        break;
-                }
-            }
+            updateThrottleTime: 5000
         });
     }
+
+    _eventSignalsFunc(payload) {
+        switch (payload.event) {
+            case 'channel.input.update':
+                this.reset();
+                break;
+            case 'stream.load.ready':
+                this.enable();
+                this.reset();
+                this._updateChartObject();
+                break;
+            case 'stream.cleanup':
+                this.disable();
+                break;
+            case 'fetch.user.follows.resp':
+                if (this._enabled) {
+                    this._pushToProcess(payload.data);
+                    this.update();
+                }
+                break;
+        }
+    }
+
 
     reset() {
         this._map = {};

@@ -18,24 +18,24 @@ class TwitchClient {
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
         this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
-        eventSignals.add(this._eventSignalFunc);
+        eventSignals.add(this._eventSignalFunc.bind(this));
     }
 
     _eventSignalFunc(payload) {
         switch (payload.event) {
             case 'main.minute':
                 if (!payload.filter.isValid()) {
-                    twitchClient.updateViewersCache();
+                    this.updateViewersCache();
                 }
                 break;
             case 'stream.cleanup':
-                twitchClient._disable();
+                this._disable();
                 break;
             case 'stream.load.ready':
-                twitchClient._enable();
+                this._enable();
                 break;
             case 'channel.changed':
-                twitchClient.changeChannel(payload.channel);
+                this.changeChannel(payload.channel);
                 break;
         }
     }

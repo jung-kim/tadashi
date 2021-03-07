@@ -9,20 +9,20 @@ const constants = require('../../helpers/constants');
 class Users {
     constructor() {
         this.reset();
-        eventSignals.add(this._eventSignalFunc);
+        eventSignals.add(this._eventSignalFunc.bind(this));
     }
 
     _eventSignalFunc(payload) {
         switch (payload.event) {
             case 'chatters.data.update':
-                users.processChattersData(payload.data, payload.channelID);
+                this.processChattersData(payload.data, payload.channelID);
                 eventSignals.dispatch({ event: 'chatters.data.update.data' });
                 break;
             case 'fetch.user.ids.resp':
-                users.processUserIDsResp(payload.data);
+                this.processUserIDsResp(payload.data);
                 break;
             case 'fetch.user.follows.resp':
-                users.processUserFollowsResp(payload.userID, payload.data);
+                this.processUserFollowsResp(payload.userID, payload.data);
                 break;
             case 'api.unthrottled':
                 userIDFetcher.fetch();
@@ -34,7 +34,7 @@ class Users {
                 channelFollowsFetcher.fetch(payload.data.id);
                 break;
             case 'fetch.channel.follows.resp':
-                users.processChannelFollows(payload.channelID, payload.data);
+                this.processChannelFollows(payload.channelID, payload.data);
                 break;
         }
     }
