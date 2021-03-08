@@ -56,6 +56,9 @@ BSN = {
 // disable signal dispatch
 eventSignals.dispatch = sinon.stub();
 
+// flatpickr the time picking lib
+flatpickr = sinon.stub();
+
 // mock chart for chart.js
 Chart = class Chart {
     constructor(dom, conf) {
@@ -101,4 +104,6 @@ reset = () => {
     document.getElementById.reset();
     auth._authToken = undefined;
     filter.changeSearchString();
+    flatpickr.reset();
+    eventSignals.dispatch.reset();
 }
