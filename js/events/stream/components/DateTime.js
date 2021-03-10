@@ -26,6 +26,10 @@ class DateTime {
     set(momentObj) {
         this.timeSelector.setDate([momentObj.format(constants.MOMENT_DISPLAY_FORMAT)], true);
     }
+
+    destroy() {
+        this.timeSelector.destroy();
+    }
 }
 
 module.exports = DateTime;

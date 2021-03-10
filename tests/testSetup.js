@@ -73,8 +73,12 @@ Chart = class Chart {
 
 // stub dom functions, I'm sure there is a npm package does this...
 document = {
-    getElementById: sinon.stub().withArgs(sinon.match.any).returns({ a: 3 }),
+    getElementById: sinon.stub().withArgs(sinon.match.any).returns({}),
 };
+
+window = {
+    addEventListener: sinon.stub().withArgs(sinon.match.any).returns({}),
+}
 
 const users = require('../js/singletons/users');
 const auth = require('../js/simpletons/auth');
