@@ -18,11 +18,12 @@ class DateTimeRangeVC {
     }
 
     _isValid() {
-        return this.start && this.end;
+        return Boolean(this.start && this.end);
     }
 
     _setIsLive() {
         const diff = this.end.get().unix() - utils.getNow().add(-1, 'minutes').unix();
+
         if (diff >= 0 && diff <= 60) {
             this.isLive = true;
         } else {
