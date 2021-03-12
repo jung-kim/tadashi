@@ -10,34 +10,34 @@ const LEFT_PAGINATE_POSTFIX = '-page-left';
 
 const chattersHBS = templates[`./hbs/stream/chatters.hbs`];
 
-require('../../helpers/signals').domSignals.add((payload) => {
-    switch (payload.type) {
-        case 'click':
-            if (payload.id.endsWith(RIGHT_PAGINATE_POSTFIX)) {
-                const key = payload.id.replace(RIGHT_PAGINATE_POSTFIX, '');
-                chattersTableVC._chatters[key].toNextPage();
-            } else if (payload.id.endsWith(LEFT_PAGINATE_POSTFIX)) {
-                const key = payload.id.replace(LEFT_PAGINATE_POSTFIX, '');
-                chattersTableVC._chatters[key].toPreviousPage();
-            }
-            break;
-        case 'keyup':
-            if (payload.id === 'chatters-search') {
-                chattersTableVC.onChattersSearchKeyUp();
-            }
-            break;
-    }
-});
-
 class ChattersTableVC {
     constructor() {
         this.loadChattersTable = _.debounce(this._loadChattersTable.bind(this));
-
         this.onChattersSearchKeyUp = _.debounce(() => {
             const searchValue = document.getElementById(`chatters-search`).value;
 
             chartFilter.update({ searchValue: searchValue });
         }, 1000);
+        require('../../helpers/signals').domSignals.add(this._domSignalsEvent.bind(this));
+    }
+
+    _domSignalsEvent(payload) {
+        switch (payload.type) {
+            case 'click':
+                if (payload.id.endsWith(RIGHT_PAGINATE_POSTFIX)) {
+                    const key = payload.id.replace(RIGHT_PAGINATE_POSTFIX, '');
+                    chattersTableVC._chatters[key].toNextPage();
+                } else if (payload.id.endsWith(LEFT_PAGINATE_POSTFIX)) {
+                    const key = payload.id.replace(LEFT_PAGINATE_POSTFIX, '');
+                    chattersTableVC._chatters[key].toPreviousPage();
+                }
+                break;
+            case 'keyup':
+                if (payload.id === 'chatters-search') {
+                    chattersTableVC.onChattersSearchKeyUp();
+                }
+                break;
+        }
     }
 
     _loadChattersTable() {
@@ -80,6 +80,7 @@ class ChattersTableVC {
 
     updateChattersList() {
         for (const key in this._chatters) {
+            console.log(28828, key, this._chatters[key])
             this._chatters[key].updateChattersList();
         }
     }

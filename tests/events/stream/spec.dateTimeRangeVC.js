@@ -2,12 +2,12 @@
 const { assert } = require('chai');
 const _ = require('lodash');
 const sinon = require('sinon');
-const chartFilter = require('../../../js/events/shared/chartFilter');
-const DateTime = require('../../../js/events/stream/components/DateTime');
 
 const dateTimeRangeVC = require('../../../js/events/stream/dateTimeRangeVC');
 const moment = require('../../../js/helpers/moment');
 const utils = require('../../../js/helpers/utils');
+const chartFilter = require('../../../js/events/shared/chartFilter');
+const DateTime = require('../../../js/events/stream/components/DateTime');
 
 describe('DateTime.js', () => {
     beforeEach(() => {
