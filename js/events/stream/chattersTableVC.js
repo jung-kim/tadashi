@@ -14,9 +14,7 @@ class ChattersTableVC {
     constructor() {
         this.loadChattersTable = _.debounce(this._loadChattersTable.bind(this));
         this.onChattersSearchKeyUp = _.debounce(() => {
-            const searchValue = document.getElementById(`chatters-search`).value;
-
-            chartFilter.update({ searchValue: searchValue });
+            chartFilter.update({ searchValue: document.getElementById(`chatters-search`).value });
         }, 1000);
         require('../../helpers/signals').domSignals.add(this._domSignalsEvent.bind(this));
     }
@@ -80,7 +78,6 @@ class ChattersTableVC {
 
     updateChattersList() {
         for (const key in this._chatters) {
-            console.log(28828, key, this._chatters[key])
             this._chatters[key].updateChattersList();
         }
     }

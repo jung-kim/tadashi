@@ -58,4 +58,71 @@ describe('chattersTableVC', () => {
         sinon.assert.calledOnce(chattersTableVC._chatters.a.updateChattersList);
         sinon.assert.calledOnce(chattersTableVC._chatters.b.updateChattersList)
     });
+
+    describe('_domSignalsEvent', () => {
+        it('click pageniate right', () => {
+            chattersTableVC._chatters = {
+                viewers: {
+                    toNextPage: sinon.stub()
+                }
+            }
+            chattersTableVC._domSignalsEvent({
+                type: 'click',
+                id: 'viewers-page-right',
+            });
+
+            sinon.assert.calledOnce(chattersTableVC._chatters.viewers.toNextPage);
+        });
+
+        it('click pageniate left', () => {
+            chattersTableVC._chatters = {
+                viewers: {
+                    toPreviousPage: sinon.stub()
+                }
+            }
+            chattersTableVC._domSignalsEvent({
+                type: 'click',
+                id: 'viewers-page-left',
+            });
+
+            sinon.assert.calledOnce(chattersTableVC._chatters.viewers.toPreviousPage);
+        });
+
+        it('keyup', () => {
+            const onChattersSearchKeyUp = sinon.stub(chattersTableVC, 'onChattersSearchKeyUp');
+
+            chattersTableVC._domSignalsEvent({
+                type: 'keyup',
+                id: 'chatters-search',
+            });
+            chattersTableVC._domSignalsEvent({
+                type: 'keyup',
+                id: 'something-else',
+            });
+
+            sinon.assert.calledOnce(onChattersSearchKeyUp);
+        });
+    });
+
+    it('initialize', () => {
+        const destroy = sinon.stub(chattersTableVC, 'destroy');
+
+        const chattersTable = {};
+        const chattersSearch = {};
+
+        Awesomplete = sinon.stub().withArgs(chattersSearch, {
+            minChars: 1,
+            maxItems: 10,
+            autoFirst: true,
+            list: [':following', ':notfollowing']
+        });
+
+        document.getElementById.onCall(0).returns(chattersTable);
+        document.getElementById.onCall(1).returns(chattersSearch);
+
+        chattersTableVC.initialize();
+
+        assert.isString(chattersTable.innerHTML);
+        sinon.assert.calledOnce(Awesomplete);
+    });
 });
