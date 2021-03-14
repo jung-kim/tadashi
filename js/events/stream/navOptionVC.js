@@ -4,37 +4,6 @@ const twitchAPI = require('../../singletons/twitchAPI');
 const constants = require('../../helpers/constants');
 const chartFilter = require('../shared/chartFilter');
 
-require('../../helpers/signals').domSignals.add((payload) => {
-    if (payload.type === 'click' && payload.id.endsWith('-interval')) {
-        navOptionVC._intervalClickEvent(payload.event);
-    } else if (payload.id === 'channel-input') {
-        switch (payload.type) {
-            case 'keyup':
-                navOptionVC._onChannelInputKeyUp(payload.event);
-                break;
-            case 'click':
-                navOptionVC._refreshList();
-                break;
-            case 'focusout':
-            case 'channel.input.update':
-                navOptionVC.syncChannelInput();
-                break;
-        }
-    } else if (payload.id === 'channel-refresh') {
-        switch (payload.type) {
-            case 'click':
-                twitchClient.changeToRandomFeaturedStream();
-                break;
-        }
-    } else if (payload.id === 'channel-save') {
-        switch (payload.type) {
-            case 'click':
-                twitchClient.saveChannel();
-                break;
-        }
-    }
-});
-
 class NavOptionVC {
     constructor() {
         this.channelInputAutoComplete = undefined;
@@ -46,6 +15,38 @@ class NavOptionVC {
         this.syncChannelInput = _.debounce(() => {
             this.channelInputAutoComplete.input.value = twitchClient.getChannel();
         }, 250, { leading: false });
+        require('../../helpers/signals').domSignals.add(this._domSignalsFunc.bind(this));
+    }
+
+    _domSignalsFunc = (payload) => {
+        if (payload.type === 'click' && payload.id.endsWith('-interval')) {
+            this._intervalClickEvent(payload.event);
+        } else if (payload.id === 'channel-input') {
+            switch (payload.type) {
+                case 'keyup':
+                    this._onChannelInputKeyUp(payload.event);
+                    break;
+                case 'click':
+                    this._refreshList();
+                    break;
+                case 'focusout':
+                case 'channel.input.update':
+                    this.syncChannelInput();
+                    break;
+            }
+        } else if (payload.id === 'channel-refresh') {
+            switch (payload.type) {
+                case 'click':
+                    twitchClient.changeToRandomFeaturedStream();
+                    break;
+            }
+        } else if (payload.id === 'channel-save') {
+            switch (payload.type) {
+                case 'click':
+                    twitchClient.saveChannel();
+                    break;
+            }
+        }
     }
 
     _onChannelInputKeyUp(event) {
