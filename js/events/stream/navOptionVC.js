@@ -50,11 +50,9 @@ class NavOptionVC {
     }
 
     _onChannelInputKeyUp(event) {
-        const channelToSearch = this.channelInputAutoComplete.input.value;
-
         if (event.keyCode === 13 || event.awesompleteSelect) {
             // enter key, trigger channel change
-            this.lastSearchedChannel = channelToSearch;
+            this.lastSearchedChannel = this.channelInputAutoComplete.input.value;
             this.streamSelect();
             return;
         }
@@ -98,10 +96,10 @@ class NavOptionVC {
 
     async _populateStreamInfo() {
         const channel = twitchClient.getChannel();
-        try {
-            this.channelInputAutoComplete.input.value = this.lastSearchedChannel || channel;
-            document.getElementById('embeded-twitch-channel').innerText = channel;
+        this.channelInputAutoComplete.input.value = this.lastSearchedChannel || channel;
+        document.getElementById('embeded-twitch-channel').innerText = channel;
 
+        try {
             this.streamInfo = await twitchAPI.getChannelInfo(channel);
             if (this.streamInfo && this.streamInfo.data && this.streamInfo.data.length > 0) {
                 document.getElementById('embeded-twitch-desc').innerHTML = `${this.streamInfo.data[0].title}`;
@@ -109,7 +107,7 @@ class NavOptionVC {
                 document.getElementById('embeded-twitch-desc').innerHTML = `(inactive...)`;
             }
         } catch (err) {
-            document.getElementById('embeded-twitch-desc').innerText = `${channel}'s stream`;
+            document.getElementById('embeded-twitch-desc').innerHTML = `${channel}'s stream`;
         }
     }
 
