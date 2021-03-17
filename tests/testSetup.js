@@ -50,7 +50,8 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
 // stub out boostrap functions 
 BSN = {
     Collapse: sinon.stub(),
-    Popover: sinon.stub()
+    Popover: sinon.stub(),
+    Dropdown: sinon.stub()
 }
 
 // disable signal dispatch
@@ -101,6 +102,8 @@ Handlebars.registerHelper('userFollowsCSS', (userName) => {
             return constants.CSS_UNKNOWN;
     }
 });
+
+Awesomplete = sinon.stub();
 
 // global test rest func
 reset = () => {

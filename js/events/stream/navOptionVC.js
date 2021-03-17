@@ -113,23 +113,22 @@ class NavOptionVC {
 
     // set interval click events
     _intervalClickEvent(event) {
-        const signalEvent = { event: "filter.interval.change", label: event.srcElement.innerHTML };
-        switch (signalEvent.label) {
+        const label = event.srcElement.innerHTML;
+        switch (label) {
             case '1 minute':
-                signalEvent.intervalLevel = constants.BUCKET_MIN;
+                chartFilter.update({ intervalLevel: constants.BUCKET_MIN });
                 break;
             case '5 minutes':
-                signalEvent.intervalLevel = constants.BUCKET_FIVE;
+                chartFilter.update({ intervalLevel: constants.BUCKET_FIVE });
                 break;
             case '1 hour':
-                signalEvent.intervalLevel = constants.BUCKET_HOUR;
+                chartFilter.update({ intervalLevel: constants.BUCKET_HOUR });
                 break;
             case '1 day':
-                signalEvent.intervalLevel = constants.BUCKET_DAY;
+                chartFilter.update({ intervalLevel: constants.BUCKET_DAY });
                 break;
         }
-        document.getElementById('interval-selector-btn').innerText = signalEvent.label;
-        chartFilter.update({ intervalLevel: signalEvent.intervalLevel });
+        document.getElementById('interval-selector-btn').innerText = label;
     }
 
     initialize() {

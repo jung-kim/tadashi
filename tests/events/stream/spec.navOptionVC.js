@@ -3,7 +3,9 @@ const { assert } = require('chai');
 const _ = require('lodash');
 const sinon = require('sinon');
 
+const chartFilter = require('../../../js/events/shared/chartFilter');
 const navOptionVC = require('../../../js/events/stream/navOptionVC');
+const constants = require('../../../js/helpers/constants');
 const twitchAPI = require('../../../js/singletons/twitchAPI');
 const twitchClient = require('../../../js/singletons/twitchClient');
 
@@ -242,5 +244,81 @@ describe('navOptionVC', () => {
             assert.equal(channelDom.innerText, 'a-channel');
             assert.equal(descDomc.innerHTML, 'a-channel\'s stream');
         });
+    });
+
+
+    describe('_intervalClickEvent', () => {
+        it('1min', () => {
+            const btn = {};
+            document.getElementById.withArgs('interval-selector-btn').returns(btn);
+            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_MIN });
+
+            navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '1 minute' } });
+
+            sinon.assert.calledOnce(update);
+        });
+
+        it('5min', () => {
+            const btn = {};
+            document.getElementById.withArgs('interval-selector-btn').returns(btn);
+            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_FIVE });
+
+            navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '5 minutes' } });
+
+            sinon.assert.calledOnce(update);
+        });
+
+        it('1hour', () => {
+            const btn = {};
+            document.getElementById.withArgs('interval-selector-btn').returns(btn);
+            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_HOUR });
+
+            navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '1 hour' } });
+
+            sinon.assert.calledOnce(update);
+        });
+
+        it('1day', () => {
+            const btn = {};
+            document.getElementById.withArgs('interval-selector-btn').returns(btn);
+            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_DAY });
+
+            navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '1 day' } });
+
+            sinon.assert.calledOnce(update);
+        });
+    });
+
+    it('initialize', () => {
+        const destroy = sinon.stub(navOptionVC, 'destroy');
+        Awesomplete.returns({ input: { addEventListener: sinon.stub() } });
+
+        document.getElementById.withArgs('nav-options').returns({});
+
+        navOptionVC.initialize();
+
+        assert.equal(navOptionVC.toDsipose.length, 4);
+        sinon.assert.calledOnce(destroy);
+    });
+
+    it('destroy', () => {
+        const channelInputAutoCompleteDestroy = sinon.stub();
+        navOptionVC.channelInputAutoComplete = { destroy: channelInputAutoCompleteDestroy };
+
+        navOptionVC.toDsipose = [{
+            dispose: sinon.stub(),
+        },
+        {
+            dispose: sinon.stub()
+        }];
+
+        navOptionVC.destroy();
+
+        assert.isUndefined(navOptionVC.channelInputAutoComplete);
+        sinon.assert.calledOnce(channelInputAutoCompleteDestroy);
+
+        for (let i = 0; i < navOptionVC.toDsipose.length; i++) {
+            sinon.assert.calledOnce(navOptionVC.toDsipose[i].dispose);
+        }
     });
 });
