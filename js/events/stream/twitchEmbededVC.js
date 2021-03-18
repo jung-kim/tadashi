@@ -2,12 +2,6 @@ const twitchClient = require('../../singletons/twitchClient');
 
 const keyIsOpenTwitchEmbeded = 'isOpenTwitchEmbeded';
 
-require('../../helpers/signals').domSignals.add((payload) => {
-    if (payload.type === 'click' && payload.id === 'embeded-twitch-collapse') {
-        twitchEmbededVC.toggleEmbededTwitch();
-    }
-});
-
 class TwitchEmbededVC {
     constructor() {
         this.lastSearchedChannel = undefined;
@@ -16,6 +10,13 @@ class TwitchEmbededVC {
         this.streamInfo = undefined;
 
         this.toggleEmbededTwitch = _.debounce(this._toggleEmbededTwitch.bind(this), 1000, { leading: false });
+        require('../../helpers/signals').domSignals.add(this._domeEventFunction.bind(this));
+    }
+
+    _domeEventFunction(payload) {
+        if (payload.type === 'click' && payload.id === 'embeded-twitch-collapse') {
+            this.toggleEmbededTwitch();
+        }
     }
 
     _getIsOpenTwitchEmbeded() {
