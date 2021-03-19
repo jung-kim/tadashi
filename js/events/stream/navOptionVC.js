@@ -18,7 +18,7 @@ class NavOptionVC {
         require('../../helpers/signals').domSignals.add(this._domSignalsFunc.bind(this));
     }
 
-    _domSignalsFunc = (payload) => {
+    _domSignalsFunc(payload) {
         if (payload.type === 'click' && payload.id.endsWith('-interval')) {
             this._intervalClickEvent(payload.event);
         } else if (payload.id === 'channel-input') {

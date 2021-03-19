@@ -60,7 +60,7 @@ class TwitchEmbededVC {
     destroy() {
         if (this.twitchEmbededCollapse) {
             this.twitchEmbededCollapse.dispose();
-            this.embededTwitch = undefined;
+            this.twitchEmbededCollapse = undefined;
         }
         if (this.embededTwitch) {
             this.embededTwitch.destroy();

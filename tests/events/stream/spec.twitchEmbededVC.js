@@ -57,5 +57,60 @@ describe('twitchEmbededVC', () => {
 
             sinon.assert.calledOnce(twitchEmbededVC.embededTwitch.destroy);
         });
-    })
+    });
+
+    it('_toggleEmbededTwitch', () => {
+        document.getElementById.withArgs('twitch-embed').returns({
+            classList: {
+                contains: sinon.stub().returns(true)
+            }
+        });
+
+        const _handleEmbededTwitch = sinon.stub(twitchEmbededVC, '_handleEmbededTwitch');
+        twitchEmbededVC._toggleEmbededTwitch();
+
+        sinon.assert.calledOnce(_handleEmbededTwitch);
+        assert.equal(localStorage.getItem('isOpenTwitchEmbeded'), 'true');
+    });
+
+    describe('initialize', () => {
+        it('open twitch embeded', () => {
+            const destroy = sinon.stub(twitchEmbededVC, 'destroy');
+            const _handleEmbededTwitch = sinon.stub(twitchEmbededVC, '_handleEmbededTwitch');
+            sinon.stub(twitchEmbededVC, '_getIsOpenTwitchEmbeded').returns(true);
+
+            twitchEmbededVC.initialize();
+
+            sinon.assert.calledOnce(destroy);
+            sinon.assert.calledOnce(_handleEmbededTwitch);
+        });
+
+        it('do not open twitch embeded', () => {
+            const destroy = sinon.stub(twitchEmbededVC, 'destroy');
+            sinon.stub(twitchEmbededVC, '_getIsOpenTwitchEmbeded').returns(false);
+            const hide = sinon.stub();
+            BSN.Collapse.returns({ hide: hide });
+
+            twitchEmbededVC.initialize();
+
+            sinon.assert.calledOnce(destroy);
+            sinon.assert.calledOnce(hide);
+        });
+    });
+
+    describe('destroy', () => {
+        it('has values to destroy', () => {
+            const dispose = sinon.stub();
+            const destroy = sinon.stub();
+            twitchEmbededVC.twitchEmbededCollapse = { dispose: dispose };
+            twitchEmbededVC.embededTwitch = { destroy: destroy };
+
+            twitchEmbededVC.destroy();
+
+            sinon.assert.calledOnce(dispose);
+            sinon.assert.calledOnce(destroy);
+            assert.isUndefined(twitchEmbededVC.twitchEmbededCollapse);
+            assert.isUndefined(twitchEmbededVC.embededTwitch);
+        });
+    });
 });
