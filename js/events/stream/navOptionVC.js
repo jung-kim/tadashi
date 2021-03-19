@@ -19,6 +19,7 @@ class NavOptionVC {
     }
 
     _domSignalsFunc(payload) {
+        /* istanbul ignore else */
         if (payload.type === 'click' && payload.id.endsWith('-interval')) {
             this._intervalClickEvent(payload.event);
         } else if (payload.id === 'channel-input') {
@@ -169,6 +170,7 @@ class NavOptionVC {
     }
 
     destroy() {
+        /* istanbul ignore else */
         if (this.channelInputAutoComplete) {
             this.channelInputAutoComplete.destroy();
             this.channelInputAutoComplete = undefined;
@@ -178,5 +180,4 @@ class NavOptionVC {
     }
 }
 
-const navOptionVC = new NavOptionVC();
-module.exports = navOptionVC;
+module.exports = new NavOptionVC();

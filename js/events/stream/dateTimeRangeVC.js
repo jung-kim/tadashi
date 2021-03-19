@@ -3,18 +3,20 @@ const DateTime = require('./components/DateTime');
 
 const chartFilter = require('../shared/chartFilter');
 
-require('../../helpers/signals').domSignals.add((payload) => {
-    if (payload.type === 'click' && payload.id === 'time-reset') {
-        dateTimeRangeVC._timeReset();
-    }
-});
-
 class DateTimeRangeVC {
     constructor() {
         this.defaultStart = utils.getNow();
         this.isLive = true;
 
         window.addEventListener('focus', this._onWindowFocus.bind(this));
+        require('../../helpers/signals').domSignals.add(this._domSignalsFunc.bind(this));
+    }
+
+    _domSignalsFunc(payload) {
+        /* istanbul ignore else */
+        if (payload.type === 'click' && payload.id === 'time-reset') {
+            this._timeReset();
+        }
     }
 
     _isValid() {

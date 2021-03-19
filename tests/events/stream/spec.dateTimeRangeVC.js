@@ -275,4 +275,12 @@ describe('DateTime.js', () => {
             assert.isFalse(dateTimeRangeVC.isLive);
         });
     });
+
+    it('_domSignalsFunc', () => {
+        const _timeReset = sinon.stub(dateTimeRangeVC, '_timeReset');
+
+        dateTimeRangeVC._domSignalsFunc({ type: 'click', id: 'time-reset' });
+
+        sinon.assert.calledOnce(_timeReset);
+    });
 });

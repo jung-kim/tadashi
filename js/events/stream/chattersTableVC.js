@@ -22,17 +22,18 @@ class ChattersTableVC {
     _domSignalsEvent(payload) {
         switch (payload.type) {
             case 'click':
+                /* istanbul ignore else */
                 if (payload.id.endsWith(RIGHT_PAGINATE_POSTFIX)) {
                     const key = payload.id.replace(RIGHT_PAGINATE_POSTFIX, '');
-                    chattersTableVC._chatters[key].toNextPage();
+                    this._chatters[key].toNextPage();
                 } else if (payload.id.endsWith(LEFT_PAGINATE_POSTFIX)) {
                     const key = payload.id.replace(LEFT_PAGINATE_POSTFIX, '');
-                    chattersTableVC._chatters[key].toPreviousPage();
+                    this._chatters[key].toPreviousPage();
                 }
                 break;
             case 'keyup':
                 if (payload.id === 'chatters-search') {
-                    chattersTableVC.onChattersSearchKeyUp();
+                    this.onChattersSearchKeyUp();
                 }
                 break;
         }
@@ -83,6 +84,7 @@ class ChattersTableVC {
     }
 
     destroy() {
+        /* istanbul ignore else */
         if (this.bsnChattersSearch) {
             this.bsnChattersSearch.dispose();
             this.bsnChattersSearch = undefined;
@@ -90,6 +92,4 @@ class ChattersTableVC {
     }
 }
 
-const chattersTableVC = new ChattersTableVC();
-
-module.exports = chattersTableVC;
+module.exports = new ChattersTableVC();

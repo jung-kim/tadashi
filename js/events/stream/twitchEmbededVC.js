@@ -14,6 +14,7 @@ class TwitchEmbededVC {
     }
 
     _domeEventFunction(payload) {
+        /* istanbul ignore else */
         if (payload.type === 'click' && payload.id === 'embeded-twitch-collapse') {
             this.toggleEmbededTwitch();
         }
@@ -25,6 +26,7 @@ class TwitchEmbededVC {
     }
 
     _handleEmbededTwitch() {
+        /* istanbul ignore else */
         if (this._getIsOpenTwitchEmbeded()) {
             this.embededTwitch = new Twitch.Embed("twitch-embed", {
                 width: '100%',
@@ -58,10 +60,12 @@ class TwitchEmbededVC {
     }
 
     destroy() {
+        /* istanbul ignore else */
         if (this.twitchEmbededCollapse) {
             this.twitchEmbededCollapse.dispose();
             this.twitchEmbededCollapse = undefined;
         }
+        /* istanbul ignore else */
         if (this.embededTwitch) {
             this.embededTwitch.destroy();
             this.embededTwitch = undefined;
@@ -69,5 +73,4 @@ class TwitchEmbededVC {
     }
 }
 
-const twitchEmbededVC = new TwitchEmbededVC();
-module.exports = twitchEmbededVC;
+module.exports = new TwitchEmbededVC();
