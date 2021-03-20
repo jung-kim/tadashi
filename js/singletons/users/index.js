@@ -58,6 +58,16 @@ class Users {
         return this._viewers;
     }
 
+    getUsers(userFilter) {
+        const users = Object.values(this._idToUser);
+
+        if (!userFilter || !userFilter.isValid()) {
+            return users;
+        }
+
+        return userFilter.filterUsers(users);
+    }
+
     processChattersData(chattersData, channelID) {
         const tmp = {};
         const viewersCount = Object.values(chattersData || {}).
@@ -97,6 +107,20 @@ class Users {
         // set follows for a user object
         this.getUserByID(id).addFollows(resp);
         eventSignals.dispatch({ event: `chatters.data.update.partial` });
+
+        resp.data.forEach(follows => {
+            const toID = parseInt(follows.to_id);
+            const toName = follows.to_name;
+            const toLowerCaseName = toName.toLowerCase();
+            const userObj = this._idToUser[toID] || this._nameToUser[toLowerCaseName] || new User(toID, toName);
+
+            if (!this._idToUser[toID]) {
+                this._idToUser[toID] = userObj;
+            }
+            if (!this._nameToUser[lowerCaseName]) {
+                this._nameToUser[lowerCaseName] = userObj;
+            }
+        });
     }
 
     processUserIDsResp(resp) {

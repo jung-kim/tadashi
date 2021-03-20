@@ -6,6 +6,7 @@ const users = require("../../../js/singletons/users");
 const User = require('../../../js/singletons/users/User');
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
+const chartFilter = require('../../../js/events/shared/chartFilter');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 
@@ -300,6 +301,43 @@ describe('users.js', () => {
             const processChannelFollows = sinon.stub(users, 'processChannelFollows').withArgs(123, ["abc"]);
             users._eventSignalFunc({ event: 'fetch.channel.follows.resp', data: ["abc"], channelID: 123 });
             sinon.assert.calledOnce(processChannelFollows);
+        });
+    });
+
+    describe('getUsers', () => {
+        const userA = new User(111, 'a');
+        const userB = new User(222, 'a');
+        const userC = new User(333, 'a');
+
+        beforeEach(() => {
+            users._idToUser = {
+                111: userA,
+                222: userB,
+                333: userC,
+            }
+        });
+
+        it('with null filter', () => {
+            assert.deepEqual(users.getUsers(), [userA, userB, userC]);
+        });
+
+        it('with invalid filter', () => {
+            const userFilter = chartFilter.getUserFilter();
+            userFilter.changeSearchString('');
+
+            assert.deepEqual(users.getUsers(userFilter), [userA, userB, userC]);
+        });
+
+        it('with valid filter', () => {
+            const userFilter = chartFilter.getUserFilter();
+            userFilter.changeSearchString('a');
+
+            const filterUsers = sinon.stub(userFilter, 'filterUsers')
+                .withArgs([userA, userB, userC])
+                .returns([userA]);
+
+            assert.deepEqual(users.getUsers(userFilter), [userA]);
+            sinon.assert.calledOnce(filterUsers);
         });
     });
 });

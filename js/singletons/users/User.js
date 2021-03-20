@@ -33,6 +33,10 @@ class User {
         (newFollows.data || []).forEach(follows => this._follows.add(parseInt(follows.to_id)));
     }
 
+    getFollows() {
+        return this._follows;
+    }
+
     isFollowing(targetUserID) {
         if (!this._follows) {
             return undefined;
