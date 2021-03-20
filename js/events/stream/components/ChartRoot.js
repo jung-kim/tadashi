@@ -21,28 +21,30 @@ class ChartRoot {
             this._updateChartObject();
         }, obj.updateThrottleTime || 500);
 
-        eventSignals.add(obj.signalListener || ((payload) => {
-            switch (payload.event) {
-                case 'channel.input.update':
-                    this.reset();
-                    break;
-                case 'stream.load.ready':
-                    this.enable();
-                    this.reset();
-                    this._updateChartObject();
-                    break;
-                case 'stream.cleanup':
-                    this.disable();
-                    break;
-                case 'data.cache.updated':
-                case 'filter.change':
-                    if (this._enabled) {
-                        this.update();
-                    }
-                    break;
-            }
-        }));
+        eventSignals.add(this._eventSignalsFunc.bind(this));
         this.reset();
+    }
+
+    _eventSignalsFunc(payload) {
+        switch (payload.event) {
+            case 'channel.input.update':
+                this.reset();
+                break;
+            case 'stream.load.ready':
+                this.enable();
+                this.reset();
+                this._updateChartObject();
+                break;
+            case 'stream.cleanup':
+                this.disable();
+                break;
+            case 'data.cache.updated':
+            case 'filter.change':
+                if (this._enabled) {
+                    this.update();
+                }
+                break;
+        }
     }
 
     enable() {

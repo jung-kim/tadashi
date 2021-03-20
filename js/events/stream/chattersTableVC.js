@@ -10,34 +10,33 @@ const LEFT_PAGINATE_POSTFIX = '-page-left';
 
 const chattersHBS = templates[`./hbs/stream/chatters.hbs`];
 
-require('../../helpers/signals').domSignals.add((payload) => {
-    switch (payload.type) {
-        case 'click':
-            if (payload.id.endsWith(RIGHT_PAGINATE_POSTFIX)) {
-                const key = payload.id.replace(RIGHT_PAGINATE_POSTFIX, '');
-                chattersTableVC._chatters[key].toNextPage();
-            } else if (payload.id.endsWith(LEFT_PAGINATE_POSTFIX)) {
-                const key = payload.id.replace(LEFT_PAGINATE_POSTFIX, '');
-                chattersTableVC._chatters[key].toPreviousPage();
-            }
-            break;
-        case 'keyup':
-            if (payload.id === 'chatters-search') {
-                chattersTableVC.onChattersSearchKeyUp();
-            }
-            break;
-    }
-});
-
 class ChattersTableVC {
     constructor() {
         this.loadChattersTable = _.debounce(this._loadChattersTable.bind(this));
-
         this.onChattersSearchKeyUp = _.debounce(() => {
-            const searchValue = document.getElementById(`chatters-search`).value;
-
-            chartFilter.update({ searchValue: searchValue });
+            chartFilter.update({ searchValue: document.getElementById(`chatters-search`).value });
         }, 1000);
+        require('../../helpers/signals').domSignals.add(this._domSignalsEvent.bind(this));
+    }
+
+    _domSignalsEvent(payload) {
+        switch (payload.type) {
+            case 'click':
+                /* istanbul ignore else */
+                if (payload.id.endsWith(RIGHT_PAGINATE_POSTFIX)) {
+                    const key = payload.id.replace(RIGHT_PAGINATE_POSTFIX, '');
+                    this._chatters[key].toNextPage();
+                } else if (payload.id.endsWith(LEFT_PAGINATE_POSTFIX)) {
+                    const key = payload.id.replace(LEFT_PAGINATE_POSTFIX, '');
+                    this._chatters[key].toPreviousPage();
+                }
+                break;
+            case 'keyup':
+                if (payload.id === 'chatters-search') {
+                    this.onChattersSearchKeyUp();
+                }
+                break;
+        }
     }
 
     _loadChattersTable() {
@@ -85,6 +84,7 @@ class ChattersTableVC {
     }
 
     destroy() {
+        /* istanbul ignore else */
         if (this.bsnChattersSearch) {
             this.bsnChattersSearch.dispose();
             this.bsnChattersSearch = undefined;
@@ -92,6 +92,4 @@ class ChattersTableVC {
     }
 }
 
-const chattersTableVC = new ChattersTableVC();
-
-module.exports = chattersTableVC;
+module.exports = new ChattersTableVC();

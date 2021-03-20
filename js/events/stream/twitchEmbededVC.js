@@ -2,12 +2,6 @@ const twitchClient = require('../../singletons/twitchClient');
 
 const keyIsOpenTwitchEmbeded = 'isOpenTwitchEmbeded';
 
-require('../../helpers/signals').domSignals.add((payload) => {
-    if (payload.type === 'click' && payload.id === 'embeded-twitch-collapse') {
-        twitchEmbededVC.toggleEmbededTwitch();
-    }
-});
-
 class TwitchEmbededVC {
     constructor() {
         this.lastSearchedChannel = undefined;
@@ -16,6 +10,14 @@ class TwitchEmbededVC {
         this.streamInfo = undefined;
 
         this.toggleEmbededTwitch = _.debounce(this._toggleEmbededTwitch.bind(this), 1000, { leading: false });
+        require('../../helpers/signals').domSignals.add(this._domeEventFunction.bind(this));
+    }
+
+    _domeEventFunction(payload) {
+        /* istanbul ignore else */
+        if (payload.type === 'click' && payload.id === 'embeded-twitch-collapse') {
+            this.toggleEmbededTwitch();
+        }
     }
 
     _getIsOpenTwitchEmbeded() {
@@ -24,6 +26,7 @@ class TwitchEmbededVC {
     }
 
     _handleEmbededTwitch() {
+        /* istanbul ignore else */
         if (this._getIsOpenTwitchEmbeded()) {
             this.embededTwitch = new Twitch.Embed("twitch-embed", {
                 width: '100%',
@@ -57,10 +60,12 @@ class TwitchEmbededVC {
     }
 
     destroy() {
+        /* istanbul ignore else */
         if (this.twitchEmbededCollapse) {
             this.twitchEmbededCollapse.dispose();
-            this.embededTwitch = undefined;
+            this.twitchEmbededCollapse = undefined;
         }
+        /* istanbul ignore else */
         if (this.embededTwitch) {
             this.embededTwitch.destroy();
             this.embededTwitch = undefined;
@@ -68,5 +73,4 @@ class TwitchEmbededVC {
     }
 }
 
-const twitchEmbededVC = new TwitchEmbededVC();
-module.exports = twitchEmbededVC;
+module.exports = new TwitchEmbededVC();

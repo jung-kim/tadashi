@@ -4,17 +4,7 @@ const { assert } = require('chai');
 const Chatters = require('../../../../js/events/stream/components/Chatters');
 const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
 const User = require('../../../../js/singletons/users/User');
-
-const setStubs = () => {
-    document.getElementById.reset();
-    document.getElementById.returns({
-        insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall'),
-        classList: {
-            add: sinon.stub().returns('addCall'),
-            remove: sinon.stub().returns('removeCall'),
-        }
-    });
-}
+const testUtils = require('../../../testUtils');
 
 describe('Chatters.js', () => {
     afterEach(() => {
@@ -23,7 +13,7 @@ describe('Chatters.js', () => {
     });
 
     it('Chatters', () => {
-        setStubs();
+        testUtils.setChattersStubs();
         filter.changeSearchString();
         const c = new Chatters('viewers', [
             new User(undefined, 'aa'),
@@ -44,7 +34,7 @@ describe('Chatters.js', () => {
         });
         sinon.assert.callCount(document.getElementById, 5);
 
-        setStubs();
+        testUtils.setChattersStubs();
         c._pageNumber = 16
         c.update([
             new User(undefined, 'aa'),
@@ -65,7 +55,7 @@ describe('Chatters.js', () => {
         });
         sinon.assert.callCount(document.getElementById, 3);
 
-        setStubs();
+        testUtils.setChattersStubs();
         const junk = [];
         junk.length = 300;
         c._pageNumber = 1;
@@ -80,7 +70,7 @@ describe('Chatters.js', () => {
     });
 
     it('_validatePageNumber', () => {
-        setStubs();
+        testUtils.setChattersStubs();
         const c = new Chatters('viewers', ['aa', 'ab', 'bb']);
 
         c._pageNumber = 1;
@@ -105,7 +95,7 @@ describe('Chatters.js', () => {
     });
 
     it('getLeftIndex', () => {
-        setStubs();
+        testUtils.setChattersStubs();
         const c = new Chatters('viewers', ['aa', 'ab', 'bb']);
 
         assert.equal(c.getLeftIndex(), 0);
@@ -116,7 +106,7 @@ describe('Chatters.js', () => {
 
 
     it('getRightIndex', () => {
-        setStubs();
+        testUtils.setChattersStubs();
         const c = new Chatters('viewers', ['aa', 'ab', 'bb']);
 
         assert.equal(c.getRightIndex(), 3);
@@ -132,7 +122,7 @@ describe('Chatters.js', () => {
     });
 
     it('page navigations', () => {
-        setStubs();
+        testUtils.setChattersStubs();
         const junk = [];
         junk.length = 300;
         const c = new Chatters('viewers', junk);

@@ -4,37 +4,6 @@ const twitchAPI = require('../../singletons/twitchAPI');
 const constants = require('../../helpers/constants');
 const chartFilter = require('../shared/chartFilter');
 
-require('../../helpers/signals').domSignals.add((payload) => {
-    if (payload.type === 'click' && payload.id.endsWith('-interval')) {
-        navOptionVC._intervalClickEvent(payload.event);
-    } else if (payload.id === 'channel-input') {
-        switch (payload.type) {
-            case 'keyup':
-                navOptionVC._onChannelInputKeyUp(payload.event);
-                break;
-            case 'click':
-                navOptionVC._refreshList();
-                break;
-            case 'focusout':
-            case 'channel.input.update':
-                navOptionVC.syncChannelInput();
-                break;
-        }
-    } else if (payload.id === 'channel-refresh') {
-        switch (payload.type) {
-            case 'click':
-                twitchClient.changeToRandomFeaturedStream();
-                break;
-        }
-    } else if (payload.id === 'channel-save') {
-        switch (payload.type) {
-            case 'click':
-                twitchClient.saveChannel();
-                break;
-        }
-    }
-});
-
 class NavOptionVC {
     constructor() {
         this.channelInputAutoComplete = undefined;
@@ -46,14 +15,45 @@ class NavOptionVC {
         this.syncChannelInput = _.debounce(() => {
             this.channelInputAutoComplete.input.value = twitchClient.getChannel();
         }, 250, { leading: false });
+        require('../../helpers/signals').domSignals.add(this._domSignalsFunc.bind(this));
+    }
+
+    _domSignalsFunc(payload) {
+        /* istanbul ignore else */
+        if (payload.type === 'click' && payload.id.endsWith('-interval')) {
+            this._intervalClickEvent(payload.event);
+        } else if (payload.id === 'channel-input') {
+            switch (payload.type) {
+                case 'keyup':
+                    this._onChannelInputKeyUp(payload.event);
+                    break;
+                case 'click':
+                    this._refreshList();
+                    break;
+                case 'focusout':
+                case 'channel.input.update':
+                    this.syncChannelInput();
+                    break;
+            }
+        } else if (payload.id === 'channel-refresh') {
+            switch (payload.type) {
+                case 'click':
+                    twitchClient.changeToRandomFeaturedStream();
+                    break;
+            }
+        } else if (payload.id === 'channel-save') {
+            switch (payload.type) {
+                case 'click':
+                    twitchClient.saveChannel();
+                    break;
+            }
+        }
     }
 
     _onChannelInputKeyUp(event) {
-        const channelToSearch = this.channelInputAutoComplete.input.value;
-
         if (event.keyCode === 13 || event.awesompleteSelect) {
             // enter key, trigger channel change
-            this.lastSearchedChannel = channelToSearch;
+            this.lastSearchedChannel = this.channelInputAutoComplete.input.value;
             this.streamSelect();
             return;
         }
@@ -97,10 +97,10 @@ class NavOptionVC {
 
     async _populateStreamInfo() {
         const channel = twitchClient.getChannel();
-        try {
-            this.channelInputAutoComplete.input.value = this.lastSearchedChannel || channel;
-            document.getElementById('embeded-twitch-channel').innerText = channel;
+        this.channelInputAutoComplete.input.value = this.lastSearchedChannel || channel;
+        document.getElementById('embeded-twitch-channel').innerText = channel;
 
+        try {
             this.streamInfo = await twitchAPI.getChannelInfo(channel);
             if (this.streamInfo && this.streamInfo.data && this.streamInfo.data.length > 0) {
                 document.getElementById('embeded-twitch-desc').innerHTML = `${this.streamInfo.data[0].title}`;
@@ -108,29 +108,28 @@ class NavOptionVC {
                 document.getElementById('embeded-twitch-desc').innerHTML = `(inactive...)`;
             }
         } catch (err) {
-            document.getElementById('embeded-twitch-desc').innerText = `${channel}'s stream`;
+            document.getElementById('embeded-twitch-desc').innerHTML = `${channel}'s stream`;
         }
     }
 
     // set interval click events
     _intervalClickEvent(event) {
-        const signalEvent = { event: "filter.interval.change", label: event.srcElement.innerHTML };
-        switch (signalEvent.label) {
+        const label = event.srcElement.innerHTML;
+        switch (label) {
             case '1 minute':
-                signalEvent.intervalLevel = constants.BUCKET_MIN;
+                chartFilter.update({ intervalLevel: constants.BUCKET_MIN });
                 break;
             case '5 minutes':
-                signalEvent.intervalLevel = constants.BUCKET_FIVE;
+                chartFilter.update({ intervalLevel: constants.BUCKET_FIVE });
                 break;
             case '1 hour':
-                signalEvent.intervalLevel = constants.BUCKET_HOUR;
+                chartFilter.update({ intervalLevel: constants.BUCKET_HOUR });
                 break;
             case '1 day':
-                signalEvent.intervalLevel = constants.BUCKET_DAY;
+                chartFilter.update({ intervalLevel: constants.BUCKET_DAY });
                 break;
         }
-        document.getElementById('interval-selector-btn').innerText = signalEvent.label;
-        chartFilter.update({ intervalLevel: signalEvent.intervalLevel });
+        document.getElementById('interval-selector-btn').innerText = label;
     }
 
     initialize() {
@@ -171,6 +170,7 @@ class NavOptionVC {
     }
 
     destroy() {
+        /* istanbul ignore else */
         if (this.channelInputAutoComplete) {
             this.channelInputAutoComplete.destroy();
             this.channelInputAutoComplete = undefined;
@@ -180,5 +180,4 @@ class NavOptionVC {
     }
 }
 
-const navOptionVC = new NavOptionVC();
-module.exports = navOptionVC;
+module.exports = new NavOptionVC();

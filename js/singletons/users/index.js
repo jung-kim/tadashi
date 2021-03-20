@@ -6,38 +6,37 @@ const userFollowsFetcher = require('./userFollowsFetcher');
 const channelFollowsFetcher = require('./channelFollowsFetcher');
 const constants = require('../../helpers/constants');
 
-
-eventSignals.add(async (payload) => {
-    switch (payload.event) {
-        case 'chatters.data.update':
-            users.processChattersData(payload.data, payload.channelID);
-            eventSignals.dispatch({ event: 'chatters.data.update.data' });
-            break;
-        case 'fetch.user.ids.resp':
-            users.processUserIDsResp(payload.data);
-            break;
-        case 'fetch.user.follows.resp':
-            users.processUserFollowsResp(payload.userID, payload.data);
-            break;
-        case 'api.unthrottled':
-            userIDFetcher.fetch();
-            userFollowsFetcher.fetch();
-            break;
-        case 'channel.input.update':
-            userIDFetcher.reset();
-            userFollowsFetcher.reset();
-            channelFollowsFetcher.fetch(payload.data.id);
-            break;
-        case 'fetch.channel.follows.resp':
-            users.processChannelFollows(payload.channelID, payload.data);
-            break;
-    }
-});
-
-
 class Users {
     constructor() {
         this.reset();
+        eventSignals.add(this._eventSignalFunc.bind(this));
+    }
+
+    _eventSignalFunc(payload) {
+        switch (payload.event) {
+            case 'chatters.data.update':
+                this.processChattersData(payload.data, payload.channelID);
+                eventSignals.dispatch({ event: 'chatters.data.update.data' });
+                break;
+            case 'fetch.user.ids.resp':
+                this.processUserIDsResp(payload.data);
+                break;
+            case 'fetch.user.follows.resp':
+                this.processUserFollowsResp(payload.userID, payload.data);
+                break;
+            case 'api.unthrottled':
+                userIDFetcher.fetch();
+                userFollowsFetcher.fetch();
+                break;
+            case 'channel.input.update':
+                userIDFetcher.reset();
+                userFollowsFetcher.reset();
+                channelFollowsFetcher.fetch(payload.data.id);
+                break;
+            case 'fetch.channel.follows.resp':
+                this.processChannelFollows(payload.channelID, payload.data);
+                break;
+        }
     }
 
     reset() {

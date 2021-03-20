@@ -1,5 +1,3 @@
-/*eslint complexity: ["error", 25]*/
-
 const eventSignals = require('../../helpers/signals').eventSignals;
 const chattersTableVC = require('./chattersTableVC');
 const twitchEmbededVC = require('./twitchEmbededVC');
@@ -7,7 +5,7 @@ const navOptionVC = require('./navOptionVC');
 const dateTimeRangeVC = require('./dateTimeRangeVC');
 const chartFilter = require('../shared/chartFilter');
 
-eventSignals.add(async (payload) => {
+const _eventSignalsFunc = (payload) => {
     switch (payload.event) {
         case 'stream.load':
             document.getElementById("main").innerHTML = templates[`./hbs/stream/index.hbs`]();
@@ -51,10 +49,12 @@ eventSignals.add(async (payload) => {
             navOptionVC.destroy();
             dateTimeRangeVC.destroy();
             chattersTableVC.destroy();
-            chartFilter.destroy();
             break;
         case 'chatters.data.update.partial':
             chattersTableVC.updateChattersList();
             break;
     }
-});
+}
+
+eventSignals.add(_eventSignalsFunc);
+module.exports = _eventSignalsFunc;

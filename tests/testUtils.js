@@ -1,4 +1,5 @@
 const moment = require('../js/helpers/moment');
+const sinon = require('sinon');
 
 const constants = require('../js/helpers/constants');
 const utils = require('../js/helpers/utils');
@@ -59,4 +60,15 @@ module.exports = {
     setFakeNow() { moment.now = () => this.fakeNow * 1000 },
 
     unsetFakeNow() { moment.now = originalMomentNow; },
+
+    setChattersStubs() {
+        document.getElementById.reset();
+        document.getElementById.returns({
+            insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall'),
+            classList: {
+                add: sinon.stub().returns('addCall'),
+                remove: sinon.stub().returns('removeCall'),
+            }
+        });
+    }
 }

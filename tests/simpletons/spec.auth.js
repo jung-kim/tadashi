@@ -107,6 +107,13 @@ describe('auth.js', () => {
             auth.logout();
             reset();
         });
+
+        it('do nothing if already authenticated', async () => {
+            const isAuthenticated = sinon.stub(auth, 'isAuthenticated').returns(false);
+            await auth.authenticate();
+            sinon.assert.calledOnce(isAuthenticated);
+        });
+
         it('parsedHash', async () => {
             let stub = sinon.stub(auth, 'isAuthenticated').returns(false);
             let searchParam = new URLSearchParams('');

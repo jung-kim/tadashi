@@ -50,11 +50,15 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
 // stub out boostrap functions 
 BSN = {
     Collapse: sinon.stub(),
-    Popover: sinon.stub()
+    Popover: sinon.stub(),
+    Dropdown: sinon.stub()
 }
 
 // disable signal dispatch
 eventSignals.dispatch = sinon.stub();
+
+// flatpickr the time picking lib
+flatpickr = sinon.stub();
 
 // mock chart for chart.js
 Chart = class Chart {
@@ -70,8 +74,12 @@ Chart = class Chart {
 
 // stub dom functions, I'm sure there is a npm package does this...
 document = {
-    getElementById: sinon.stub().withArgs(sinon.match.any).returns({ a: 3 }),
+    getElementById: sinon.stub().withArgs(sinon.match.any).returns({}),
 };
+
+window = {
+    addEventListener: sinon.stub().withArgs(sinon.match.any).returns({}),
+}
 
 const users = require('../js/singletons/users');
 const auth = require('../js/simpletons/auth');
@@ -95,10 +103,14 @@ Handlebars.registerHelper('userFollowsCSS', (userName) => {
     }
 });
 
+Awesomplete = sinon.stub();
+
 // global test rest func
 reset = () => {
     sinon.verifyAndRestore();
     document.getElementById.reset();
     auth._authToken = undefined;
     filter.changeSearchString();
+    flatpickr.reset();
+    eventSignals.dispatch.reset();
 }
