@@ -1,13 +1,13 @@
 const cssUnknown = require('../../helpers/constants').CSS_UNKNOWN;
 
 class User {
-    constructor(id, name, follows) {
+    constructor(id, name) {
         this._id = id;
         this._userName = name;
         this.userNameCSSClass = cssUnknown;
-        if (follows) {
-            this._follows = new Set(Object.keys(follows).map(id => parseInt(id)));
-        }
+
+        this._following = {};   // id, user pair of users this user is following
+        this._followedBy = {};  // id, user pair of users this user is followed by
     }
 
     getID() {
@@ -18,30 +18,56 @@ class User {
         return this._userName;
     }
 
-    setID(id) {
-        this._id = id;
+    /**
+     * Users this user is following
+     * @param {User} user 
+     */
+    addFollowing(user) {
+        if (!user || !user.getID()) {
+            throw 'user is missing id and cannot be added to following';
+        }
+        this._following[user.getID()] = user;
     }
 
-    addFollows(newFollows) {
-        if (!newFollows) {
-            return;
+    /**
+     * Useers this user is followed by
+     * @param {User} user 
+     */
+    addFollowedBy(user) {
+        if (!user || !user.getID()) {
+            throw 'user is missing id and cannot be added to followed by';
         }
-        if (!this._follows) {
-            this._follows = new Set();
-        }
-
-        (newFollows.data || []).forEach(follows => this._follows.add(parseInt(follows.to_id)));
+        this._followedBy[user.getID()] = user;
     }
 
-    getFollows() {
-        return this._follows;
+    /**
+     * get followed by sumary grouped by if a follower is following 
+     * current streamer or not.
+     * 
+     * @param {int} currentStreamID 
+     */
+    getFollowedBySummary(currentStreamID) {
+        return Object.values(this._followedBy)
+            .reduce((accumulator, current) => {
+                if (current.isFollowing(currentStreamID)) {
+                    accumulator.followingCurrent++;
+                } else {
+                    accumulator.admiringCurrent++;
+                }
+                return accumulator;
+            }, { followingCurrent: 0, admiringCurrent: 0 });
+    }
+
+    getFollowedByCounts() {
+        return Object.keys(this._followedBy).length;
     }
 
     isFollowing(targetUserID) {
-        if (!this._follows) {
-            return undefined;
-        }
-        return this._follows.has(targetUserID);
+        return Boolean(this._following[targetUserID]);
+    }
+
+    isFollowedBy(targetUserID) {
+        return Boolean(this._followedBy[targetUserID]);
     }
 }
 
