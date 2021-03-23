@@ -22,7 +22,7 @@ class Users {
                 this.processUserIDsResp(payload.data);
                 break;
             case 'fetch.user.follows.resp':
-                this.processUserFollowsResp(payload.userID, payload.data);
+                this.processUserFollowsResp(payload.data);
                 break;
             case 'api.unthrottled':
                 userIDFetcher.fetch();
@@ -34,7 +34,7 @@ class Users {
                 channelFollowsFetcher.fetch(payload.data.id);
                 break;
             case 'fetch.channel.follows.resp':
-                this.processChannelFollows(payload.channelID, payload.data);
+                this.processUserFollowsResp(payload.data);
                 break;
         }
     }
@@ -68,6 +68,26 @@ class Users {
         return userFilter.filterUsers(users);
     }
 
+    /**
+     * When a pair of id and name arrives, ensure user exists.
+     * id is optional and maybe called again later with id to update object with the id.
+     * 
+     * @param {number} id optional
+     * @param {string} name required
+     */
+    _ensureUserExists(id, name) {
+        const lowerCaseName = name.toLowerCase();
+        const userObj = this.getUserByID(id) || this.getUserByName(lowerCaseName) || new User(id, name);
+
+        userObj._id = id;
+        userObj._userName = name;
+
+        this._idToUser[id] = userObj;
+        this._nameToUser[lowerCaseName] = userObj;
+
+        return userObj;
+    }
+
     processChattersData(chattersData, channelID) {
         const tmp = {};
         const viewersCount = Object.values(chattersData || {}).
@@ -78,14 +98,12 @@ class Users {
                 const lowerCaseName = name.toLowerCase();
 
                 if (!this.getUserByName(lowerCaseName)) {
-                    this._nameToUser[lowerCaseName] = new User(undefined, name);
-
-                    if (viewersCount < constants.MAX_VIEWERS_COUNTS_FOR_PROCESS) {
+                    if (viewersCount < constants.MAX_VIEWcERS_COUNTS_FOR_PROCESS) {
                         userIDFetcher.add(name);
                     }
                 }
 
-                return this.getUserByName(lowerCaseName);
+                return this._ensureUserExists(undefined, name);
             });
         }
 
@@ -103,50 +121,69 @@ class Users {
         this._viewers = tmp;
     }
 
-    processUserFollowsResp(id, resp) {
-        // set follows for a user object
-        this.getUserByID(id).addFollows(resp);
-        eventSignals.dispatch({ event: `chatters.data.update.partial` });
-
+    /**
+     * 
+     * @param {json} resp 
+     * 
+{
+    "total": 173,
+    "data": [
+        {
+            "from_id": "1111",
+            "from_login": "alogin",
+            "from_name": "alogin",
+            "to_id": "2222",
+            "to_login": "another",
+            "to_name": "another",
+            "followed_at": "2021-03-16T11:06:38Z"
+        },
+    ]
+    ...
+}
+     */
+    processUserFollowsResp(resp) {
         resp.data.forEach(follows => {
             const toID = parseInt(follows.to_id);
-            const toName = follows.to_name;
-            const toLowerCaseName = toName.toLowerCase();
-            const userObj = this._idToUser[toID] || this._nameToUser[toLowerCaseName] || new User(toID, toName);
+            const fromID = parseInt(follows.from_id);
+            const toUser = this._ensureUserExists(toID, follows.to_name);
+            const fromUser = this._ensureUserExists(fromID, follows.from_name);
 
-            if (!this._idToUser[toID]) {
-                this._idToUser[toID] = userObj;
-            }
-            if (!this._nameToUser[lowerCaseName]) {
-                this._nameToUser[lowerCaseName] = userObj;
-            }
+            fromUser.addFollowing(toUser);
+            toUser.addFollowedBy(fromUser);
         });
+
+        // set follows for a user object
+        eventSignals.dispatch({ event: `chatters.data.update.partial` });
     }
 
-    processUserIDsResp(resp) {
-        for (const element of resp) {
-            const login = element.login.toLowerCase();
-            if (this.getUserByName(login)) {
-                const intID = parseInt(element.id);
-                this.getUserByName(login).setID(intID);
-                this._idToUser[intID] = this.getUserByName(login);
-                userFollowsFetcher.add(intID);
-            }
+    /**
+     * process get user response from `helix/users?login=...' to ensure exists
+     * and queue up for fetching user follows fetching.
+     * 
+     * @param {json} resp 
+     * 
+{
+    "data": [
+        {
+            "id": "9999", // <-- why is this string...?  wtf twitch??
+            "login": "...",
+            "display_name": "...",
+            "type": "",
+            "broadcaster_type": "partner",
+            "description": "...",
+            "profile_image_url": "...",
+            "offline_image_url": "..",
+            "view_count": 9999,
+            "created_at": "2014-06-11T14:11:05.9921119Z"
         }
-    }
-
-    processChannelFollows(channelID, resp) {
-        resp.data.forEach(follows => {
-            const userID = follows.from_id;
-            const userName = follows.from_name;
-            const userNameLower = userName.toLowerCase();
-
-            const user = this.getUserByName(userNameLower) || this.getUserByID(userID) || new User(userID, userName);
-            user.addFollows({ data: [{ to_id: channelID }] });
-
-            this._nameToUser[userNameLower] = user;
-            this._idToUser[userID] = user;
-        });
+    ]
+}
+     */
+    processUserIDsResp(resp) {
+        for (const element of resp.data) {
+            const userObj = this._ensureUserExists(element.id, element.login);
+            userFollowsFetcher.add(userObj.getID());
+        }
     }
 }
 

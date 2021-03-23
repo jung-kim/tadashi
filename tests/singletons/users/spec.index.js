@@ -79,44 +79,51 @@ describe('users.js', () => {
         users._nameToUser = { 'a': aUser, 'b': bUser, 'c': cUser };
 
         // missing get user
-        users.processUserFollowsResp(1, {
+        users.processUserFollowsResp({
             data: [
-                { to_id: 11, to_name: 'aa' },
-                { to_id: 22, to_name: 'bb' },
+                { to_id: 11, to_name: 'aa', from_name: 'a', from_id: 1 },
+                { to_id: 22, to_name: 'bb', from_name: 'a', from_id: 1 },
             ]
-        });
-        assert.deepEqual(users._idToUser[1], {
-            _id: 1,
-            _userName: 'a',
-            userNameCSSClass: 'text-muted',
-            _follows: new Set([11, 22]),
-        });
-        assert.deepEqual(users._nameToUser['a'], {
-            _id: 1,
-            _userName: 'a',
-            userNameCSSClass: 'text-muted',
-            _follows: new Set([11, 22]),
         });
 
+        // because of circular reference issues, checking mostly by id
+        assert.deepEqual(Object.keys(users._idToUser), ['1', '2', '3', '11', '22']);
+        assert.deepEqual(Object.keys(users._idToUser[1]._followedBy), []);
+        assert.deepEqual(Object.keys(users._idToUser[2]._followedBy), []);
+        assert.deepEqual(Object.keys(users._idToUser[3]._followedBy), []);
+        assert.deepEqual(Object.keys(users._idToUser[11]._followedBy), ['1']);
+        assert.deepEqual(Object.keys(users._idToUser[22]._followedBy), ['1']);
+        assert.deepEqual(Object.keys(users._idToUser[1]._following), ['11', '22']);
+        assert.deepEqual(Object.keys(users._idToUser[2]._following), []);
+        assert.deepEqual(Object.keys(users._idToUser[3]._following), []);
+        assert.deepEqual(Object.keys(users._idToUser[11]._following), []);
+        assert.deepEqual(Object.keys(users._idToUser[22]._following), []);
+        assert.deepEqual(Object.keys(users._nameToUser), ['a', 'b', 'c', 'aa', 'bb']);
+
         // with valid get user
-        users.processUserFollowsResp(1, {
+        users.processUserFollowsResp({
             data: [
-                { to_id: 33, to_name: 'c' },
-                { to_id: 44, to_name: 'dd' },
+                { to_id: 33, to_name: 'cc', from_name: 'a', from_id: 1 },
+                { to_id: 44, to_name: 'dd', from_name: 'a', from_id: 2 },
             ]
         });
-        assert.deepEqual(users._idToUser[1], {
-            _id: 1,
-            _userName: 'a',
-            userNameCSSClass: 'text-muted',
-            _follows: new Set([11, 22, 33, 44]),
-        });
-        assert.deepEqual(users._nameToUser['a'], {
-            _id: 1,
-            _userName: 'a',
-            userNameCSSClass: 'text-muted',
-            _follows: new Set([11, 22, 33, 44]),
-        });
+
+        assert.deepEqual(Object.keys(users._idToUser), ['1', '2', '3', '11', '22', '33', '44']);
+        assert.deepEqual(Object.keys(users._idToUser[1]._followedBy), []);
+        assert.deepEqual(Object.keys(users._idToUser[2]._followedBy), []);
+        assert.deepEqual(Object.keys(users._idToUser[3]._followedBy), []);
+        assert.deepEqual(Object.keys(users._idToUser[11]._followedBy), ['1']);
+        assert.deepEqual(Object.keys(users._idToUser[22]._followedBy), ['1']);
+        assert.deepEqual(Object.keys(users._idToUser[33]._followedBy), ['1']);
+        assert.deepEqual(Object.keys(users._idToUser[44]._followedBy), ['2']);
+        assert.deepEqual(Object.keys(users._idToUser[1]._following), ['11', '22', '33']);
+        assert.deepEqual(Object.keys(users._idToUser[2]._following), ['44']);
+        assert.deepEqual(Object.keys(users._idToUser[3]._following), []);
+        assert.deepEqual(Object.keys(users._idToUser[11]._following), []);
+        assert.deepEqual(Object.keys(users._idToUser[22]._following), []);
+        assert.deepEqual(Object.keys(users._idToUser[33]._following), []);
+        assert.deepEqual(Object.keys(users._idToUser[44]._following), []);
+        assert.deepEqual(Object.keys(users._nameToUser), ['a', 'b', 'c', 'aa', 'bb', 'cc', 'dd']);
     });
 
     describe('processChattersData()', () => {

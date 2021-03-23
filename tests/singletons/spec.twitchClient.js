@@ -40,8 +40,7 @@ describe('twitchClient.js', () => {
             const start = Date.now();
             await twitchClient.initializeClient();
             const diff = Date.now() - start;
-            console.log(`diff=${diff}`);
-            assert.isTrue(diff >= 500);
+            assert.isTrue(diff >= 499);
         });
 
         it('run after intialized', async () => {
