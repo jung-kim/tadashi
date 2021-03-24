@@ -79,10 +79,12 @@ class Users {
         const lowerCaseName = name.toLowerCase();
         const userObj = this.getUserByID(id) || this.getUserByName(lowerCaseName) || new User(id, name);
 
-        userObj._id = id;
-        userObj._userName = name;
+        userObj._id = userObj._id || id;
+        userObj._userName = userObj._userName || name;
 
-        this._idToUser[id] = userObj;
+        if (id) {
+            this._idToUser[id] = userObj;
+        }
         this._nameToUser[lowerCaseName] = userObj;
 
         return userObj;
@@ -96,9 +98,8 @@ class Users {
         for (const [key, names] of Object.entries(chattersData || {})) {
             tmp[key] = names.sort().map(name => {
                 const lowerCaseName = name.toLowerCase();
-
                 if (!this.getUserByName(lowerCaseName)) {
-                    if (viewersCount < constants.MAX_VIEWcERS_COUNTS_FOR_PROCESS) {
+                    if (viewersCount < constants.MAX_VIEWERS_COUNTS_FOR_PROCESS) {
                         userIDFetcher.add(name);
                     }
                 }
@@ -122,6 +123,8 @@ class Users {
     }
 
     /**
+     * for each user follows response, ensure users exists and establish
+     * following and followed by relationships.
      * 
      * @param {json} resp 
      * 

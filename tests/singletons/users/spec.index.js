@@ -30,20 +30,32 @@ describe('users.js', () => {
 
         users._idToUser = { 0: aUser, 3: cUser };
         users._nameToUser = { 'a': aUser, 'b': bUser, 'c': cUser };
-        users.processUserIDsResp([{ login: 'A', id: 1 }, { login: 'B', id: 2 }, { login: 'D', id: 4 }]);
+        users.processUserIDsResp({ data: [{ login: 'A', id: 1 }, { login: 'B', id: 2 }, { login: 'D', id: 4 }] });
         assert.deepEqual(users._nameToUser, {
             'a': {
                 _id: 1,
                 _userName: 'a',
                 userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
             }, 'b': {
                 _id: 2,
                 _userName: 'b',
                 userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
             }, 'c': {
                 _id: 3,
                 _userName: 'c',
                 userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
+            }, 'd': {
+                _id: 4,
+                _userName: 'D',
+                userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
             }
         });
         assert.deepEqual(users._idToUser, {
@@ -51,18 +63,32 @@ describe('users.js', () => {
                 _id: 1,
                 _userName: 'a',
                 userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
             }, 1: {
                 _id: 1,
                 _userName: 'a',
                 userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
             }, 2: {
                 _id: 2,
                 _userName: 'b',
                 userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
             }, 3: {
                 _id: 3,
                 _userName: 'c',
                 userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
+            }, 4: {
+                _id: 4,
+                _userName: 'D',
+                userNameCSSClass: 'text-muted',
+                _following: {},
+                _followedBy: {},
             }
         });
 
@@ -128,7 +154,7 @@ describe('users.js', () => {
 
     describe('processChattersData()', () => {
         it('default cases', async () => {
-            users._nameToUser = { 'a': new User(1, 'a', { 11: undefined, 22: undefined }) };
+            users._nameToUser = { 'a': new User(1, 'a') };
             users._idToUser = { 1: users._nameToUser['a'] };
             const idFetcherAddStub = sinon.stub(userIDFetcher, 'add')
                 .withArgs('b')
@@ -145,19 +171,26 @@ describe('users.js', () => {
                     _id: 1,
                     _userName: 'a',
                     userNameCSSClass: 'text-muted',
-                    _follows: new Set([11, 22]),
+                    _following: {},
+                    _followedBy: {},
                 }, b: {
                     _id: undefined,
                     _userName: 'b',
                     userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
                 }, c: {
                     _id: undefined,
                     _userName: 'c',
                     userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
                 }, d: {
                     _id: undefined,
                     _userName: 'd',
                     userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
                 }
             });
             assert.deepEqual(users._idToUser, {
@@ -165,34 +198,42 @@ describe('users.js', () => {
                     _id: 1,
                     _userName: 'a',
                     userNameCSSClass: 'text-muted',
-                    _follows: new Set([11, 22]),
+                    _following: {},
+                    _followedBy: {},
                 }
             });
 
             assert.deepEqual(users._viewers, {
                 broadcaster: [
                     {
-                        _follows: new Set([11, 22]),
                         _id: 1,
                         _userName: 'a',
-                        userNameCSSClass: 'text-muted'
+                        userNameCSSClass: 'text-muted',
+                        _following: {},
+                        _followedBy: {},
                     }
                 ],
                 viewers: [
                     {
                         _id: undefined,
                         _userName: 'b',
-                        userNameCSSClass: 'text-muted'
+                        userNameCSSClass: 'text-muted',
+                        _following: {},
+                        _followedBy: {},
                     },
                     {
                         _id: undefined,
                         _userName: 'c',
-                        userNameCSSClass: 'text-muted'
+                        userNameCSSClass: 'text-muted',
+                        _following: {},
+                        _followedBy: {},
                     },
                     {
                         _id: undefined,
                         _userName: 'd',
-                        userNameCSSClass: 'text-muted'
+                        userNameCSSClass: 'text-muted',
+                        _following: {},
+                        _followedBy: {},
                     }
                 ]
             });
@@ -224,49 +265,6 @@ describe('users.js', () => {
         assert.equal(users.getViewers(), 111);
     });
 
-    it('processChannelFollows', () => {
-        users._nameToUser['aaa'] = new User(111, 'aAa');
-        users._idToUser[222] = new User(222, 'BbB');
-
-
-        users.processChannelFollows(999, {
-            data: [{
-                from_id: 111,
-                from_name: 'aAa',
-            }, {
-                from_id: 222,
-                from_name: 'BbB',
-            }, {
-                from_id: 333,
-                from_name: 'cCc',
-            }]
-        });
-
-        assert.equal(users._nameToUser['aaa'], users._idToUser[111]);
-        assert.deepEqual(users._idToUser[111], {
-            _id: 111,
-            _userName: 'aAa',
-            _follows: new Set([999]),
-            userNameCSSClass: 'text-muted'
-        });
-
-        assert.equal(users._nameToUser['bbb'], users._idToUser[222]);
-        assert.deepEqual(users._idToUser[222], {
-            _id: 222,
-            _userName: 'BbB',
-            _follows: new Set([999]),
-            userNameCSSClass: 'text-muted'
-        });
-
-        assert.equal(users._nameToUser['ccc'], users._idToUser[333]);
-        assert.deepEqual(users._idToUser[333], {
-            _id: 333,
-            _userName: 'cCc',
-            _follows: new Set([999]),
-            userNameCSSClass: 'text-muted'
-        });
-    });
-
     describe('_eventSignalFunc', () => {
         it('chatters.data.update', () => {
             const processChattersData = sinon.stub(users, 'processChattersData').withArgs(["abc"], 123);
@@ -283,7 +281,7 @@ describe('users.js', () => {
         });
 
         it('fetch.user.follows.resp', () => {
-            const processUserIDsResp = sinon.stub(users, 'processUserFollowsResp').withArgs(888, ["abc"]);
+            const processUserIDsResp = sinon.stub(users, 'processUserFollowsResp').withArgs(["abc"]);
             users._eventSignalFunc({ event: 'fetch.user.follows.resp', data: ["abc"], userID: 888 });
             sinon.assert.calledOnce(processUserIDsResp);
         });
@@ -305,7 +303,7 @@ describe('users.js', () => {
         });
 
         it('fetch.channel.follows.resp', () => {
-            const processChannelFollows = sinon.stub(users, 'processChannelFollows').withArgs(123, ["abc"]);
+            const processChannelFollows = sinon.stub(users, 'processUserFollowsResp').withArgs(["abc"]);
             users._eventSignalFunc({ event: 'fetch.channel.follows.resp', data: ["abc"], channelID: 123 });
             sinon.assert.calledOnce(processChannelFollows);
         });
@@ -345,6 +343,74 @@ describe('users.js', () => {
 
             assert.deepEqual(users.getUsers(userFilter), [userA]);
             sinon.assert.calledOnce(filterUsers);
+        });
+    });
+
+    describe('_ensureUserExists', () => {
+        beforeEach(() => { users.reset(); });
+        it('none existant', () => {
+            users._ensureUserExists(undefined, 'AAA');
+
+            assert.deepEqual(users._idToUser, {});
+            assert.deepEqual(users._nameToUser, {
+                'aaa': {
+                    _id: undefined,
+                    _userName: 'AAA',
+                    userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
+                }
+            });
+        });
+
+        it('update with id', () => {
+            users._ensureUserExists(111, 'AAA');
+
+            assert.deepEqual(users._idToUser, {
+                111: {
+                    _id: 111,
+                    _userName: 'AAA',
+                    userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
+                }
+            });
+            assert.deepEqual(users._nameToUser, {
+                'aaa': {
+                    _id: 111,
+                    _userName: 'AAA',
+                    userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
+                }
+            });
+        });
+
+        it('already existing', () => {
+            users._ensureUserExists(111, 'AAA');
+            users._idToUser[111]._test = 'test';
+            users._ensureUserExists(111, 'AAA');
+
+            assert.deepEqual(users._idToUser, {
+                111: {
+                    _id: 111,
+                    _userName: 'AAA',
+                    userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
+                    _test: 'test',
+                }
+            });
+            assert.deepEqual(users._nameToUser, {
+                'aaa': {
+                    _id: 111,
+                    _userName: 'AAA',
+                    userNameCSSClass: 'text-muted',
+                    _following: {},
+                    _followedBy: {},
+                    _test: 'test',
+                }
+            });
         });
     });
 });
