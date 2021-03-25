@@ -188,6 +188,39 @@ class Users {
             userFollowsFetcher.add(userObj.getID());
         }
     }
+
+    /**
+     * get top N followed by summary
+     * 
+     * @param {int} currentStreamID 
+     */
+    getTopFollowedBySummary(currentStreamID) {
+        return Object.values(this.getUserByID)
+            .sort((left, right) => left.getFollowedByCounts() - right.getFollowedByCounts())
+            .slice(0, 10)
+            .map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
+    }
+
+    /**
+     * Get followed summary of a user grouped by if they are following 
+     * current streamer or not
+     * 
+     * @param {int} currentStreamID 
+     * @param {int} userID 
+     */
+    _getFollowedBySummary(currentStreamID, userID) {
+        return this.getUserByID(userID)
+            ._followedBy
+            .map(id => this.getUserByID(id))
+            .reduce((accumulator, current) => {
+                if (current.isFollowing(currentStreamID)) {
+                    accumulator.followingCurrent++;
+                } else {
+                    accumulator.admiringCurrent++;
+                }
+                return accumulator;
+            }, { followingCurrent: 0, admiringCurrent: 0 });
+    }
 }
 
 const users = new Users();

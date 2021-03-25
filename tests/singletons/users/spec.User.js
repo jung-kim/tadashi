@@ -6,95 +6,63 @@ describe('User.js', () => {
         const u1 = new User(123, 'abc');
         assert.equal(u1._id, 123);
         assert.equal(u1._userName, 'abc');
-        assert.deepEqual(u1._following, {});
-        assert.deepEqual(u1._followedBy, {});
+        assert.deepEqual(u1._following, new Set());
+        assert.deepEqual(u1._followedBy, new Set());
 
         const u2 = new User(undefined, 'abc');
         assert.isUndefined(u2._id);
         assert.equal(u2._userName, 'abc');
-        assert.deepEqual(u2._following, {});
-        assert.deepEqual(u2._followedBy, {});
+        assert.deepEqual(u2._following, new Set());
+        assert.deepEqual(u2._followedBy, new Set());
     });
 
     describe('addFollowing()', () => {
         it('default', () => {
             const u1 = new User(123, 'abc');
-            assert.deepEqual(u1._following, {});
+            assert.deepEqual(u1._following, new Set());
 
-            u1.addFollowing(new User(1, 'a'));
-            assert.deepEqual(u1._following, {
-                1: new User(1, 'a'),
-            });
+            u1.addFollowing(1);
+            assert.deepEqual(u1._following, new Set([1]));
 
 
-            u1.addFollowing(new User(2, 'b'));
-            assert.deepEqual(u1._following, {
-                1: new User(1, 'a'),
-                2: new User(2, 'b'),
-            });
+            u1.addFollowing(2);
+            assert.deepEqual(u1._following, new Set([1, 2]));
+
+            u1.addFollowing(2);
+            assert.deepEqual(u1._following, new Set([1, 2]));
         });
 
         it('undefined', () => {
             const u1 = new User(123, 'abc');
 
-            try {
-                u1.addFollowing();
-                assert.fail('should not have succeeded');
-            } catch (err) {
-                assert.equal(err, 'user is missing id and cannot be added to following')
-            }
-        });
+            u1.addFollowing();
 
-        it('missing id', () => {
-            const u1 = new User(123, 'abc');
-
-            try {
-                u1.addFollowing(new User(undefined, 'aaa'));
-                assert.fail('should not have succeeded');
-            } catch (err) {
-                assert.equal(err, 'user is missing id and cannot be added to following')
-            }
+            assert.equal(u1._following.size, 0);
         });
     });
 
     describe('addFollowedBy()', () => {
         it('default', () => {
             const u1 = new User(123, 'abc');
-            assert.deepEqual(u1._followedBy, {});
+            assert.deepEqual(u1._followedBy, new Set());
 
-            u1.addFollowedBy(new User(1, 'a'));
-            assert.deepEqual(u1._followedBy, {
-                1: new User(1, 'a'),
-            });
+            u1.addFollowedBy(1);
+            assert.deepEqual(u1._followedBy, new Set([1]));
 
 
-            u1.addFollowedBy(new User(2, 'b'));
-            assert.deepEqual(u1._followedBy, {
-                1: new User(1, 'a'),
-                2: new User(2, 'b'),
-            });
+            u1.addFollowedBy(2);
+            assert.deepEqual(u1._followedBy, new Set([1, 2]));
+
+            u1.addFollowedBy(2);
+            assert.deepEqual(u1._followedBy, new Set([1, 2]));
         });
 
         it('undefined', () => {
             const u1 = new User(123, 'abc');
 
-            try {
-                u1.addFollowedBy();
-                assert.fail('should not have succeeded');
-            } catch (err) {
-                assert.equal(err, 'user is missing id and cannot be added to followed by')
-            }
-        });
+            u1.addFollowedBy();
 
-        it('missing id', () => {
-            const u1 = new User(123, 'abc');
-
-            try {
-                u1.addFollowedBy(new User(undefined, 'aaa'));
-                assert.fail('should not have succeeded');
-            } catch (err) {
-                assert.equal(err, 'user is missing id and cannot be added to followed by')
-            }
+            assert.equal(u1._followedBy.size, 0);
         });
     });
 
@@ -103,7 +71,7 @@ describe('User.js', () => {
 
         assert.isFalse(u1.isFollowing(1));
 
-        u1.addFollowing(new User(1, 'a'));
+        u1.addFollowing(1);
         assert.isTrue(u1.isFollowing(1));
         assert.isFalse(u1.isFollowing(4));
     });
@@ -113,27 +81,21 @@ describe('User.js', () => {
 
         assert.isFalse(u1.isFollowedBy(1));
 
-        u1.addFollowedBy(new User(1, 'a'));
+        u1.addFollowedBy(1);
         assert.isTrue(u1.isFollowedBy(1));
         assert.isFalse(u1.isFollowedBy(4));
     });
 
-    it('getFollowedBySummary', () => {
+    it('getFollowingCounts', () => {
         const u1 = new User(123, 'abc');
 
-        assert.deepEqual(u1.getFollowedBySummary(1), { followingCurrent: 0, admiringCurrent: 0 });
+        assert.equal(u1.getFollowingCounts(), 0);
 
-        u1.addFollowedBy(new User(1, 'a'));
-        u1.addFollowedBy(new User(2, 'b'));
-        u1.addFollowedBy(new User(3, 'c'));
+        u1.addFollowing(1);
+        u1.addFollowing(2);
+        u1.addFollowing(3);
 
-        assert.deepEqual(u1.getFollowedBySummary(1), { followingCurrent: 0, admiringCurrent: 3 });
-
-        // have b and c follow a
-        u1._followedBy[2].addFollowing(u1._followedBy[1]);
-        u1._followedBy[3].addFollowing(u1._followedBy[1]);
-
-        assert.deepEqual(u1.getFollowedBySummary(1), { followingCurrent: 2, admiringCurrent: 1 });
+        assert.equal(u1.getFollowingCounts(), 3);
     });
 
     it('getFollowedByCounts', () => {
@@ -141,9 +103,9 @@ describe('User.js', () => {
 
         assert.equal(u1.getFollowedByCounts(), 0);
 
-        u1.addFollowedBy(new User(1, 'a'));
-        u1.addFollowedBy(new User(2, 'b'));
-        u1.addFollowedBy(new User(3, 'c'));
+        u1.addFollowedBy(1);
+        u1.addFollowedBy(2);
+        u1.addFollowedBy(3);
 
         assert.equal(u1.getFollowedByCounts(), 3);
     });
