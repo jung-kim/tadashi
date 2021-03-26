@@ -109,4 +109,9 @@ describe('User.js', () => {
 
         assert.equal(u1.getFollowedByCounts(), 3);
     });
+
+    it('getUserName', () => {
+        const u1 = new User(123, 'abc');
+        assert.equal(u1.getUserName(), 'abc');
+    });
 });

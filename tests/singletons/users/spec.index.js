@@ -32,64 +32,17 @@ describe('users.js', () => {
         users._nameToUser = { 'a': aUser, 'b': bUser, 'c': cUser };
         users.processUserIDsResp({ data: [{ login: 'A', id: 1 }, { login: 'B', id: 2 }, { login: 'D', id: 4 }] });
         assert.deepEqual(users._nameToUser, {
-            'a': {
-                _id: 1,
-                _userName: 'a',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }, 'b': {
-                _id: 2,
-                _userName: 'b',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }, 'c': {
-                _id: 3,
-                _userName: 'c',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }, 'd': {
-                _id: 4,
-                _userName: 'D',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }
+            'a': new User(1, 'a'),
+            'b': new User(2, 'b'),
+            'c': new User(3, 'c'),
+            'd': new User(4, 'D'),
         });
         assert.deepEqual(users._idToUser, {
-            0: { // this demonstrates an odd case where id changes
-                _id: 1,
-                _userName: 'a',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }, 1: {
-                _id: 1,
-                _userName: 'a',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }, 2: {
-                _id: 2,
-                _userName: 'b',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }, 3: {
-                _id: 3,
-                _userName: 'c',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }, 4: {
-                _id: 4,
-                _userName: 'D',
-                userNameCSSClass: 'text-muted',
-                _following: {},
-                _followedBy: {},
-            }
+            0: new User(1, 'a'), // this demonstrates an odd case where id changes
+            1: new User(1, 'a'),
+            2: new User(2, 'b'),
+            3: new User(3, 'c'),
+            4: new User(4, 'D'),
         });
 
         sinon.assert.calledOnce(stub.withArgs(1));
@@ -112,44 +65,48 @@ describe('users.js', () => {
             ]
         });
 
-        // because of circular reference issues, checking mostly by id
-        assert.deepEqual(Object.keys(users._idToUser), ['1', '2', '3', '11', '22']);
-        assert.deepEqual(Object.keys(users._idToUser[1]._followedBy), []);
-        assert.deepEqual(Object.keys(users._idToUser[2]._followedBy), []);
-        assert.deepEqual(Object.keys(users._idToUser[3]._followedBy), []);
-        assert.deepEqual(Object.keys(users._idToUser[11]._followedBy), ['1']);
-        assert.deepEqual(Object.keys(users._idToUser[22]._followedBy), ['1']);
-        assert.deepEqual(Object.keys(users._idToUser[1]._following), ['11', '22']);
-        assert.deepEqual(Object.keys(users._idToUser[2]._following), []);
-        assert.deepEqual(Object.keys(users._idToUser[3]._following), []);
-        assert.deepEqual(Object.keys(users._idToUser[11]._following), []);
-        assert.deepEqual(Object.keys(users._idToUser[22]._following), []);
-        assert.deepEqual(Object.keys(users._nameToUser), ['a', 'b', 'c', 'aa', 'bb']);
+        assert.deepEqual(users._idToUser, {
+            1: new User(1, 'a', [11, 22]),
+            2: new User(2, 'b'),
+            3: new User(3, 'c'),
+            11: new User(11, 'aa', [], [1]),
+            22: new User(22, 'bb', [], [1]),
+        });
+        assert.deepEqual(users._nameToUser, {
+            a: new User(1, 'a', [11, 22]),
+            b: new User(2, 'b'),
+            c: new User(3, 'c'),
+            aa: new User(11, 'aa', [], [1]),
+            bb: new User(22, 'bb', [], [1]),
+        });
 
         // with valid get user
         users.processUserFollowsResp({
             data: [
                 { to_id: 33, to_name: 'cc', from_name: 'a', from_id: 1 },
-                { to_id: 44, to_name: 'dd', from_name: 'a', from_id: 2 },
+                { to_id: 44, to_name: 'dd', from_name: 'b', from_id: 2 },
             ]
         });
 
-        assert.deepEqual(Object.keys(users._idToUser), ['1', '2', '3', '11', '22', '33', '44']);
-        assert.deepEqual(Object.keys(users._idToUser[1]._followedBy), []);
-        assert.deepEqual(Object.keys(users._idToUser[2]._followedBy), []);
-        assert.deepEqual(Object.keys(users._idToUser[3]._followedBy), []);
-        assert.deepEqual(Object.keys(users._idToUser[11]._followedBy), ['1']);
-        assert.deepEqual(Object.keys(users._idToUser[22]._followedBy), ['1']);
-        assert.deepEqual(Object.keys(users._idToUser[33]._followedBy), ['1']);
-        assert.deepEqual(Object.keys(users._idToUser[44]._followedBy), ['2']);
-        assert.deepEqual(Object.keys(users._idToUser[1]._following), ['11', '22', '33']);
-        assert.deepEqual(Object.keys(users._idToUser[2]._following), ['44']);
-        assert.deepEqual(Object.keys(users._idToUser[3]._following), []);
-        assert.deepEqual(Object.keys(users._idToUser[11]._following), []);
-        assert.deepEqual(Object.keys(users._idToUser[22]._following), []);
-        assert.deepEqual(Object.keys(users._idToUser[33]._following), []);
-        assert.deepEqual(Object.keys(users._idToUser[44]._following), []);
-        assert.deepEqual(Object.keys(users._nameToUser), ['a', 'b', 'c', 'aa', 'bb', 'cc', 'dd']);
+
+        assert.deepEqual(users._idToUser, {
+            1: new User(1, 'a', [11, 22, 33]),
+            2: new User(2, 'b', [44]),
+            3: new User(3, 'c'),
+            11: new User(11, 'aa', [], [1]),
+            22: new User(22, 'bb', [], [1]),
+            33: new User(33, 'cc', [], [1]),
+            44: new User(44, 'dd', [], [2]),
+        });
+        assert.deepEqual(users._nameToUser, {
+            a: new User(1, 'a', [11, 22, 33]),
+            b: new User(2, 'b', [44]),
+            c: new User(3, 'c'),
+            aa: new User(11, 'aa', [], [1]),
+            bb: new User(22, 'bb', [], [1]),
+            cc: new User(33, 'cc', [], [1]),
+            dd: new User(44, 'dd', [], [2]),
+        });
     });
 
     describe('processChattersData()', () => {
@@ -167,81 +124,28 @@ describe('users.js', () => {
             }, 111);
 
             assert.deepEqual(users._nameToUser, {
-                a: {
-                    _id: 1,
-                    _userName: 'a',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }, b: {
-                    _id: undefined,
-                    _userName: 'b',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }, c: {
-                    _id: undefined,
-                    _userName: 'c',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }, d: {
-                    _id: undefined,
-                    _userName: 'd',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }
+                a: new User(1, 'a'),
+                b: new User(undefined, 'b'),
+                c: new User(undefined, 'c'),
+                d: new User(undefined, 'd'),
             });
             assert.deepEqual(users._idToUser, {
-                1: {
-                    _id: 1,
-                    _userName: 'a',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }
+                1: new User(1, 'a'),
             });
 
             assert.deepEqual(users._viewers, {
-                broadcaster: [
-                    {
-                        _id: 1,
-                        _userName: 'a',
-                        userNameCSSClass: 'text-muted',
-                        _following: {},
-                        _followedBy: {},
-                    }
-                ],
+                broadcaster: [new User(1, 'a')],
                 viewers: [
-                    {
-                        _id: undefined,
-                        _userName: 'b',
-                        userNameCSSClass: 'text-muted',
-                        _following: {},
-                        _followedBy: {},
-                    },
-                    {
-                        _id: undefined,
-                        _userName: 'c',
-                        userNameCSSClass: 'text-muted',
-                        _following: {},
-                        _followedBy: {},
-                    },
-                    {
-                        _id: undefined,
-                        _userName: 'd',
-                        userNameCSSClass: 'text-muted',
-                        _following: {},
-                        _followedBy: {},
-                    }
+                    new User(undefined, 'b'),
+                    new User(undefined, 'c'),
+                    new User(undefined, 'd'),
                 ]
             });
             sinon.assert.calledOnce(idFetcherAddStub);
         });
 
         it('high viewers throttling', async () => {
-            users._nameToUser = { 'a': new User(1, 'a', { 11: undefined, 22: undefined }) };
+            users._nameToUser = { 'a': new User(1, 'a') };
             users._idToUser = { 1: users._nameToUser['a'] };
 
             const idFetcherAddStub = sinon.stub(userIDFetcher, 'add');
@@ -353,13 +257,7 @@ describe('users.js', () => {
 
             assert.deepEqual(users._idToUser, {});
             assert.deepEqual(users._nameToUser, {
-                'aaa': {
-                    _id: undefined,
-                    _userName: 'AAA',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }
+                aaa: new User(undefined, 'AAA'),
             });
         });
 
@@ -367,22 +265,10 @@ describe('users.js', () => {
             users._ensureUserExists(111, 'AAA');
 
             assert.deepEqual(users._idToUser, {
-                111: {
-                    _id: 111,
-                    _userName: 'AAA',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }
+                111: new User(111, 'AAA'),
             });
             assert.deepEqual(users._nameToUser, {
-                'aaa': {
-                    _id: 111,
-                    _userName: 'AAA',
-                    userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
-                }
+                aaa: new User(111, 'AAA'),
             });
         });
 
@@ -396,8 +282,8 @@ describe('users.js', () => {
                     _id: 111,
                     _userName: 'AAA',
                     userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
+                    _following: new Set(),
+                    _followedBy: new Set(),
                     _test: 'test',
                 }
             });
@@ -406,11 +292,74 @@ describe('users.js', () => {
                     _id: 111,
                     _userName: 'AAA',
                     userNameCSSClass: 'text-muted',
-                    _following: {},
-                    _followedBy: {},
+                    _following: new Set(),
+                    _followedBy: new Set(),
                     _test: 'test',
                 }
             });
         });
+    });
+
+    it('getTopFollowedBySummary', () => {
+        users._idToUser = {
+            1: new User(1, 'a', [777], [11, 22, 33]),
+            11: new User(11, 'aa', [123], [1]),
+            22: new User(22, 'bb', [], [1]),
+            33: new User(33, 'cc', [123], [1]),
+            123: new User(123, 'abc', [], [11, 33]),
+            777: new User(777, 'ggg', [1], []),
+            888: new User(888, 'hhh'),
+        }
+
+        assert.deepEqual(users.getTopFollowedBySummary(123), [
+            { followingCurrent: 2, admiringCurrent: 1 },
+            { followingCurrent: 2, admiringCurrent: 0 },
+            { followingCurrent: 0, admiringCurrent: 1 },
+            { followingCurrent: 0, admiringCurrent: 1 },
+            { followingCurrent: 0, admiringCurrent: 1 },
+            { followingCurrent: 0, admiringCurrent: 0 },
+            { followingCurrent: 0, admiringCurrent: 0 },
+        ]);
+
+
+        assert.deepEqual(users.getTopFollowedBySummary(777), [
+            { followingCurrent: 0, admiringCurrent: 3 },
+            { followingCurrent: 0, admiringCurrent: 2 },
+            { followingCurrent: 1, admiringCurrent: 0 },
+            { followingCurrent: 1, admiringCurrent: 0 },
+            { followingCurrent: 1, admiringCurrent: 0 },
+            { followingCurrent: 0, admiringCurrent: 0 },
+            { followingCurrent: 0, admiringCurrent: 0 },
+        ]);
+
+    });
+
+    it('_getFollowedBySummary', () => {
+        users._idToUser = {
+            1: new User(1, 'a', [777], [11, 22, 33]),
+            11: new User(11, 'aa', [123], [1]),
+            22: new User(22, 'bb', [], [1]),
+            33: new User(33, 'cc', [123], [1]),
+            123: new User(123, 'abc', [], [11, 33]),
+            777: new User(777, 'ggg', [1], []),
+            888: new User(888, 'hhh'),
+        }
+
+        assert.deepEqual(users._getFollowedBySummary(123, 1), {
+            followingCurrent: 2,
+            admiringCurrent: 1,
+        });
+
+        assert.deepEqual(users._getFollowedBySummary(77, 1), {
+            followingCurrent: 0,
+            admiringCurrent: 3,
+        });
+
+        assert.deepEqual(users._getFollowedBySummary(123, 777), {
+            followingCurrent: 0,
+            admiringCurrent: 0,
+        });
+
+        assert.isUndefined(users._getFollowedBySummary(123, 17263));
     });
 });

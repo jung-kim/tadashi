@@ -80,7 +80,7 @@ class Users {
         const userObj = this.getUserByID(id) || this.getUserByName(lowerCaseName) || new User(id, name);
 
         userObj._id = userObj._id || id;
-        userObj._userName = userObj._userName || name;
+        userObj._userName = userObj._userName;
 
         if (id) {
             this._idToUser[id] = userObj;
@@ -151,8 +151,8 @@ class Users {
             const toUser = this._ensureUserExists(toID, follows.to_name);
             const fromUser = this._ensureUserExists(fromID, follows.from_name);
 
-            fromUser.addFollowing(toUser);
-            toUser.addFollowedBy(fromUser);
+            fromUser.addFollowing(toUser.getID());
+            toUser.addFollowedBy(fromUser.getID());
         });
 
         // set follows for a user object
@@ -195,8 +195,8 @@ class Users {
      * @param {int} currentStreamID 
      */
     getTopFollowedBySummary(currentStreamID) {
-        return Object.values(this.getUserByID)
-            .sort((left, right) => left.getFollowedByCounts() - right.getFollowedByCounts())
+        return Object.values(this._idToUser)
+            .sort((left, right) => right.getFollowedByCounts() - left.getFollowedByCounts())
             .slice(0, 10)
             .map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
     }
@@ -209,8 +209,11 @@ class Users {
      * @param {int} userID 
      */
     _getFollowedBySummary(currentStreamID, userID) {
-        return this.getUserByID(userID)
-            ._followedBy
+        if (!this.getUserByID(userID)) {
+            return undefined;
+        }
+
+        return [...this.getUserByID(userID)._followedBy]
             .map(id => this.getUserByID(id))
             .reduce((accumulator, current) => {
                 if (current.isFollowing(currentStreamID)) {

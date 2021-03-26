@@ -1,13 +1,13 @@
 const cssUnknown = require('../../helpers/constants').CSS_UNKNOWN;
 
 class User {
-    constructor(id, name) {
+    constructor(id, name, following, followedBy) {
         this._id = id;
         this._userName = name;
         this.userNameCSSClass = cssUnknown;
 
-        this._following = new Set();   // ids of users this user is following
-        this._followedBy = new Set();  // ids of users this user is followed by
+        this._following = new Set(following);   // ids of users this user is following
+        this._followedBy = new Set(followedBy);  // ids of users this user is followed by
     }
 
     getID() {
