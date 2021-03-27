@@ -196,8 +196,14 @@ class Users {
      */
     getTopFollowedBySummary(currentStreamID) {
         return Object.values(this._idToUser)
-            .sort((left, right) => right.getFollowedByCounts() - left.getFollowedByCounts())
-            .slice(0, 10)
+            .sort((left, right) => {
+                const followedByCount = right.getFollowedByCounts() - left.getFollowedByCounts();
+                if (followedByCount === 0) {
+                    return right.getID() - left.getID();
+                } else {
+                    return followedByCount;
+                }
+            }).slice(0, 10)
             .map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
     }
 
@@ -222,7 +228,7 @@ class Users {
                     accumulator.admiringCurrent++;
                 }
                 return accumulator;
-            }, { followingCurrent: 0, admiringCurrent: 0 });
+            }, { userID: userID, followingCurrent: 0, admiringCurrent: 0 });
     }
 }
 

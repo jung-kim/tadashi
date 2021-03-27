@@ -312,24 +312,24 @@ describe('users.js', () => {
         }
 
         assert.deepEqual(users.getTopFollowedBySummary(123), [
-            { followingCurrent: 2, admiringCurrent: 1 },
-            { followingCurrent: 2, admiringCurrent: 0 },
-            { followingCurrent: 0, admiringCurrent: 1 },
-            { followingCurrent: 0, admiringCurrent: 1 },
-            { followingCurrent: 0, admiringCurrent: 1 },
-            { followingCurrent: 0, admiringCurrent: 0 },
-            { followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 1, followingCurrent: 2, admiringCurrent: 1 },
+            { userID: 123, followingCurrent: 2, admiringCurrent: 0 },
+            { userID: 33, followingCurrent: 0, admiringCurrent: 1 },
+            { userID: 22, followingCurrent: 0, admiringCurrent: 1 },
+            { userID: 11, followingCurrent: 0, admiringCurrent: 1 },
+            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 777, followingCurrent: 0, admiringCurrent: 0 },
         ]);
 
 
         assert.deepEqual(users.getTopFollowedBySummary(777), [
-            { followingCurrent: 0, admiringCurrent: 3 },
-            { followingCurrent: 0, admiringCurrent: 2 },
-            { followingCurrent: 1, admiringCurrent: 0 },
-            { followingCurrent: 1, admiringCurrent: 0 },
-            { followingCurrent: 1, admiringCurrent: 0 },
-            { followingCurrent: 0, admiringCurrent: 0 },
-            { followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 1, followingCurrent: 0, admiringCurrent: 3 },
+            { userID: 123, followingCurrent: 0, admiringCurrent: 2 },
+            { userID: 33, followingCurrent: 1, admiringCurrent: 0 },
+            { userID: 22, followingCurrent: 1, admiringCurrent: 0 },
+            { userID: 11, followingCurrent: 1, admiringCurrent: 0 },
+            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 777, followingCurrent: 0, admiringCurrent: 0 },
         ]);
 
     });
@@ -346,16 +346,19 @@ describe('users.js', () => {
         }
 
         assert.deepEqual(users._getFollowedBySummary(123, 1), {
+            userID: 1,
             followingCurrent: 2,
             admiringCurrent: 1,
         });
 
         assert.deepEqual(users._getFollowedBySummary(77, 1), {
+            userID: 1,
             followingCurrent: 0,
             admiringCurrent: 3,
         });
 
         assert.deepEqual(users._getFollowedBySummary(123, 777), {
+            userID: 777,
             followingCurrent: 0,
             admiringCurrent: 0,
         });

@@ -1,7 +1,7 @@
 const chartFilter = require('../../shared/chartFilter');
 const ChartRoot = require('./ChartRoot');
-
-const numStreamerToDisplay = 10;
+const users = require('../../../singletons/users');
+const twitchClient = require('../../../singletons/twitchClient');
 
 const chartFollowedStreamersHelperContent = `<p>Top followed streamers from viewers<br>
 Top 10 streamers followed by viewers.  </br>
@@ -33,17 +33,14 @@ class FollowedStreamersVC extends ChartRoot {
                 this.disable();
                 break;
             case 'fetch.user.follows.resp':
-                if (this._enabled) {
-                    this._pushToProcess(payload.data);
-                    this.update();
-                }
+                this.update();
                 break;
         }
     }
 
-
     reset() {
-        this._map = {};
+        this._fromAdmirers = {};
+        this._fromFollowers = {};
         this._labels = [];
         this._datasets = [];
     }
@@ -55,34 +52,28 @@ class FollowedStreamersVC extends ChartRoot {
     }
 
     _update() {
-        this._labels = [];
-        this._datasets = [];
-        const filter = chartFilter.getUserFilter();
-
-        for (const [name, value] of Object.entries(this._map)) {
-            if (filter.isValid() && !filter.isApplicable(name)) {
-                // searching and this one doesn't meet search criteria
-                continue;
-            }
-
-            const lastIndx = (this._datasets.length >= numStreamerToDisplay ? numStreamerToDisplay : this._datasets.length) - 1;
-            if (this._datasets.length >= numStreamerToDisplay && value < this._datasets[lastIndx]) {
-                // value is lower than displaying and already showing maximum amount;
-                continue;
-            }
-
-            let indx = 0;
-            for (; indx < this._datasets.length; indx++) {
-                if (value > this._datasets[indx]) {
-                    break;
-                }
-            }
-
-            this._datasets.splice(indx, 0, value);
-            this._labels.splice(indx, 0, name);
+        if (!this._enabled) {
+            return;
         }
-        this._datasets.length = Math.min(this._datasets.length, numStreamerToDisplay);
-        this._labels.length = Math.min(this._datasets.length, numStreamerToDisplay);
+
+        const currentStreamerID = twitchClient.getChannelID();
+        const followedBySummary = users.getTopFollowedBySummary(currentStreamerID);
+
+        this._labels = followedBySummary.map(summary => users.getUserByID(summary.userID).getUserName());
+        this._datasets = [
+            {
+                label: 'from not following current streamer',
+                data: followedBySummary.map(summary => summary.admiringCurrent),
+                borderWidth: 5,
+                backgroundColor: "red"
+            },
+            {
+                label: 'from following current streamer',
+                data: followedBySummary.map(summary => summary.followingCurrent),
+                borderWidth: 1,
+                backgroundColor: "blue"
+            }
+        ]
     }
 }
 
