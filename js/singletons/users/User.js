@@ -6,8 +6,12 @@ class User {
         this._userName = name;
         this.userNameCSSClass = cssUnknown;
 
-        this._following = new Set(following);   // ids of users this user is following
-        this._followedBy = new Set(followedBy);  // ids of users this user is followed by
+        if (following) {
+            this._following = new Set(following);    // ids of users this user is following
+        }
+        if (followedBy) {
+            this._followedBy = new Set(followedBy);  // ids of users this user is followed by
+        }
     }
 
     getID() {
@@ -24,6 +28,9 @@ class User {
      */
     addFollowing(userID) {
         if (userID) {
+            if (!this._following) {
+                this._following = new Set();
+            }
             this._following.add(userID);
         }
     }
@@ -34,16 +41,19 @@ class User {
      */
     addFollowedBy(userID) {
         if (userID) {
+            if (!this._followedBy) {
+                this._followedBy = new Set();
+            }
             this._followedBy.add(userID);
         }
     }
 
     getFollowingCounts() {
-        return this._following.size;
+        return this._following ? this._following.size : undefined;
     }
 
     getFollowedByCounts() {
-        return this._followedBy.size;
+        return this._followedBy ? this._followedBy.size : undefined;
     }
 
     /**
@@ -52,16 +62,16 @@ class User {
      * @param {int} targetUserID 
      */
     isFollowing(targetUserID) {
-        return this._following.has(targetUserID);
+        return this._following ? this._following.has(targetUserID) : undefined;
     }
 
     /**
      * Check if this user is followed by the target user
      * 
-     * @param {*} targetUserID 
+     * @param {int} targetUserID 
      */
     isFollowedBy(targetUserID) {
-        return this._followedBy.has(targetUserID);
+        return this._followedBy ? this._followedBy.has(targetUserID) : undefined;
     }
 }
 

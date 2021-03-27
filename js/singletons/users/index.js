@@ -193,9 +193,10 @@ class Users {
      * get top N followed by summary
      * 
      * @param {int} currentStreamID 
+     * @param {UserFilter} filter
      */
-    getTopFollowedBySummary(currentStreamID) {
-        return Object.values(this._idToUser)
+    getTopFollowedBySummary(currentStreamID, filter) {
+        return filter.filterUsers(Object.values(this._idToUser))
             .sort((left, right) => {
                 const followedByCount = right.getFollowedByCounts() - left.getFollowedByCounts();
                 if (followedByCount === 0) {
@@ -219,7 +220,7 @@ class Users {
             return undefined;
         }
 
-        return [...this.getUserByID(userID)._followedBy]
+        return [...(this.getUserByID(userID)._followedBy || [])]
             .map(id => this.getUserByID(id))
             .reduce((accumulator, current) => {
                 if (current.isFollowing(currentStreamID)) {

@@ -69,15 +69,15 @@ describe('users.js', () => {
             1: new User(1, 'a', [11, 22]),
             2: new User(2, 'b'),
             3: new User(3, 'c'),
-            11: new User(11, 'aa', [], [1]),
-            22: new User(22, 'bb', [], [1]),
+            11: new User(11, 'aa', undefined, [1]),
+            22: new User(22, 'bb', undefined, [1]),
         });
         assert.deepEqual(users._nameToUser, {
             a: new User(1, 'a', [11, 22]),
             b: new User(2, 'b'),
             c: new User(3, 'c'),
-            aa: new User(11, 'aa', [], [1]),
-            bb: new User(22, 'bb', [], [1]),
+            aa: new User(11, 'aa', undefined, [1]),
+            bb: new User(22, 'bb', undefined, [1]),
         });
 
         // with valid get user
@@ -93,19 +93,19 @@ describe('users.js', () => {
             1: new User(1, 'a', [11, 22, 33]),
             2: new User(2, 'b', [44]),
             3: new User(3, 'c'),
-            11: new User(11, 'aa', [], [1]),
-            22: new User(22, 'bb', [], [1]),
-            33: new User(33, 'cc', [], [1]),
-            44: new User(44, 'dd', [], [2]),
+            11: new User(11, 'aa', undefined, [1]),
+            22: new User(22, 'bb', undefined, [1]),
+            33: new User(33, 'cc', undefined, [1]),
+            44: new User(44, 'dd', undefined, [2]),
         });
         assert.deepEqual(users._nameToUser, {
             a: new User(1, 'a', [11, 22, 33]),
             b: new User(2, 'b', [44]),
             c: new User(3, 'c'),
-            aa: new User(11, 'aa', [], [1]),
-            bb: new User(22, 'bb', [], [1]),
-            cc: new User(33, 'cc', [], [1]),
-            dd: new User(44, 'dd', [], [2]),
+            aa: new User(11, 'aa', undefined, [1]),
+            bb: new User(22, 'bb', undefined, [1]),
+            cc: new User(33, 'cc', undefined, [1]),
+            dd: new User(44, 'dd', undefined, [2]),
         });
     });
 
@@ -282,8 +282,6 @@ describe('users.js', () => {
                     _id: 111,
                     _userName: 'AAA',
                     userNameCSSClass: 'text-muted',
-                    _following: new Set(),
-                    _followedBy: new Set(),
                     _test: 'test',
                 }
             });
@@ -292,8 +290,6 @@ describe('users.js', () => {
                     _id: 111,
                     _userName: 'AAA',
                     userNameCSSClass: 'text-muted',
-                    _following: new Set(),
-                    _followedBy: new Set(),
                     _test: 'test',
                 }
             });
@@ -301,6 +297,7 @@ describe('users.js', () => {
     });
 
     it('getTopFollowedBySummary', () => {
+        const userFilter = chartFilter.getUserFilter();
         users._idToUser = {
             1: new User(1, 'a', [777], [11, 22, 33]),
             11: new User(11, 'aa', [123], [1]),
@@ -311,27 +308,25 @@ describe('users.js', () => {
             888: new User(888, 'hhh'),
         }
 
-        assert.deepEqual(users.getTopFollowedBySummary(123), [
+        assert.deepEqual(users.getTopFollowedBySummary(123, userFilter), [
             { userID: 1, followingCurrent: 2, admiringCurrent: 1 },
             { userID: 123, followingCurrent: 2, admiringCurrent: 0 },
             { userID: 33, followingCurrent: 0, admiringCurrent: 1 },
             { userID: 22, followingCurrent: 0, admiringCurrent: 1 },
             { userID: 11, followingCurrent: 0, admiringCurrent: 1 },
-            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
             { userID: 777, followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
         ]);
 
-
-        assert.deepEqual(users.getTopFollowedBySummary(777), [
+        assert.deepEqual(users.getTopFollowedBySummary(777, userFilter), [
             { userID: 1, followingCurrent: 0, admiringCurrent: 3 },
             { userID: 123, followingCurrent: 0, admiringCurrent: 2 },
             { userID: 33, followingCurrent: 1, admiringCurrent: 0 },
             { userID: 22, followingCurrent: 1, admiringCurrent: 0 },
             { userID: 11, followingCurrent: 1, admiringCurrent: 0 },
-            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
             { userID: 777, followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
         ]);
-
     });
 
     it('_getFollowedBySummary', () => {

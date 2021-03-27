@@ -57,7 +57,8 @@ class FollowedStreamersVC extends ChartRoot {
         }
 
         const currentStreamerID = twitchClient.getChannelID();
-        const followedBySummary = users.getTopFollowedBySummary(currentStreamerID);
+        const userFilter = chartFilter.getUserFilter();
+        const followedBySummary = users.getTopFollowedBySummary(currentStreamerID, userFilter);
 
         this._labels = followedBySummary.map(summary => users.getUserByID(summary.userID).getUserName());
         this._datasets = [

@@ -4,7 +4,7 @@ const twitchClient = require('../../../singletons/twitchClient');
 const followingFlag = ':following';
 const notFollowingFlag = ':notfollowing';
 
-class Filter {
+class UserFilter {
     constructor(searchString) {
         this.changeSearchString(searchString);
     }
@@ -68,5 +68,5 @@ class Filter {
     }
 }
 
-const filter = new Filter();
+const filter = new UserFilter();
 module.exports = filter;
