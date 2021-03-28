@@ -63,16 +63,22 @@ class FollowedStreamersVC extends ChartRoot {
         this._labels = followedBySummary.map(summary => users.getUserByID(summary.userID).getUserName());
         this._datasets = [
             {
-                label: 'from not following current streamer',
-                data: followedBySummary.map(summary => summary.admiringCurrent),
+                label: 'following',
+                data: followedBySummary.map(summary => summary.admiring),
                 borderWidth: 5,
+                backgroundColor: "green"
+            },
+            {
+                label: 'not following',
+                data: followedBySummary.map(summary => summary.following),
+                borderWidth: 1,
                 backgroundColor: "red"
             },
             {
-                label: 'from following current streamer',
-                data: followedBySummary.map(summary => summary.followingCurrent),
-                borderWidth: 1,
-                backgroundColor: "blue"
+                label: 'unknown',
+                data: followedBySummary.map(summary => summary.unknown),
+                borderWidth: 5,
+                backgroundColor: "grey"
             }
         ]
     }

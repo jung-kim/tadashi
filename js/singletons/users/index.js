@@ -74,13 +74,13 @@ class Users {
      * 
      * @param {number} id optional
      * @param {string} name required
+     * @returns {User} created or founded user object
      */
     _ensureUserExists(id, name) {
         const lowerCaseName = name.toLowerCase();
         const userObj = this.getUserByID(id) || this.getUserByName(lowerCaseName) || new User(id, name);
 
         userObj._id = userObj._id || id;
-        userObj._userName = userObj._userName;
 
         if (id) {
             this._idToUser[id] = userObj;
@@ -90,6 +90,35 @@ class Users {
         return userObj;
     }
 
+    /**
+     * process chatters data to 
+     *  1. ensure they exists as users object
+     *  2. if new user, add them to id fetcher as user id is missing
+     *  3. update viewers object to be used by chattersTableVC
+     * 
+     * @param {Object} chattersData result of `https://tmi.twitch.tv/group/user/{streamer name}/chatters`
+     * @param {number} channelID current streamer id
+     * @returns {undefined}
+     * 
+     * {
+     *     "_links": {},
+     *     "chatter_count": 3,
+     *     "chatters": {
+     *         "broadcaster": [
+     *             "abc"
+     *         ],
+     *         "vips": [],
+     *         "moderators": [],
+     *         "staff": [],
+     *         "admins": [],
+     *         "global_mods": [],
+     *         "viewers": [
+     *             "aaa",
+     *             "bbb"
+     *         ]
+     *     }
+     * }
+     */
     processChattersData(chattersData, channelID) {
         const tmp = {};
         const viewersCount = Object.values(chattersData || {}).
@@ -126,23 +155,24 @@ class Users {
      * for each user follows response, ensure users exists and establish
      * following and followed by relationships.
      * 
-     * @param {json} resp 
+     * @param {Object} resp result of https://dev.twitch.tv/docs/api/reference#get-users-follows
+     * {
+     *     "total": 173,
+     *     "data": [
+     *         {
+     *             "from_id": "1111",
+     *             "from_login": "alogin",
+     *             "from_name": "alogin",
+     *             "to_id": "2222",
+     *             "to_login": "another",
+     *             "to_name": "another",
+     *             "followed_at": "2021-03-16T11:06:38Z"
+     *         },
+     *         ...
+     *     ]
+     * }
+     * @returns {undefined}
      * 
-{
-    "total": 173,
-    "data": [
-        {
-            "from_id": "1111",
-            "from_login": "alogin",
-            "from_name": "alogin",
-            "to_id": "2222",
-            "to_login": "another",
-            "to_name": "another",
-            "followed_at": "2021-03-16T11:06:38Z"
-        },
-    ]
-    ...
-}
      */
     processUserFollowsResp(resp) {
         resp.data.forEach(follows => {
@@ -163,24 +193,25 @@ class Users {
      * process get user response from `helix/users?login=...' to ensure exists
      * and queue up for fetching user follows fetching.
      * 
-     * @param {json} resp 
+     * @param {Object} resp result of https://dev.twitch.tv/docs/api/reference#get-users
+     * {
+     *    "data": [
+     *        {
+     *            "id": "9999", // <-- why is this string...?  wtf twitch??
+     *            "login": "...",
+     *            "display_name": "...",
+     *            "type": "",
+     *            "broadcaster_type": "partner",
+     *            "description": "...",
+     *            "profile_image_url": "...",
+     *            "offline_image_url": "..",
+     *            "view_count": 9999,
+     *            "created_at": "2014-06-11T14:11:05.9921119Z"
+     *        }
+     *    ]
+     * }
+     * @returns {undefined}
      * 
-{
-    "data": [
-        {
-            "id": "9999", // <-- why is this string...?  wtf twitch??
-            "login": "...",
-            "display_name": "...",
-            "type": "",
-            "broadcaster_type": "partner",
-            "description": "...",
-            "profile_image_url": "...",
-            "offline_image_url": "..",
-            "view_count": 9999,
-            "created_at": "2014-06-11T14:11:05.9921119Z"
-        }
-    ]
-}
      */
     processUserIDsResp(resp) {
         for (const element of resp.data) {
@@ -192,44 +223,52 @@ class Users {
     /**
      * get top N followed by summary
      * 
-     * @param {int} currentStreamID 
-     * @param {UserFilter} filter
+     * @param {number} currentStreamID userID of the current streamer
+     * @param {UserFilter} filter filter to be applied on user lists
+     * @returns {Array.<Object>} array of followed by summary objects
      */
     getTopFollowedBySummary(currentStreamID, filter) {
-        return filter.filterUsers(Object.values(this._idToUser))
-            .sort((left, right) => {
+        return filter.filterUsers(Object.values(this._idToUser)).
+            sort((left, right) => {
                 const followedByCount = right.getFollowedByCounts() - left.getFollowedByCounts();
                 if (followedByCount === 0) {
                     return right.getID() - left.getID();
                 } else {
                     return followedByCount;
                 }
-            }).slice(0, 10)
-            .map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
+            }).slice(0, 10).
+            map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
     }
 
     /**
      * Get followed summary of a user grouped by if they are following 
      * current streamer or not
      * 
-     * @param {int} currentStreamID 
-     * @param {int} userID 
+     * @param {number} currentStreamID userID of the current streamer
+     * @param {number} userID userID of a user to get followed by summary
+     * @returns {Object} { userID, unknown, folowing, admiring}
      */
     _getFollowedBySummary(currentStreamID, userID) {
         if (!this.getUserByID(userID)) {
             return undefined;
         }
 
-        return [...(this.getUserByID(userID)._followedBy || [])]
-            .map(id => this.getUserByID(id))
-            .reduce((accumulator, current) => {
-                if (current.isFollowing(currentStreamID)) {
-                    accumulator.followingCurrent++;
-                } else {
-                    accumulator.admiringCurrent++;
+        return [...(this.getUserByID(userID)._followedBy || [])].
+            map(id => this.getUserByID(id)).
+            reduce((accumulator, current) => {
+                switch (current.isFollowing(currentStreamID)) {
+                    case undefined:
+                        accumulator.unknown++;
+                        break;
+                    case true:
+                        accumulator.following++;
+                        break;
+                    case false:
+                        accumulator.admiring++;
+                        break;
                 }
                 return accumulator;
-            }, { userID: userID, followingCurrent: 0, admiringCurrent: 0 });
+            }, { userID: userID, unknown: 0, following: 0, admiring: 0 });
     }
 }
 

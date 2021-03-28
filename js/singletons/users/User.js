@@ -24,7 +24,8 @@ class User {
 
     /**
      * Users this user is following
-     * @param {int} userID 
+     * @param {number} userID of a user this user is following
+     * @returns {undefined}
      */
     addFollowing(userID) {
         if (userID) {
@@ -37,7 +38,8 @@ class User {
 
     /**
      * Useers this user is followed by
-     * @param {int} userID
+     * @param {number} userID of a user this user is followed by
+     * @returns {undefined}
      */
     addFollowedBy(userID) {
         if (userID) {
@@ -59,7 +61,8 @@ class User {
     /**
      * Check if this user is following the target user
      * 
-     * @param {int} targetUserID 
+     * @param {number} targetUserID of a user to check if this user is following by that user
+     * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowing(targetUserID) {
         return this._following ? this._following.has(targetUserID) : undefined;
@@ -68,7 +71,8 @@ class User {
     /**
      * Check if this user is followed by the target user
      * 
-     * @param {int} targetUserID 
+     * @param {number} targetUserID of a user to check if this user is followed by that user
+     * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowedBy(targetUserID) {
         return this._followedBy ? this._followedBy.has(targetUserID) : undefined;
