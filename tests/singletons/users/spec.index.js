@@ -301,31 +301,31 @@ describe('users.js', () => {
         users._idToUser = {
             1: new User(1, 'a', [777], [11, 22, 33]),
             11: new User(11, 'aa', [123], [1]),
-            22: new User(22, 'bb', [], [1]),
+            22: new User(22, 'bb', undefined, [1]),
             33: new User(33, 'cc', [123], [1]),
             123: new User(123, 'abc', [], [11, 33]),
-            777: new User(777, 'ggg', [1], []),
+            777: new User(777, 'ggg', [1]),
             888: new User(888, 'hhh'),
         }
 
         assert.deepEqual(users.getTopFollowedBySummary(123, userFilter), [
-            { userID: 1, followingCurrent: 2, admiringCurrent: 1 },
-            { userID: 123, followingCurrent: 2, admiringCurrent: 0 },
-            { userID: 33, followingCurrent: 0, admiringCurrent: 1 },
-            { userID: 22, followingCurrent: 0, admiringCurrent: 1 },
-            { userID: 11, followingCurrent: 0, admiringCurrent: 1 },
-            { userID: 777, followingCurrent: 0, admiringCurrent: 0 },
-            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 1, unknown: 1, following: 2, admiring: 0 },
+            { userID: 123, unknown: 0, following: 2, admiring: 0 },
+            { userID: 33, unknown: 0, following: 0, admiring: 1 },
+            { userID: 22, unknown: 0, following: 0, admiring: 1 },
+            { userID: 11, unknown: 0, following: 0, admiring: 1 },
+            { userID: 777, unknown: 0, following: 0, admiring: 0 },
+            { userID: 888, unknown: 0, following: 0, admiring: 0 },
         ]);
 
         assert.deepEqual(users.getTopFollowedBySummary(777, userFilter), [
-            { userID: 1, followingCurrent: 0, admiringCurrent: 3 },
-            { userID: 123, followingCurrent: 0, admiringCurrent: 2 },
-            { userID: 33, followingCurrent: 1, admiringCurrent: 0 },
-            { userID: 22, followingCurrent: 1, admiringCurrent: 0 },
-            { userID: 11, followingCurrent: 1, admiringCurrent: 0 },
-            { userID: 777, followingCurrent: 0, admiringCurrent: 0 },
-            { userID: 888, followingCurrent: 0, admiringCurrent: 0 },
+            { userID: 1, unknown: 1, following: 0, admiring: 2 },
+            { userID: 123, unknown: 0, following: 0, admiring: 2 },
+            { userID: 33, unknown: 0, following: 1, admiring: 0 },
+            { userID: 22, unknown: 0, following: 1, admiring: 0 },
+            { userID: 11, unknown: 0, following: 1, admiring: 0 },
+            { userID: 777, unknown: 0, following: 0, admiring: 0 },
+            { userID: 888, unknown: 0, following: 0, admiring: 0 },
         ]);
     });
 
@@ -333,29 +333,39 @@ describe('users.js', () => {
         users._idToUser = {
             1: new User(1, 'a', [777], [11, 22, 33]),
             11: new User(11, 'aa', [123], [1]),
-            22: new User(22, 'bb', [], [1]),
+            22: new User(22, 'bb', undefined, [1]),
             33: new User(33, 'cc', [123], [1]),
             123: new User(123, 'abc', [], [11, 33]),
-            777: new User(777, 'ggg', [1], []),
+            777: new User(777, 'ggg', [1]),
             888: new User(888, 'hhh'),
         }
 
         assert.deepEqual(users._getFollowedBySummary(123, 1), {
             userID: 1,
-            followingCurrent: 2,
-            admiringCurrent: 1,
+            unknown: 1,
+            following: 2,
+            admiring: 0,
         });
 
         assert.deepEqual(users._getFollowedBySummary(77, 1), {
             userID: 1,
-            followingCurrent: 0,
-            admiringCurrent: 3,
+            unknown: 1,
+            following: 0,
+            admiring: 2,
         });
 
         assert.deepEqual(users._getFollowedBySummary(123, 777), {
             userID: 777,
-            followingCurrent: 0,
-            admiringCurrent: 0,
+            unknown: 0,
+            following: 0,
+            admiring: 0,
+        });
+
+        assert.deepEqual(users._getFollowedBySummary(123, 33), {
+            userID: 33,
+            unknown: 0,
+            following: 0,
+            admiring: 1,
         });
 
         assert.isUndefined(users._getFollowedBySummary(123, 17263));

@@ -23,6 +23,8 @@ class ChartRoot {
 
         eventSignals.add(this._eventSignalsFunc.bind(this));
         this.reset();
+
+        this._initializedChartObject();
     }
 
     _eventSignalsFunc(payload) {
@@ -106,19 +108,9 @@ class ChartRoot {
         });
     }
 
-
-    _updateChartObject() {
+    _initializedChartObject() {
         if (this._chartObject) {
-            this._chartObject.data.datasets[0].data = this._datasets;
-            if (!Object.isFrozen(this._chartObject.data.labels)) {
-                // static lables, label colors will not change and preconfigured.
-                this._chartObject.data.labels = this._labels;
-                this._chartObject.data.datasets[0].backgroundColor = this._getBackgroundColor()
-                this._chartObject.data.datasets[0].borderColor = this._getBorderColor()
-            }
-
-            this._chartObject.update();
-            return;
+            this._chartObject.destroy();
         }
 
         document.getElementById(this._chartDomSelector).innerHTML = templates[`./hbs/stream/components/chart.hbs`](this);
@@ -128,21 +120,25 @@ class ChartRoot {
             placement: 'left'
         });
 
+        this._chartObject = new Chart(document.getElementById(`canvas-${this._chartDomSelector}`), this._defaultChartOptions());
+    }
+
+    _defaultChartOptions() {
         let indexAxis;
         if (this._type === 'horizontalBar') {
             this._type = 'bar';
             indexAxis = 'y';
         }
 
-        this._chartObject = new Chart(document.getElementById(`canvas-${this._chartDomSelector}`), {
+        return {
             type: this._type,
             data: {
-                labels: this._labels,
+                labels: [],
 
                 datasets: [{
-                    data: this._datasets,
-                    backgroundColor: this._getBackgroundColor(),
-                    borderColor: this._getBorderColor(),
+                    data: [],
+                    backgroundColor: [],
+                    borderColor: [],
                     borderWidth: 1,
                     indexAxis: indexAxis,
                 }]
@@ -168,7 +164,19 @@ class ChartRoot {
                     }
                 },
             },
-        });
+        }
+    }
+
+    _updateChartObject() {
+        this._chartObject.data.datasets[0].data = this._datasets;
+        if (!Object.isFrozen(this._chartObject.data.labels)) {
+            // not static lables, label colors will may change
+            this._chartObject.data.labels = this._labels;
+            this._chartObject.data.datasets[0].backgroundColor = this._getBackgroundColor();
+            this._chartObject.data.datasets[0].borderColor = this._getBorderColor();
+        }
+
+        this._chartObject.update();
     }
 }
 
