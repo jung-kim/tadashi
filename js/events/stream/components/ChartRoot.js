@@ -16,15 +16,9 @@ class ChartRoot {
         this._helpContent = obj.helpContent;
         this._type = obj.type || 'doughnut';
 
-        this.update = _.throttle(() => {
-            this._update();
-            this._updateChartObject();
-        }, obj.updateThrottleTime || 500);
+        this.update = _.throttle(this.update.bind(this), obj.updateThrottleTime || 500);
 
         eventSignals.add(this._eventSignalsFunc.bind(this));
-        this.reset();
-
-        this._initializedChartObject();
     }
 
     _eventSignalsFunc(payload) {
@@ -35,7 +29,6 @@ class ChartRoot {
             case 'stream.load.ready':
                 this.enable();
                 this.reset();
-                this._updateChartObject();
                 break;
             case 'stream.cleanup':
                 this.disable();
@@ -62,7 +55,7 @@ class ChartRoot {
     }
 
     reset() {
-        // override this
+        this._initializedChartObject();
     }
 
     _getParameters() {
@@ -94,15 +87,15 @@ class ChartRoot {
         }
     }
 
-    _getBackgroundColor() {
-        return this._labels.map((userName) => {
+    _getBackgroundColor(labels) {
+        return labels.map((userName) => {
             const bgColor = toMaterialStyle(userName, '200').backgroundColor;
             return `${bgColor}4D`;
         });
     }
 
-    _getBorderColor() {
-        return this._labels.map((userName) => {
+    _getBorderColor(labels) {
+        return labels.map((userName) => {
             const bgColor = toMaterialStyle(userName, '200').backgroundColor;
             return `${bgColor}FF`;
         });
@@ -134,7 +127,6 @@ class ChartRoot {
             type: this._type,
             data: {
                 labels: [],
-
                 datasets: [{
                     data: [],
                     backgroundColor: [],
@@ -154,29 +146,10 @@ class ChartRoot {
                         display: true,
                         text: this._title,
                         fontSize: 18,
-                    },
-                    tooltip: {
-                        callbacks: {
-                            afterLabel: (tooltipItem) => {
-                                return this.afterLabel ? this.afterLabel(tooltipItem.label) : undefined;
-                            }
-                        }
                     }
                 },
             },
         }
-    }
-
-    _updateChartObject() {
-        this._chartObject.data.datasets[0].data = this._datasets;
-        if (!Object.isFrozen(this._chartObject.data.labels)) {
-            // not static lables, label colors will may change
-            this._chartObject.data.labels = this._labels;
-            this._chartObject.data.datasets[0].backgroundColor = this._getBackgroundColor();
-            this._chartObject.data.datasets[0].borderColor = this._getBorderColor();
-        }
-
-        this._chartObject.update();
     }
 }
 
