@@ -1,6 +1,7 @@
 const ChartRoot = require('./ChartRoot');
 const constants = require('../../../helpers/constants');
 const dataCache = require('../../../simpletons/dataCache');
+const utils = require('../../../helpers/utils');
 
 const chartChatsByUsersHelperContent = `<p>Chats grouped by user name</p>`
 
@@ -31,8 +32,8 @@ class ChatsByUsersVC extends ChartRoot {
 
         labels.length = length;
         data.length = length;
-        this._chartObject.data.datasets[0].backgroundColor = this._getBackgroundColor(labels);
-        this._chartObject.data.datasets[0].borderColor = this._getBorderColor(labels);
+        this._chartObject.data.datasets[0].backgroundColor = utils.getBackgroundColor(labels);
+        this._chartObject.data.datasets[0].borderColor = utils.getBorderColor(labels);
         this._chartObject.update();
     }
 }

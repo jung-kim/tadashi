@@ -3,7 +3,6 @@ const chartFilter = require('../../shared/chartFilter');
 const twitchClient = require('../../../singletons/twitchClient');
 const utils = require('../../../helpers/utils');
 const constants = require('../../../helpers/constants');
-const toMaterialStyle = require('material-color-hash').default;
 const _ = require('lodash');
 
 const MAX_DATAPOINT_LIMIT = 250;
@@ -16,22 +15,28 @@ class ChartRoot {
         this._helpContent = obj.helpContent;
         this._type = obj.type || 'doughnut';
 
-        this.update = _.throttle(this.update.bind(this), obj.updateThrottleTime || 500);
+        this.update = _.throttle(this._update.bind(this), obj.updateThrottleTime || 500);
 
         eventSignals.add(this._eventSignalsFunc.bind(this));
     }
 
+    /**
+     * function to run on event signals.  
+     * 
+     * @param {object} payload event signals
+     * @returns {undefined}
+     */
     _eventSignalsFunc(payload) {
         switch (payload.event) {
             case 'channel.input.update':
                 this.reset();
                 break;
             case 'stream.load.ready':
-                this.enable();
+                this._enabled = true;
                 this.reset();
                 break;
             case 'stream.cleanup':
-                this.disable();
+                this._enabled = false;
                 break;
             case 'data.cache.updated':
             case 'filter.change':
@@ -42,22 +47,29 @@ class ChartRoot {
         }
     }
 
-    enable() {
-        this._enabled = true;
-    }
-
-    disable() {
-        this._enabled = false;
-    }
-
+    /**
+     * logic to update data values and redraws
+     * 
+     * @returns {undefined}
+     */
     async _update() {
         // override this
     }
 
+    /**
+     * called when to disregard existing data and start fresh
+     * 
+     * @returns {undefined}
+     */
     reset() {
         this._initializedChartObject();
     }
 
+    /**
+     * returns parameters for drawing charts
+     * 
+     * @returns {object} various parameters
+     */
     _getParameters() {
         const start = chartFilter.getStartTime().unix();
         const end = chartFilter.getEndTime().unix();
@@ -87,20 +99,12 @@ class ChartRoot {
         }
     }
 
-    _getBackgroundColor(labels) {
-        return labels.map((userName) => {
-            const bgColor = toMaterialStyle(userName, '200').backgroundColor;
-            return `${bgColor}4D`;
-        });
-    }
-
-    _getBorderColor(labels) {
-        return labels.map((userName) => {
-            const bgColor = toMaterialStyle(userName, '200').backgroundColor;
-            return `${bgColor}FF`;
-        });
-    }
-
+    /**
+     * initialized chart object, destroy if already exists.
+     * Previous data are destroyed
+     * 
+     * @returns {undefined}
+     */
     _initializedChartObject() {
         if (this._chartObject) {
             this._chartObject.destroy();
@@ -116,6 +120,12 @@ class ChartRoot {
         this._chartObject = new Chart(document.getElementById(`canvas-${this._chartDomSelector}`), this._defaultChartOptions());
     }
 
+    /**
+     * Returns default chart option object to create chart with.
+     * Maybe overwridden to customize
+     * 
+     * @returns {object} chart option object to be passed into `new Chart`
+     */
     _defaultChartOptions() {
         let indexAxis;
         if (this._type === 'horizontalBar') {

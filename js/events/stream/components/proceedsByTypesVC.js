@@ -46,10 +46,17 @@ class ProceedsByTypesVC extends ChartRoot {
         data[3] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBGIFT, filter)._sum;
         data[4] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBMYSTERY, filter)._sum;
 
-        this._chartObject.data.labels = this._labels;
-        this._chartObject.data.datasets[0].backgroundColor = this._backgroundColor;
-        this._chartObject.data.datasets[0].borderColor = this._borderColor;
         this._chartObject.update();
+    }
+
+    _defaultChartOptions() {
+        const options = super._defaultChartOptions();
+
+        options.data.labels = this._labels;
+        options.data.datasets[0].backgroundColor = this._backgroundColor;
+        options.data.datasets[0].borderColor = this._borderColor;
+
+        return options;
     }
 }
 
