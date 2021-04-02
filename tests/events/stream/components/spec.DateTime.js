@@ -17,7 +17,10 @@ describe('DateTime.js', () => {
         sinon.useFakeTimers();
         const getElementById = document.getElementById.withArgs('dom-id').returns('a-dom');
 
-        assert.deepEqual(new DateTime('dom-id'), {
+        const datetime = new DateTime('dom-id');
+        sinon.assert.calledOnce(getElementById);
+
+        assert.deepEqual(datetime, {
             dom: 'a-dom',
             id: 'dom-id',
             timeSelector: undefined,
@@ -33,7 +36,6 @@ describe('DateTime.js', () => {
             defaultDate: moment().toDate(),
             onValueUpdate: sinon.match.any,
         }));
-        sinon.assert.calledOnce(getElementById);
     });
 
     it('get', () => {
@@ -51,5 +53,15 @@ describe('DateTime.js', () => {
         dateTime.set(now);
 
         sinon.assert.calledOnce(dateTime.timeSelector.setDate.withArgs([now.format(constants.MOMENT_DISPLAY_FORMAT)]));
+    });
+
+    it('destroy', () => {
+        const dateTime = new DateTime('dom-id');
+        const destroy = sinon.stub();
+        dateTime.timeSelector = { destroy: destroy };
+
+        dateTime.destroy();
+
+        sinon.assert.calledOnce(destroy);
     });
 });

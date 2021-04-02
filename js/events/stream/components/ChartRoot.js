@@ -42,6 +42,7 @@ class ChartRoot {
             case 'filter.change':
                 if (this._enabled) {
                     this.update();
+                    this._chartObject.update();
                 }
                 break;
         }
@@ -66,7 +67,7 @@ class ChartRoot {
     }
 
     /**
-     * returns parameters for drawing charts
+     * returns parameters for drawing charts and set context
      * 
      * @returns {object} various parameters
      */
@@ -127,12 +128,6 @@ class ChartRoot {
      * @returns {object} chart option object to be passed into `new Chart`
      */
     _defaultChartOptions() {
-        let indexAxis;
-        if (this._type === 'horizontalBar') {
-            this._type = 'bar';
-            indexAxis = 'y';
-        }
-
         return {
             type: this._type,
             data: {
@@ -142,7 +137,6 @@ class ChartRoot {
                     backgroundColor: [],
                     borderColor: [],
                     borderWidth: 1,
-                    indexAxis: indexAxis,
                 }]
             },
             options: {
@@ -160,6 +154,25 @@ class ChartRoot {
                 },
             },
         }
+    }
+
+    /**
+     * Returns root level labels.  
+     * This labels are different then dataset level labels.
+     * 
+     * @returns {Array} root level labels
+     */
+    _getRootLabels() {
+        return this._chartObject.data.labels;
+    }
+
+    /**
+     * returns datasets of chartjs
+     * 
+     * @returns {Array} datasets
+     */
+    _getDataset() {
+        return this._chartObject.data.datasets;
     }
 }
 

@@ -38,15 +38,14 @@ class ProceedsByTypesVC extends ChartRoot {
 
     async _update() {
         const { channel, filter, startBucket, endBucket } = await this._getParameters();
-        const data = this._chartObject.data.datasets[0].data;
+        const datasets = this._getDataset();
+        const data = datasets[0].data;
 
         data[0] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_CHEER, filter)._sum;
         data[1] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUB, filter)._sum;
         data[2] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_RESUB, filter)._sum;
         data[3] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBGIFT, filter)._sum;
         data[4] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBMYSTERY, filter)._sum;
-
-        this._chartObject.update();
     }
 
     _defaultChartOptions() {

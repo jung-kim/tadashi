@@ -9,7 +9,7 @@ const utils = require('../../../js/helpers/utils');
 const chartFilter = require('../../../js/events/shared/chartFilter');
 const DateTime = require('../../../js/events/stream/components/DateTime');
 
-describe('DateTime.js', () => {
+describe('DateTimeRange.js', () => {
     beforeEach(() => {
         reset();
     });

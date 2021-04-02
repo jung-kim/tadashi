@@ -14,9 +14,8 @@ class TimeseriesVC extends ChartRoot {
 
     async _update() {
         const { interval, startBucket, channel, filter, length } = await this._getParameters();
-
-        const labels = this._chartObject.data.labels;
-        const datasets = this._chartObject.data.datasets;
+        const labels = this._getRootLabels();
+        const datasets = this._getDataset();
 
         for (let i = 0; i < length; i++) {
             const at = startBucket + (i * interval);
@@ -37,7 +36,6 @@ class TimeseriesVC extends ChartRoot {
             datasets[type].users.length = length;
         }
         labels.length = length;
-        this._chartObject.update();
     }
 
     _initializedChartObject() {

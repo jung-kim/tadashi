@@ -73,85 +73,6 @@ describe('ChartRoot.js', () => {
         });
     });
 
-    it('enable/disable', () => {
-        const chartRoot = new ChartRoot({});
-        chartRoot.enable();
-        assert.isTrue(chartRoot._enabled);
-
-        chartRoot.disable();
-        assert.isFalse(chartRoot._enabled);
-    });
-
-    it('_getBackgroundColor', () => {
-        const chartRoot = new ChartRoot({});
-        chartRoot._labels = ['a', 'b'];
-
-        assert.deepEqual(chartRoot._getBackgroundColor(), ['#E6EE9C4D', '#FFCC804D']);
-    });
-
-
-    it('_getBorderColor', () => {
-        const chartRoot = new ChartRoot({});
-        chartRoot._labels = ['a', 'b'];
-
-        assert.deepEqual(chartRoot._getBorderColor(), ['#E6EE9CFF', '#FFCC80FF']);
-    });
-
-    describe('_updateChartObject', () => {
-        it('_chartObject initialized', () => {
-            const chartRoot = new ChartRoot({});
-            chartRoot._datasets = [5, 6];
-            chartRoot._labels = ['a', 'b'];
-            chartRoot._chartObject = {
-                data: {
-                    labels: [],
-                    datasets: [{}]
-                },
-                update: sinon.stub()
-            }
-
-            chartRoot._updateChartObject();
-
-            assert.deepEqual(chartRoot._chartObject.data.labels, ['a', 'b']);
-            assert.deepEqual(chartRoot._chartObject.data.datasets[0].backgroundColor, ['#E6EE9C4D', '#FFCC804D']);
-            assert.deepEqual(chartRoot._chartObject.data.datasets[0].borderColor, ['#E6EE9CFF', '#FFCC80FF']);
-            assert.deepEqual(chartRoot._chartObject.data.datasets[0].data, [5, 6]);
-
-            sinon.assert.calledOnce(chartRoot._chartObject.update);
-        });
-
-        it('_chartObject is not initialized', () => {
-            const chartRoot = new ChartRoot({ type: 'horizontalBar', chartDomSelector: 'dom-selector' });
-            chartRoot._datasets = [5, 6];
-            chartRoot._labels = ['a', 'b'];
-
-            document.getElementById.reset();
-            document.getElementById = sinon.stub().withArgs(sinon.match.any).returns({ a: 1 })
-            chartRoot._updateChartObject();
-
-            assert.equal(chartRoot._chartObject.type, 'bar');
-            assert.deepEqual(chartRoot._chartObject.data, {
-                labels: ['a', 'b'],
-                datasets: [{
-                    backgroundColor: [
-                        "#E6EE9C4D",
-                        "#FFCC804D",
-                    ],
-                    borderColor: [
-                        "#E6EE9CFF",
-                        "#FFCC80FF",
-                    ],
-                    borderWidth: 1,
-                    data: [
-                        5,
-                        6
-                    ],
-                    indexAxis: 'y'
-                }],
-            });
-        });
-    });
-
     describe('_eventSignalsFunc', () => {
         it('channel.input.update', () => {
             const chartRoot = new ChartRoot({});
@@ -163,39 +84,70 @@ describe('ChartRoot.js', () => {
         it('stream.load.ready', () => {
             const chartRoot = new ChartRoot({});
             const reset = sinon.stub(chartRoot, 'reset');
-            const enable = sinon.stub(chartRoot, 'enable');
-            const _updateChartObject = sinon.stub(chartRoot, '_updateChartObject');
             chartRoot._eventSignalsFunc({ event: 'stream.load.ready' });
             sinon.assert.calledOnce(reset);
-            sinon.assert.calledOnce(enable);
-            sinon.assert.calledOnce(_updateChartObject);
+            assert.isTrue(chartRoot._enabled)
         });
 
         it('stream.cleanup', () => {
             const chartRoot = new ChartRoot({});
-            const disable = sinon.stub(chartRoot, 'disable');
             chartRoot._eventSignalsFunc({ event: 'stream.cleanup' });
-            sinon.assert.calledOnce(disable);
+            assert.isFalse(chartRoot._enabled)
         });
 
         it('data.cache.updated', () => {
             const chartRoot = new ChartRoot({});
             const update = sinon.stub(chartRoot, 'update');
+            chartRoot._chartObject = { update: sinon.stub() };
+
             chartRoot._enabled = true;
             chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
             chartRoot._enabled = false;
             chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
             sinon.assert.calledOnce(update);
+            sinon.assert.calledOnce(chartRoot._chartObject.update);
         });
 
         it('filter.change', () => {
             const chartRoot = new ChartRoot({});
             const update = sinon.stub(chartRoot, 'update');
+            chartRoot._chartObject = { update: sinon.stub() };
+
             chartRoot._enabled = true;
             chartRoot._eventSignalsFunc({ event: 'filter.change' });
             chartRoot._enabled = false;
             chartRoot._eventSignalsFunc({ event: 'filter.change' });
             sinon.assert.calledOnce(update);
+            sinon.assert.calledOnce(chartRoot._chartObject.update);
+        });
+    });
+
+    describe('_initializedChartObject', () => {
+        it('_chartObject is undefined', () => {
+            const chartRoot = new ChartRoot({ chartDomSelector: 'something' });
+
+            const dom = {};
+            document.getElementById.withArgs('something').returns(dom);
+            chartRoot._initializedChartObject();
+
+            assert.isString(dom.innerHTML);
+            assert.isObject(chartRoot._helpDom);
+            assert.isObject(chartRoot._chartObject);
+        });
+
+        it('_chartObject already initialized', () => {
+            const chartRoot = new ChartRoot({ chartDomSelector: 'something' });
+            const destroy = sinon.stub();
+            chartRoot._chartObject = { destroy: destroy };
+
+            const dom = {};
+            document.getElementById.withArgs('something').returns(dom);
+            chartRoot._initializedChartObject();
+
+            sinon.assert.calledOnce(destroy);
+            assert.isString(dom.innerHTML);
+            assert.isObject(chartRoot._helpDom);
+            assert.isObject(chartRoot._chartObject);
         });
     });
 });

@@ -18,8 +18,9 @@ class ChatsByUsersVC extends ChartRoot {
 
     async _update() {
         const { channel, filter, startBucket, endBucket } = await this._getParameters();
-        const labels = this._chartObject.data.labels;
-        const data = this._chartObject.data.datasets[0].data;
+        const labels = this._getRootLabels();
+        const datasets = this._getDataset();
+        const data = datasets[0].data;
 
         const total = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_CHAT, filter);
         const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
@@ -32,9 +33,8 @@ class ChatsByUsersVC extends ChartRoot {
 
         labels.length = length;
         data.length = length;
-        this._chartObject.data.datasets[0].backgroundColor = utils.getBackgroundColor(labels);
-        this._chartObject.data.datasets[0].borderColor = utils.getBorderColor(labels);
-        this._chartObject.update();
+        datasets[0].backgroundColor = utils.getBackgroundColor(labels);
+        datasets[0].borderColor = utils.getBorderColor(labels);
     }
 }
 

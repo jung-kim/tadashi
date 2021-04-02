@@ -47,8 +47,9 @@ class ProceedsByUsersVC extends ChartRoot {
 
         const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
         const length = Math.min(sorted.length, this._displayLimit);
-        const labels = this._chartObject.data.labels;
-        const data = this._chartObject.data.datasets[0].data;
+        const labels = this._getRootLabels();
+        const datasets = this._getDataset();
+        const data = datasets[0].data;
 
         for (let i = 0; i < length; i++) {
             const userName = sorted[i][0];
@@ -66,9 +67,8 @@ class ProceedsByUsersVC extends ChartRoot {
         labels.length = length;
         data.length = length;
         this._sumByType.length = length;
-        this._chartObject.data.datasets[0].backgroundColor = utils.getBackgroundColor(labels);
-        this._chartObject.data.datasets[0].borderColor = utils.getBorderColor(labels);
-        this._chartObject.update();
+        datasets[0].backgroundColor = utils.getBackgroundColor(labels);
+        datasets[0].borderColor = utils.getBorderColor(labels);
     }
 
     _afterLabel(userName) {
