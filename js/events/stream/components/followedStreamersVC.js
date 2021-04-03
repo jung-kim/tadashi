@@ -11,11 +11,11 @@ Includes some viewers who may not be watching anymore.
 class FollowedStreamersVC extends ChartRoot {
     constructor() {
         super({
-            type: 'horizontalBar',
+            type: 'bar',
             title: 'Top followed streamers by viewers',
             chartDomSelector: 'pie-followed-streamers',
             helpContent: chartFollowedStreamersHelperContent,
-            updateThrottleTime: 5000
+            updateThrottleTime: 5000,
         });
     }
 
@@ -25,62 +25,70 @@ class FollowedStreamersVC extends ChartRoot {
                 this.reset();
                 break;
             case 'stream.load.ready':
-                this.enable();
+                this._enabled = true;
                 this.reset();
-                this._updateChartObject();
                 break;
             case 'stream.cleanup':
-                this.disable();
+                this._enabled = false;
                 break;
             case 'fetch.user.follows.resp':
-                this.update();
+                if (this._enabled) {
+                    this.update();
+                    this._chartObject.update();
+                }
                 break;
         }
     }
 
-    reset() {
-        this._fromAdmirers = {};
-        this._fromFollowers = {};
-        this._labels = [];
-        this._datasets = [];
-    }
+    _defaultChartOptions() {
+        const options = super._defaultChartOptions();
+        options.data.datasets = [{
+            data: [],
+            backgroundColor: 'blue',
+            borderColor: 'grey',
+            borderWidth: 1,
+            label: 'not following',
+        },
+        {
+            data: [],
+            backgroundColor: 'red',
+            borderColor: 'grey',
+            borderWidth: 1,
+            label: 'following',
+        },
+        {
+            data: [],
+            backgroundColor: 'green',
+            borderColor: 'grey',
+            borderWidth: 1,
+            label: 'unknown',
+        }];
+        options.options.indexAxis = 'y';
+        options.options.scales = {
+            x: { stacked: true },
+            y: { stacked: true },
+        };
 
-    _pushToProcess(userFollows) {
-        userFollows.data.forEach(follows => {
-            this._map[follows.to_name] = (this._map[follows.to_name] || 0) + 1;
-        });
+        console.log(23482, options)
+
+        return options;
     }
 
     _update() {
-        if (!this._enabled) {
-            return;
-        }
-
         const currentStreamerID = twitchClient.getChannelID();
         const userFilter = chartFilter.getUserFilter();
         const followedBySummary = users.getTopFollowedBySummary(currentStreamerID, userFilter);
 
-        this._labels = followedBySummary.map(summary => users.getUserByID(summary.userID).getUserName());
-        this._datasets = [
-            {
-                label: 'following',
-                data: followedBySummary.map(summary => summary.admiring),
-                borderWidth: 5,
-                backgroundColor: "green"
-            },
-            {
-                label: 'not following',
-                data: followedBySummary.map(summary => summary.following),
-                borderWidth: 1,
-                backgroundColor: "red"
-            },
-            {
-                label: 'unknown',
-                data: followedBySummary.map(summary => summary.unknown),
-                borderWidth: 5,
-                backgroundColor: "grey"
-            }
-        ]
+        const labels = this._getRootLabels();
+        const datasets = this._getDataset();
+
+        for (let i = 0; i < followedBySummary.length; i++) {
+            labels[i] = users.getUserByID(followedBySummary[i].userID).getUserName();
+        }
+
+        datasets[0].data = followedBySummary.map(summary => summary.admiring);
+        datasets[1].data = followedBySummary.map(summary => summary.following);
+        datasets[2].data = followedBySummary.map(summary => summary.unknown);
     }
 }
 
