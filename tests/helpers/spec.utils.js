@@ -146,4 +146,22 @@ describe('Utils.js', () => {
             assert.equal(err, `invalid message type: ${undefined}`);
         }
     });
+
+    it('getHashedColor', () => {
+        assert.equal(utils.getHashedColor('abc', '4D'), '#80DEEA4D');
+    });
+
+    it('getBackgroundColor', () => {
+        assert.deepEqual(utils.getBackgroundColor(['a', 'b']), [
+            "#E6EE9C4D",
+            "#FFCC804D",
+        ]);
+    });
+
+    it('getBorderColor', () => {
+        assert.deepEqual(utils.getBorderColor(['a', 'b']), [
+            "#E6EE9CFF",
+            "#FFCC80FF",
+        ]);
+    });
 });

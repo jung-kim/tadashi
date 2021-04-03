@@ -61,10 +61,12 @@ describe('proceedsByUsersVC.js', () => {
                 }
             });
 
+        document.getElementById.withArgs(proceedsByUsersVC._chartDomSelector).returns({});
+        proceedsByUsersVC.reset();
         await proceedsByUsersVC._update();
 
-        assert.deepEqual(proceedsByUsersVC._labels, ['a', 'f', 'b', 'd', 'e', 'c']);
-        assert.deepEqual(proceedsByUsersVC._datasets, [9, 7, 3, 3, 2, 1]);
+        assert.deepEqual(proceedsByUsersVC._getRootLabels(), ['a', 'f', 'b', 'd', 'e', 'c']);
+        assert.deepEqual(proceedsByUsersVC._getDataset()[0].data, [9, 7, 3, 3, 2, 1]);
         assert.deepEqual(proceedsByUsersVC._sumByType, [
             { 1: 3, 2: 3, 7: 3 },
             { 6: 5, 7: 2 },
@@ -136,8 +138,8 @@ describe('proceedsByUsersVC.js', () => {
 
         await proceedsByUsersVC._update();
 
-        assert.deepEqual(proceedsByUsersVC._labels, ['a', 'c', 'b', 'f', 'd', 'e', 'g', 'h', 'i', 'j']);
-        assert.deepEqual(proceedsByUsersVC._datasets, [6, 4, 3, 2, 1, 1, 1, 1, 1, 1]);
+        assert.deepEqual(proceedsByUsersVC._getRootLabels(), ['a', 'c', 'b', 'f', 'd', 'e', 'g', 'h', 'i', 'j']);
+        assert.deepEqual(proceedsByUsersVC._getDataset()[0].data, [6, 4, 3, 2, 1, 1, 1, 1, 1, 1]);
         assert.deepEqual(proceedsByUsersVC._sumByType, [
             { 2: 1, 6: 5 },
             { 2: 1, 7: 3 },
@@ -210,11 +212,11 @@ describe('proceedsByUsersVC.js', () => {
                 }
             });
 
-        assert.deepEqual(proceedsByUsersVC.afterLabel('a'), [
+        assert.deepEqual(proceedsByUsersVC._afterLabel('a'), [
             "  cheer: 100",
             "  subscription gift: 5",
         ]);
 
-        assert.deepEqual(proceedsByUsersVC.afterLabel('aaa'), []);
+        assert.deepEqual(proceedsByUsersVC._afterLabel('aaa'), []);
     });
 });

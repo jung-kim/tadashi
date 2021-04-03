@@ -30,19 +30,12 @@ describe('chatsByUsersVC.js', () => {
                     'c': 2,
                 }
             });
-        const datasets = [{
-            data: [],
-            backgroundColor: [],
-            borderColor: [],
-            borderWidth: 1,
-        }];
-        const labels = [];
-        sinon.stub(chatsByUsersVC, '_getDataset').returns(datasets);
-        sinon.stub(chatsByUsersVC, '_getRootLabels').returns(labels);
+        document.getElementById.withArgs(chatsByUsersVC._chartDomSelector).returns({});
+        chatsByUsersVC.reset();
 
         await chatsByUsersVC._update();
-        assert.deepEqual(datasets[0].data, [2, 2, 1]);
-        assert.deepEqual(labels, ['a', 'c', 'b']);
+        assert.deepEqual(chatsByUsersVC._getDataset()[0].data, [2, 2, 1]);
+        assert.deepEqual(chatsByUsersVC._getRootLabels(), ['a', 'c', 'b']);
 
         sinon.verifyAndRestore();
         sinon.stub(chatsByUsersVC, '_getParameters').returns({
@@ -74,11 +67,9 @@ describe('chatsByUsersVC.js', () => {
                     'o': 7,
                 }
             });
-        sinon.stub(chatsByUsersVC, '_getDataset').returns(datasets);
-        sinon.stub(chatsByUsersVC, '_getRootLabels').returns(labels);
         await chatsByUsersVC._update();
-        assert.deepEqual(datasets[0].data, [10, 9, 8, 7, 7, 7, 5, 4, 4, 2]);
-        assert.deepEqual(labels, ['g', 'e', 'k', 'h', 'm', 'o', 'd', 'i', 'j', 'a']);
+        assert.deepEqual(chatsByUsersVC._getDataset()[0].data, [10, 9, 8, 7, 7, 7, 5, 4, 4, 2]);
+        assert.deepEqual(chatsByUsersVC._getRootLabels(), ['g', 'e', 'k', 'h', 'm', 'o', 'd', 'i', 'j', 'a']);
     });
 
 });

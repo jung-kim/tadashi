@@ -50,7 +50,7 @@ class TimeseriesVC extends ChartRoot {
         if (!tooltipItem) {
             return;
         }
-        const chartDatasetsMsgType = this._chartObject.data.datasets[tooltipItem.datasetIndex];
+        const chartDatasetsMsgType = this._getDataset()[tooltipItem.datasetIndex];
         if (tooltipItem.yLabel === 0
             || !chartFilter.getUserFilter().isValid()
             || !chartDatasetsMsgType.users
@@ -72,7 +72,7 @@ class TimeseriesVC extends ChartRoot {
     _toolTipTitle(tooltipItem) {
         const dataIndex = ((tooltipItem && tooltipItem[0]) || {}).dataIndex;
         if (dataIndex >= 0) {
-            return this._chartObject.data.labels[dataIndex].format(constants.TIMEFORMAT_DISPLAY);
+            return this._getRootLabels()[dataIndex].format(constants.TIMEFORMAT_DISPLAY);
         }
     }
 
@@ -96,7 +96,7 @@ class TimeseriesVC extends ChartRoot {
     }
 
     _scaleTicksCallback(labelIndex) {
-        const value = this._chartObject.data.labels[labelIndex];
+        const value = this._getRootLabels()[labelIndex];
         if (value.hours() === 0 && value.minutes() === 0) {
             return value.format("M/D");
         }
@@ -123,6 +123,7 @@ class TimeseriesVC extends ChartRoot {
         }
 
         return {
+            k: 99,
             type: 'bar',
             data: {
                 labels: [],
