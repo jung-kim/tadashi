@@ -3,9 +3,12 @@ const ChartRoot = require('./ChartRoot');
 const users = require('../../../singletons/users');
 const twitchClient = require('../../../singletons/twitchClient');
 
-const chartFollowedStreamersHelperContent = `<p>Top followed streamers from viewers<br>
-Top 10 streamers followed by viewers.  </br>
-Includes some viewers who may not be watching anymore.
+const chartFollowedStreamersHelperContent = `<p>Top 19 followed streamers from viewers<br>
+Includes data from both current viewers and the viewers who have left as well.
+</br>
+- Followed by admirers: following another streamer but not following current streamer amongst viewers.
+- Followed by followers: following another streamer and following current streamer amongst viewers.
+- unknown: data hasn't beent fetched yet and is unkonwn.
 </p>`
 
 class FollowedStreamersVC extends ChartRoot {
@@ -44,22 +47,22 @@ class FollowedStreamersVC extends ChartRoot {
         const options = super._defaultChartOptions();
         options.data.datasets = [{
             data: [],
-            backgroundColor: 'blue',
-            borderColor: 'grey',
+            backgroundColor: '#B346A3',
+            borderColor: '#B34650',
             borderWidth: 1,
-            label: 'not following',
+            label: 'followed admirers',
         },
         {
             data: [],
-            backgroundColor: 'red',
-            borderColor: 'grey',
+            backgroundColor: '#46B356',
+            borderColor: '#46B380',
             borderWidth: 1,
-            label: 'following',
+            label: 'Followed by current stream followers',
         },
         {
             data: [],
-            backgroundColor: 'green',
-            borderColor: 'grey',
+            backgroundColor: '#466DB3',
+            borderColor: '#466D80',
             borderWidth: 1,
             label: 'unknown',
         }];
@@ -68,8 +71,6 @@ class FollowedStreamersVC extends ChartRoot {
             x: { stacked: true },
             y: { stacked: true },
         };
-
-        console.log(23482, options)
 
         return options;
     }

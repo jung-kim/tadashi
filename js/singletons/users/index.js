@@ -3,7 +3,7 @@ const eventSignals = require('../../helpers/signals').eventSignals;
 const User = require('./User');
 const userIDFetcher = require('./userIDFetcher');
 const userFollowsFetcher = require('./userFollowsFetcher');
-const channelFollowsFetcher = require('./channelFollowsFetcher');
+// const channelFollowsFetcher = require('./channelFollowsFetcher');
 const constants = require('../../helpers/constants');
 
 class Users {
@@ -31,7 +31,7 @@ class Users {
             case 'channel.input.update':
                 userIDFetcher.reset();
                 userFollowsFetcher.reset();
-                channelFollowsFetcher.fetch(payload.data.id);
+                // channelFollowsFetcher.fetch(payload.data.id);
                 break;
             case 'fetch.channel.follows.resp':
                 this.processUserFollowsResp(payload.data);
@@ -230,7 +230,7 @@ class Users {
     getTopFollowedBySummary(currentStreamID, filter) {
         return filter.filterUsers(Object.values(this._idToUser)).
             sort((left, right) => {
-                const followedByCount = right.getFollowedByCounts() - left.getFollowedByCounts();
+                const followedByCount = (right.getFollowedByCounts() || 0) - (left.getFollowedByCounts() || 0);
                 if (followedByCount === 0) {
                     return right.getID() - left.getID();
                 } else {
