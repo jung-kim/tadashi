@@ -306,6 +306,7 @@ describe('users.js', () => {
             123: new User(123, 'abc', [], [11, 33]),
             777: new User(777, 'ggg', [1]),
             888: new User(888, 'hhh'),
+            999: new User(999)
         }
 
         assert.deepEqual(users.getTopFollowedBySummary(123, userFilter), [
@@ -314,8 +315,9 @@ describe('users.js', () => {
             { userID: 33, unknown: 0, following: 0, admiring: 1 },
             { userID: 22, unknown: 0, following: 0, admiring: 1 },
             { userID: 11, unknown: 0, following: 0, admiring: 1 },
-            { userID: 777, unknown: 0, following: 0, admiring: 0 },
+            { userID: 999, unknown: 0, following: 0, admiring: 0 },
             { userID: 888, unknown: 0, following: 0, admiring: 0 },
+            { userID: 777, unknown: 0, following: 0, admiring: 0 },
         ]);
 
         assert.deepEqual(users.getTopFollowedBySummary(777, userFilter), [
@@ -324,8 +326,9 @@ describe('users.js', () => {
             { userID: 33, unknown: 0, following: 1, admiring: 0 },
             { userID: 22, unknown: 0, following: 1, admiring: 0 },
             { userID: 11, unknown: 0, following: 1, admiring: 0 },
-            { userID: 777, unknown: 0, following: 0, admiring: 0 },
+            { userID: 999, unknown: 0, following: 0, admiring: 0 },
             { userID: 888, unknown: 0, following: 0, admiring: 0 },
+            { userID: 777, unknown: 0, following: 0, admiring: 0 },
         ]);
     });
 

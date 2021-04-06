@@ -2,103 +2,87 @@ const { assert } = require('chai');
 const sinon = require('sinon');
 
 const followedStreamersVC = require('../../../../js/events/stream/components/followedStreamersVC');
-const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
+const chartFilter = require('../../../../js/events/shared/chartFilter');
+const twitchClient = require('../../../../js/singletons/twitchClient');
+const users = require('../../../../js/singletons/users');
+const User = require('../../../../js/singletons/users/User');
 
 
 describe('followedStreamersVC.js', () => {
-    afterEach(() => {
-        followedStreamersVC.reset();
+    beforeEach(() => {
         reset();
-    });
-
-    it('_pushToProcess', () => {
-        followedStreamersVC._pushToProcess({
-            data: [
-                { to_id: '123', to_name: 'abc' },
-                { to_id: '442', to_name: 'aaa' }
-            ]
-        });
-        assert.deepEqual(followedStreamersVC._map, {
-            abc: 1,
-            aaa: 1
-        });
-
-
-        followedStreamersVC._pushToProcess({
-            data: [
-                { to_id: '123', to_name: 'abc' },
-                { to_id: '555', to_name: 'bbb' }
-            ]
-        });
-        assert.deepEqual(followedStreamersVC._map, {
-            abc: 2,
-            aaa: 1,
-            bbb: 1,
-        });
+        document.getElementById.withArgs('pie-followed-streamers').returns({});
+        followedStreamersVC.reset();
     });
 
     it('_update', () => {
-        followedStreamersVC._update();
-        assert.deepEqual(followedStreamersVC._datasets, []);
-        assert.deepEqual(followedStreamersVC._labels, []);
-
-        followedStreamersVC._map = {
-            'a': 11
+        users._idToUser = {
+            1: new User(1, 'a'),
+            2: new User(1, 'b'),
+            3: new User(1, 'c'),
+            4: new User(1, 'd'),
         }
-        followedStreamersVC._update();
-        assert.deepEqual(followedStreamersVC._datasets, [11]);
-        assert.deepEqual(followedStreamersVC._labels, ['a']);
 
-        followedStreamersVC._map = {
-            'a': 11,
-            'b': 17,
-            'c': 7
-        }
-        followedStreamersVC._update();
-        assert.deepEqual(followedStreamersVC._datasets, [17, 11, 7]);
-        assert.deepEqual(followedStreamersVC._labels, ['b', 'a', 'c']);
+        sinon.stub(twitchClient, 'getChannelID').returns(123);
+        sinon.stub(users, 'getTopFollowedBySummary')
+            .withArgs(123, chartFilter.getUserFilter())
+            .returns([])
 
-        followedStreamersVC._map = {
-            'a': 18,
-            'b': 17,
-            'c': 18
-        }
-        followedStreamersVC._update();
-        assert.deepEqual(followedStreamersVC._datasets, [18, 18, 17]);
-        assert.deepEqual(followedStreamersVC._labels, ['a', 'c', 'b']);
 
-        followedStreamersVC._map = {
-            'a': 18,
-            'b': 17,
-            'c': 18,
-            'd': 20,
-            'e': 1,
-            'f': 8,
-            'g': 12,
-            'h': 4,
-            'i': 21,
-            'j': 17,
-            'k': 11,
-            'l': 15,
-            'm': 2
-        }
         followedStreamersVC._update();
-        assert.deepEqual(followedStreamersVC._datasets, [21, 20, 18, 18, 17, 17, 15, 12, 11, 8]);
-        assert.deepEqual(followedStreamersVC._labels, ['i', 'd', 'a', 'c', 'b', 'j', 'l', 'g', 'k', 'f']);
+        assert.deepEqual(followedStreamersVC._getDataset()[0].data, []);
+        assert.deepEqual(followedStreamersVC._getDataset()[1].data, []);
+        assert.deepEqual(followedStreamersVC._getDataset()[2].data, []);
+        assert.deepEqual(followedStreamersVC._getRootLabels(), []);
 
-        followedStreamersVC._map = {
-            'aa': 18,
-            'a': 17,
-            'bAaA': 18,
-            'abab': 20,
-            'AA': 1,
-            'Aa': 8,
-            'A': 12,
-        }
-        filter.changeSearchString('aa')
+        sinon.verifyAndRestore();
+
+        sinon.stub(twitchClient, 'getChannelID').returns(123);
+        sinon.stub(users, 'getTopFollowedBySummary')
+            .withArgs(123, chartFilter.getUserFilter())
+            .returns([{
+                userID: 1,
+                unknown: 0,
+                following: 1,
+                admiring: 0,
+            }]);
+
         followedStreamersVC._update();
-        assert.deepEqual(followedStreamersVC._datasets, [18, 18, 8, 1]);
-        assert.deepEqual(followedStreamersVC._labels, ['aa', 'bAaA', 'Aa', 'AA']);
+        assert.deepEqual(followedStreamersVC._getDataset()[0].data, [0]);
+        assert.deepEqual(followedStreamersVC._getDataset()[1].data, [1]);
+        assert.deepEqual(followedStreamersVC._getDataset()[2].data, [0]);
+        assert.deepEqual(followedStreamersVC._getRootLabels(), ['a']);
+
+
+
+        sinon.verifyAndRestore();
+
+        sinon.stub(twitchClient, 'getChannelID').returns(123);
+        sinon.stub(users, 'getTopFollowedBySummary')
+            .withArgs(123, chartFilter.getUserFilter())
+            .returns([{
+                userID: 1,
+                unknown: 0,
+                following: 6,
+                admiring: 7,
+            }, {
+                userID: 2,
+                unknown: 0,
+                following: 3,
+                admiring: 9,
+            }, {
+                userID: 3,
+                unknown: 7,
+                following: 4,
+                admiring: 2,
+            }]);
+
+
+        followedStreamersVC._update();
+        assert.deepEqual(followedStreamersVC._getDataset()[0].data, [7, 9, 2]);
+        assert.deepEqual(followedStreamersVC._getDataset()[1].data, [6, 3, 4]);
+        assert.deepEqual(followedStreamersVC._getDataset()[2].data, [0, 0, 7]);
+        assert.deepEqual(followedStreamersVC._getRootLabels(), ['a', 'b', 'c']);
     });
 
     describe('_eventSignalsFunc', () => {
@@ -110,28 +94,27 @@ describe('followedStreamersVC.js', () => {
 
         it('stream.load.ready', () => {
             const reset = sinon.stub(followedStreamersVC, 'reset');
-            const enable = sinon.stub(followedStreamersVC, 'enable');
-            const _updateChartObject = sinon.stub(followedStreamersVC, '_updateChartObject');
             followedStreamersVC._eventSignalsFunc({ event: 'stream.load.ready' });
             sinon.assert.calledOnce(reset);
-            sinon.assert.calledOnce(enable);
-            sinon.assert.calledOnce(_updateChartObject);
+            assert.equal(followedStreamersVC._enabled, true);
         });
 
         it('stream.cleanup', () => {
-            const disable = sinon.stub(followedStreamersVC, 'disable');
             followedStreamersVC._eventSignalsFunc({ event: 'stream.cleanup' });
-            sinon.assert.calledOnce(disable);
+            assert.equal(followedStreamersVC._enabled, false);
         });
 
         it('fetch.user.follows.resp', () => {
-            const _pushToProcess = sinon.stub(followedStreamersVC, '_pushToProcess');
             const update = sinon.stub(followedStreamersVC, 'update');
+            const chartObjectUpdate = sinon.stub();
+            followedStreamersVC._chartObject = { update: chartObjectUpdate };
+
             followedStreamersVC._enabled = true;
             followedStreamersVC._eventSignalsFunc({ event: 'fetch.user.follows.resp' });
             followedStreamersVC._enabled = false;
             followedStreamersVC._eventSignalsFunc({ event: 'fetch.user.follows.resp' });
-            sinon.assert.calledOnce(_pushToProcess);
+
+            sinon.assert.calledOnce(chartObjectUpdate);
             sinon.assert.calledOnce(update);
         });
     });

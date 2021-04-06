@@ -111,10 +111,6 @@ class ChartRoot {
             this._chartObject.destroy();
         }
 
-        if (this._dom === 'pie-followed-streamers') {
-            console.log(11, this._defaultChartOptions())
-        }
-
         document.getElementById(this._chartDomSelector).innerHTML = templates[`./hbs/stream/components/chart.hbs`](this);
         this._helpDom = new BSN.Popover(document.getElementById(`${this._chartDomSelector}-help`), {
             title: this._title,
