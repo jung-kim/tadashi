@@ -28,7 +28,7 @@ jobs:
         name: codecov-tadashi
         fail_ci_if_error: true 
     - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          commit: ${{ github.event.workflow_run.head_sha }}
-          files: "tset-results.xml"
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      with:
+        commit: ${{ github.event.workflow_run.head_sha }}
+        files: "test-results.xml"
