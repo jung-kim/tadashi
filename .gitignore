@@ -142,3 +142,5 @@ js/env.js
 coverage
 cache
 scratch**
+
+test-results.xml
