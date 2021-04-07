@@ -6,9 +6,9 @@
   "scripts": {
     "prep": "npm run env-gen && awk '{gsub(/\"es2015\"/,\"\\\"@babel/preset-env\\\"\")}1' ./node_modules/tmi.js/package.json > temp.txt && mv temp.txt ./node_modules/tmi.js/package.json",
     "env-gen": "node ./scripts/env_export.js",
-    "test": "npm run prep && ./node_modules/mocha/bin/mocha --timeout 5000 --exit --file ./tests/testSetup.js './tests/**/*'",
+    "test": "npm run prep && ./node_modules/mocha/bin/mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-multi-config.json --timeout 5000 --exit --file ./tests/testSetup.js './tests/**/*'",
     "cov": "npm run coverage",
-    "coverage": "npm run prep && ./node_modules/nyc/bin/nyc.js --reporter=json --reporter=text --reporter=html ./node_modules/mocha/bin/mocha --timeout 5000 --exit --file ./tests/testSetup.js './tests/**/*'",
+    "coverage": "npm run prep && ./node_modules/nyc/bin/nyc.js --reporter=json --reporter=text --reporter=html ./node_modules/mocha/bin/mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-multi-config.json --timeout 5000 --exit --file ./tests/testSetup.js './tests/**/*'",
     "build": "npm run prep && node ./scripts/build.js",
     "deploy": "node ./scripts/deploy.js"
   },
@@ -47,6 +47,8 @@
     "minify-stream": "^2.1.0",
     "mkdirp": "^1.0.4",
     "mocha": "^8.3.0",
+    "mocha-junit-reporter": "^2.0.0",
+    "mocha-multi-reporters": "^1.5.1",
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "node-localstorage": "^2.1.6",
