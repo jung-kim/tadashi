@@ -23,7 +23,7 @@ These are the folders and what files are in each folders.  There are other gener
 - ./html
     - index.html, entry point of the page
 - [./js](./js/README.md)
-    - js logics
+    - bulk of js codes.
 - ./less
     - less files that gets translated into css
 - [./proxy-server](./proxy-server/README.md)
@@ -67,3 +67,33 @@ Code coverages are automatically posted to [codecov.io](https://codecov.io/gh/ju
     - `open ./public/index.html`
 
 Technically, one could skip step 1 and run build the project without the client_id by doing `npm run install; npm run build`.  But some [Twitch API calls](https://dev.twitch.tv/docs/api/reference) that requires client id will not work.
+
+
+## dev faq
+
+### What are some of the libraries that are being used?
+not exhaustive
+
+- handlebars
+- less
+- browserify
+- babelify
+- chartjs
+- lodash
+- moment
+- pako
+- awesomplete
+- flatpickr
+- micro-signal
+
+### Why is it not in react?
+Short answer is because I don't want to.  Long answer is that I'm a backend grunt who've actually never done JS devlopment professionally, I've been doing Scala, Java, Python and GoLang.  I wanted to something fun, simple and different before doing things the way others do.
+
+### Where is the twitch API refernce?
+[twitch api](https://dev.twitch.tv/docs/api/)
+
+### API throttling limit
+Twitch have [api limit](https://dev.twitch.tv/docs/api/guide#rate-limits) of 800 points per minute.  [api.js](./js/simpletons/api.js) does catch response codes and automatically retry it when rate limit bucket refilled.
+
+### How is code structured?
+Latest information on this can be found at the separate [documentation](./js/README.md)

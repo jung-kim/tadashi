@@ -44,4 +44,27 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License (MIT)
 
+## faq
+
+### Why build this?
+Two reasons:
+1. One of my favorite streamer was struggling with stream growth and was contemplating quiting.  I wanted to do something.
+2. I was bold during pandemic and wanted a fun project
+
+### Are there any PII data collected?
+No, all data collections are within browser and when browser is closed all data is lost.
+
+### Is there any data are you collecting out side of the opened browser?
+No, there are no servers nor DBs.  
+
+### Can I report issues?
+Yes please, I want to fix and tinker as long as I'm interested in it.  Please open github issues if there are any problems or suggestions.
+
+### Can I help contribute to the project?
+Yes please, this is a madness concocted by me so it maybe disorganized but please checkout [CONTRIBUTING.md](./CONTRIBUTING.md) before asking questions and opening PRs.
+
+### Who are some of your favorite streamers?
+[Lowko](https://www.twitch.tv/lowko), [RTGame](https://www.twitch.tv/rtgame), and [MrSmartDonkey](https://www.youtube.com/user/MrSmartDonkeyLP)
+
+
 [LICENSE.md](./LICENSE.md)
