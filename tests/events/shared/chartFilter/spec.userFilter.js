@@ -37,12 +37,12 @@ describe('userFilter.js', () => {
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', { 22: 'bb', 33: 'cc' }));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(22);
         assert.isTrue(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', { 22: 'bb', 33: 'cc' }));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [], [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(44);
         assert.isFalse(filter.isApplicable('a'));
     });
@@ -58,12 +58,12 @@ describe('userFilter.js', () => {
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', { 22: 'bb', 33: 'cc' }));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(22);
         assert.isFalse(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', { 22: 'bb', 33: 'cc' }));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [], [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(44);
         assert.isTrue(filter.isApplicable('a'));
     });

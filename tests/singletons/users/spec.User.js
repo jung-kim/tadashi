@@ -6,37 +6,70 @@ describe('User.js', () => {
         const u1 = new User(123, 'abc');
         assert.equal(u1._id, 123);
         assert.equal(u1._userName, 'abc');
-        assert.isUndefined(u1._follows);
+        assert.isUndefined(u1._following);
+        assert.isUndefined(u1._followedBy);
 
-        const u2 = new User(123, 'abc', { 1: 'ab', 8: 'ee' });
-        assert.equal(u2._id, 123);
+        const u2 = new User(undefined, 'abc', [1], [2]);
+        assert.isUndefined(u2._id);
         assert.equal(u2._userName, 'abc');
-        assert.deepEqual(u2._follows, new Set([1, 8]));
+        assert.deepEqual(u2._following, new Set([1]));
+        assert.deepEqual(u2._followedBy, new Set([2]));
     });
 
-    it('addFollows()', () => {
-        const u1 = new User(123, 'abc');
+    describe('addFollowing()', () => {
+        it('default', () => {
+            const u1 = new User(123, 'abc');
+            assert.isUndefined(u1._following);
 
-        u1.addFollows();
-        assert.deepEqual(u1._follows, undefined);
+            u1.addFollowing(1);
+            assert.deepEqual(u1._following, new Set([1]));
 
-        u1.addFollows({
-            data: [
-                { to_id: '1', to_name: 'ab' },
-                { to_id: '8', to_name: 'ee' }
-            ]
+
+            u1.addFollowing(2);
+            assert.deepEqual(u1._following, new Set([1, 2]));
+
+            u1.addFollowing(2);
+            assert.deepEqual(u1._following, new Set([1, 2]));
+
+            u1.addFollowedBy();
+            assert.deepEqual(u1._following, new Set([1, 2]));
         });
-        assert.deepEqual(u1._follows, new Set([1, 8]));
 
+        it('undefined', () => {
+            const u1 = new User(123, 'abc');
 
-        u1.addFollows({
-            data: [
-                { to_id: '1', to_name: 'ab' },
-                { to_id: '8', to_name: 'ee' },
-                { to_id: '2', to_name: 'b' }
-            ]
+            u1.addFollowing();
+
+            assert.isUndefined(u1._following);
         });
-        assert.deepEqual(u1._follows, new Set([1, 8, 2]));
+    });
+
+    describe('addFollowedBy()', () => {
+        it('default', () => {
+            const u1 = new User(123, 'abc');
+            assert.isUndefined(u1._followedBy);
+
+            u1.addFollowedBy(1);
+            assert.deepEqual(u1._followedBy, new Set([1]));
+
+
+            u1.addFollowedBy(2);
+            assert.deepEqual(u1._followedBy, new Set([1, 2]));
+
+            u1.addFollowedBy(2);
+            assert.deepEqual(u1._followedBy, new Set([1, 2]));
+
+            u1.addFollowedBy();
+            assert.deepEqual(u1._followedBy, new Set([1, 2]));
+        });
+
+        it('undefined', () => {
+            const u1 = new User(123, 'abc');
+
+            u1.addFollowedBy();
+
+            assert.isUndefined(u1._followedBy);
+        });
     });
 
     it('isFollowing()', () => {
@@ -44,19 +77,49 @@ describe('User.js', () => {
 
         assert.isUndefined(u1.isFollowing(1));
 
-        u1.addFollows({
-            data: [
-                { to_id: '1', to_name: 'ab' },
-                { to_id: '8', to_name: 'ee' }
-            ]
-        });
+        u1.addFollowing(1);
         assert.isTrue(u1.isFollowing(1));
         assert.isFalse(u1.isFollowing(4));
     });
 
-    it('gets', () => {
+    it('isFollowedBy()', () => {
         const u1 = new User(123, 'abc');
-        assert.equal(u1.getID(), 123);
+
+        assert.isUndefined(u1.isFollowedBy(1));
+
+        u1.addFollowedBy(1);
+        assert.isTrue(u1.isFollowedBy(1));
+        assert.isFalse(u1.isFollowedBy(4));
+    });
+
+    it('getFollowingCounts', () => {
+        const u1 = new User(123, 'abc');
+
+        assert.isUndefined(u1.getFollowingCounts());
+
+        u1.addFollowing(1);
+        u1.addFollowing(2);
+        u1.addFollowing(3);
+        u1.addFollowing(3);
+
+        assert.equal(u1.getFollowingCounts(), 3);
+    });
+
+    it('getFollowedByCounts', () => {
+        const u1 = new User(123, 'abc');
+
+        assert.isUndefined(u1.getFollowedByCounts());
+
+        u1.addFollowedBy(1);
+        u1.addFollowedBy(2);
+        u1.addFollowedBy(3);
+        u1.addFollowedBy(3);
+
+        assert.equal(u1.getFollowedByCounts(), 3);
+    });
+
+    it('getUserName', () => {
+        const u1 = new User(123, 'abc');
         assert.equal(u1.getUserName(), 'abc');
     });
 });

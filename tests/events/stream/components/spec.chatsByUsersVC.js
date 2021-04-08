@@ -30,9 +30,12 @@ describe('chatsByUsersVC.js', () => {
                     'c': 2,
                 }
             });
+        document.getElementById.withArgs(chatsByUsersVC._chartDomSelector).returns({});
+        chatsByUsersVC.reset();
+
         await chatsByUsersVC._update();
-        assert.deepEqual(chatsByUsersVC._datasets, [2, 2, 1]);
-        assert.deepEqual(chatsByUsersVC._labels, ['a', 'c', 'b']);
+        assert.deepEqual(chatsByUsersVC._getDataset()[0].data, [2, 2, 1]);
+        assert.deepEqual(chatsByUsersVC._getRootLabels(), ['a', 'c', 'b']);
 
         sinon.verifyAndRestore();
         sinon.stub(chatsByUsersVC, '_getParameters').returns({
@@ -65,8 +68,8 @@ describe('chatsByUsersVC.js', () => {
                 }
             });
         await chatsByUsersVC._update();
-        assert.deepEqual(chatsByUsersVC._datasets, [10, 9, 8, 7, 7, 7, 5, 4, 4, 2]);
-        assert.deepEqual(chatsByUsersVC._labels, ['g', 'e', 'k', 'h', 'm', 'o', 'd', 'i', 'j', 'a']);
+        assert.deepEqual(chatsByUsersVC._getDataset()[0].data, [10, 9, 8, 7, 7, 7, 5, 4, 4, 2]);
+        assert.deepEqual(chatsByUsersVC._getRootLabels(), ['g', 'e', 'k', 'h', 'm', 'o', 'd', 'i', 'j', 'a']);
     });
 
 });

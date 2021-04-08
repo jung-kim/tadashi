@@ -1,6 +1,11 @@
 const moment = require('../helpers/moment');
 const constants = require('./constants');
 const models = require('../models/events');
+const toMaterialStyle = require('material-color-hash').default;
+
+const getHashedColor = (label, fillerColor) => {
+    return `${toMaterialStyle(label, '200').backgroundColor}${fillerColor}`;
+}
 
 module.exports = {
     muteSeconds(t) {
@@ -80,4 +85,16 @@ module.exports = {
                 throw `invalid message type: ${messageType}`;
         }
     },
+
+    getHashedColor(label, fillerColor) {
+        return getHashedColor(label, fillerColor);
+    },
+
+    getBackgroundColor(labels) {
+        return labels.map((userName) => getHashedColor(userName, '4D'));
+    },
+
+    getBorderColor(labels) {
+        return labels.map((userName) => getHashedColor(userName, 'FF'));
+    }
 }

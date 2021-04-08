@@ -36,26 +36,26 @@ class ProceedsByTypesVC extends ChartRoot {
         }));
     }
 
-    reset() {
-        this._datasets = [0, 0, 0, 0, 0];
-    }
-
     async _update() {
         const { channel, filter, startBucket, endBucket } = await this._getParameters();
+        const datasets = this._getDataset();
+        const data = datasets[0].data;
 
-        this._datasets[0] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_CHEER, filter)._sum;
-        this._datasets[1] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUB, filter)._sum;
-        this._datasets[2] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_RESUB, filter)._sum;
-        this._datasets[3] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBGIFT, filter)._sum;
-        this._datasets[4] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBMYSTERY, filter)._sum;
+        data[0] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_CHEER, filter)._sum;
+        data[1] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUB, filter)._sum;
+        data[2] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_RESUB, filter)._sum;
+        data[3] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBGIFT, filter)._sum;
+        data[4] = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_SUBMYSTERY, filter)._sum;
     }
 
-    _getBackgroundColor() {
-        return this._backgroundColor;
-    }
+    _defaultChartOptions() {
+        const options = super._defaultChartOptions();
 
-    _getBorderColor() {
-        return this._borderColor;
+        options.data.labels = this._labels;
+        options.data.datasets[0].backgroundColor = this._backgroundColor;
+        options.data.datasets[0].borderColor = this._borderColor;
+
+        return options;
     }
 }
 

@@ -1,6 +1,7 @@
 const ChartRoot = require('./ChartRoot');
 const constants = require('../../../helpers/constants');
 const dataCache = require('../../../simpletons/dataCache');
+const utils = require('../../../helpers/utils');
 
 const chartProceedsByUsersHelperContent = `<p>Proceeds by users<br>
 <ul>
@@ -26,13 +27,12 @@ class ProceedsByUsersVC extends ChartRoot {
             constants.TYPE_SUBGIFT,
             constants.TYPE_SUBMYSTERY
         ]);
+        this._displayLimit = 10;
     }
 
     reset() {
-        this._labels = [];
-        this._datasets = [];
+        super.reset();
         this._sumByType = [];
-        this._displayLimit = 10;
     }
 
     async _update() {
@@ -47,11 +47,14 @@ class ProceedsByUsersVC extends ChartRoot {
 
         const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
         const length = Math.min(sorted.length, this._displayLimit);
+        const labels = this._getRootLabels();
+        const datasets = this._getDataset();
+        const data = datasets[0].data;
 
         for (let i = 0; i < length; i++) {
             const userName = sorted[i][0];
-            this._labels[i] = userName;
-            this._datasets[i] = sorted[i][1];
+            labels[i] = userName;
+            data[i] = sorted[i][1];
             this._sumByType[i] = this._proceedsTypesToProcess.reduce((prev, type) => {
                 const value = cache[type]._users[userName];
                 if (value) {
@@ -61,18 +64,30 @@ class ProceedsByUsersVC extends ChartRoot {
             }, {});
         }
 
-        this._labels.length = length;
-        this._datasets.length = length;
+        labels.length = length;
+        data.length = length;
         this._sumByType.length = length;
+        datasets[0].backgroundColor = utils.getBackgroundColor(labels);
+        datasets[0].borderColor = utils.getBorderColor(labels);
     }
 
-    afterLabel(userName) {
-        const indx = this._labels.indexOf(userName);
+    _afterLabel(userName) {
+        const indx = this._chartObject.data.labels.indexOf(userName);
         const data = this._sumByType[indx];
         return Object.keys(data || {}).map(msgTypeIndex => {
             const value = data[msgTypeIndex];
             return `  ${constants.CHART_LABEL[msgTypeIndex]}: ${msgTypeIndex == constants.TYPE_CHEER ? (value * 100) : value}`;
         });
+    }
+
+    _defaultChartOptions() {
+        const options = super._defaultChartOptions();
+        options.options.plugins.tooltip = {
+            callbacks: {
+                afterLabel: this._afterLabel.bind(this)
+            }
+        }
+        return options;
     }
 }
 

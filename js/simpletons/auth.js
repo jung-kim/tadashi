@@ -25,7 +25,7 @@ class Auth {
         if (!env.CLIENT_SECRET) {
             return;
         }
-        const res = await fetch(`${env.TWITCH_ENDPOINT}/oauth2/token?client_id=${env.CLIENT_ID}&client_secret=${env.CLIENT_SECRET}&grant_type=client_credentials&${scope}`, {
+        const res = await fetch(`${env.AUTH_ENDPOINT}/oauth2/token?client_id=${env.CLIENT_ID}&client_secret=${env.CLIENT_SECRET}&grant_type=client_credentials&${scope}`, {
             method: 'POST'
         });
         const json = await res.json();
@@ -43,7 +43,7 @@ class Auth {
         } else if (env.CLIENT_SECRET) {
             await this._authWithSecret();
         } else {
-            return `${env.TWITCH_ENDPOINT}/oauth2/authorize?client_id=${env.CLIENT_ID}&redirect_uri=${env.REDIRECT_URL}&response_type=token&${scope}`;
+            return `${env.AUTH_ENDPOINT}/oauth2/authorize?client_id=${env.CLIENT_ID}&redirect_uri=${env.REDIRECT_URL}&response_type=token&${scope}`;
         }
 
         if (this.isAuthenticated()) {

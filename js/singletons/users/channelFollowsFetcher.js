@@ -3,7 +3,7 @@ const auth = require('../../simpletons/auth');
 const api = require('../../simpletons/api');
 const eventSignals = require('../../helpers/signals').eventSignals;
 
-class UserFollowsFetcher {
+class ChannelFollowsFetcher {
     constructor() {
         this._paginations = {};
         this.fetch = _.throttle(this._fetch, 5000);
@@ -34,4 +34,4 @@ class UserFollowsFetcher {
     }
 }
 
-module.exports = new UserFollowsFetcher();
+module.exports = new ChannelFollowsFetcher();

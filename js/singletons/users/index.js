@@ -3,7 +3,7 @@ const eventSignals = require('../../helpers/signals').eventSignals;
 const User = require('./User');
 const userIDFetcher = require('./userIDFetcher');
 const userFollowsFetcher = require('./userFollowsFetcher');
-const channelFollowsFetcher = require('./channelFollowsFetcher');
+// const channelFollowsFetcher = require('./channelFollowsFetcher');
 const constants = require('../../helpers/constants');
 
 class Users {
@@ -22,7 +22,7 @@ class Users {
                 this.processUserIDsResp(payload.data);
                 break;
             case 'fetch.user.follows.resp':
-                this.processUserFollowsResp(payload.userID, payload.data);
+                this.processUserFollowsResp(payload.data);
                 break;
             case 'api.unthrottled':
                 userIDFetcher.fetch();
@@ -31,10 +31,10 @@ class Users {
             case 'channel.input.update':
                 userIDFetcher.reset();
                 userFollowsFetcher.reset();
-                channelFollowsFetcher.fetch(payload.data.id);
+                // channelFollowsFetcher.fetch(payload.data.id);
                 break;
             case 'fetch.channel.follows.resp':
-                this.processChannelFollows(payload.channelID, payload.data);
+                this.processUserFollowsResp(payload.data);
                 break;
         }
     }
@@ -58,6 +58,67 @@ class Users {
         return this._viewers;
     }
 
+    getUsers(userFilter) {
+        const users = Object.values(this._idToUser);
+
+        if (!userFilter || !userFilter.isValid()) {
+            return users;
+        }
+
+        return userFilter.filterUsers(users);
+    }
+
+    /**
+     * When a pair of id and name arrives, ensure user exists.
+     * id is optional and maybe called again later with id to update object with the id.
+     * 
+     * @param {number} id optional
+     * @param {string} name required
+     * @returns {User} created or founded user object
+     */
+    _ensureUserExists(id, name) {
+        const lowerCaseName = name.toLowerCase();
+        const userObj = this.getUserByID(id) || this.getUserByName(lowerCaseName) || new User(id, name);
+
+        userObj._id = userObj._id || id;
+
+        if (id) {
+            this._idToUser[id] = userObj;
+        }
+        this._nameToUser[lowerCaseName] = userObj;
+
+        return userObj;
+    }
+
+    /**
+     * process chatters data to 
+     *  1. ensure they exists as users object
+     *  2. if new user, add them to id fetcher as user id is missing
+     *  3. update viewers object to be used by chattersTableVC
+     * 
+     * @param {Object} chattersData result of `https://tmi.twitch.tv/group/user/{streamer name}/chatters`
+     * @param {number} channelID current streamer id
+     * @returns {undefined}
+     * 
+     * {
+     *     "_links": {},
+     *     "chatter_count": 3,
+     *     "chatters": {
+     *         "broadcaster": [
+     *             "abc"
+     *         ],
+     *         "vips": [],
+     *         "moderators": [],
+     *         "staff": [],
+     *         "admins": [],
+     *         "global_mods": [],
+     *         "viewers": [
+     *             "aaa",
+     *             "bbb"
+     *         ]
+     *     }
+     * }
+     */
     processChattersData(chattersData, channelID) {
         const tmp = {};
         const viewersCount = Object.values(chattersData || {}).
@@ -66,16 +127,13 @@ class Users {
         for (const [key, names] of Object.entries(chattersData || {})) {
             tmp[key] = names.sort().map(name => {
                 const lowerCaseName = name.toLowerCase();
-
                 if (!this.getUserByName(lowerCaseName)) {
-                    this._nameToUser[lowerCaseName] = new User(undefined, name);
-
                     if (viewersCount < constants.MAX_VIEWERS_COUNTS_FOR_PROCESS) {
                         userIDFetcher.add(name);
                     }
                 }
 
-                return this.getUserByName(lowerCaseName);
+                return this._ensureUserExists(undefined, name);
             });
         }
 
@@ -93,36 +151,124 @@ class Users {
         this._viewers = tmp;
     }
 
-    processUserFollowsResp(id, resp) {
+    /**
+     * for each user follows response, ensure users exists and establish
+     * following and followed by relationships.
+     * 
+     * @param {Object} resp result of https://dev.twitch.tv/docs/api/reference#get-users-follows
+     * {
+     *     "total": 173,
+     *     "data": [
+     *         {
+     *             "from_id": "1111",
+     *             "from_login": "alogin",
+     *             "from_name": "alogin",
+     *             "to_id": "2222",
+     *             "to_login": "another",
+     *             "to_name": "another",
+     *             "followed_at": "2021-03-16T11:06:38Z"
+     *         },
+     *         ...
+     *     ]
+     * }
+     * @returns {undefined}
+     * 
+     */
+    processUserFollowsResp(resp) {
+        resp.data.forEach(follows => {
+            const toID = parseInt(follows.to_id);
+            const fromID = parseInt(follows.from_id);
+            const toUser = this._ensureUserExists(toID, follows.to_name);
+            const fromUser = this._ensureUserExists(fromID, follows.from_name);
+
+            fromUser.addFollowing(toUser.getID());
+            toUser.addFollowedBy(fromUser.getID());
+        });
+
         // set follows for a user object
-        this.getUserByID(id).addFollows(resp);
         eventSignals.dispatch({ event: `chatters.data.update.partial` });
     }
 
+    /**
+     * process get user response from `helix/users?login=...' to ensure exists
+     * and queue up for fetching user follows fetching.
+     * 
+     * @param {Object} resp result of https://dev.twitch.tv/docs/api/reference#get-users
+     * {
+     *    "data": [
+     *        {
+     *            "id": "9999", // <-- why is this string...?  wtf twitch??
+     *            "login": "...",
+     *            "display_name": "...",
+     *            "type": "",
+     *            "broadcaster_type": "partner",
+     *            "description": "...",
+     *            "profile_image_url": "...",
+     *            "offline_image_url": "..",
+     *            "view_count": 9999,
+     *            "created_at": "2014-06-11T14:11:05.9921119Z"
+     *        }
+     *    ]
+     * }
+     * @returns {undefined}
+     * 
+     */
     processUserIDsResp(resp) {
-        for (const element of resp) {
-            const login = element.login.toLowerCase();
-            if (this.getUserByName(login)) {
-                const intID = parseInt(element.id);
-                this.getUserByName(login).setID(intID);
-                this._idToUser[intID] = this.getUserByName(login);
-                userFollowsFetcher.add(intID);
-            }
+        for (const element of resp.data) {
+            const userObj = this._ensureUserExists(element.id, element.login);
+            userFollowsFetcher.add(userObj.getID());
         }
     }
 
-    processChannelFollows(channelID, resp) {
-        resp.data.forEach(follows => {
-            const userID = follows.from_id;
-            const userName = follows.from_name;
-            const userNameLower = userName.toLowerCase();
+    /**
+     * get top N followed by summary
+     * 
+     * @param {number} currentStreamID userID of the current streamer
+     * @param {UserFilter} filter filter to be applied on user lists
+     * @returns {Array.<Object>} array of followed by summary objects
+     */
+    getTopFollowedBySummary(currentStreamID, filter) {
+        return filter.filterUsers(Object.values(this._idToUser)).
+            sort((left, right) => {
+                const followedByCount = (right.getFollowedByCounts() || 0) - (left.getFollowedByCounts() || 0);
+                if (followedByCount === 0) {
+                    return right.getID() - left.getID();
+                } else {
+                    return followedByCount;
+                }
+            }).slice(0, 10).
+            map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
+    }
 
-            const user = this.getUserByName(userNameLower) || this.getUserByID(userID) || new User(userID, userName);
-            user.addFollows({ data: [{ to_id: channelID }] });
+    /**
+     * Get followed summary of a user grouped by if they are following 
+     * current streamer or not
+     * 
+     * @param {number} currentStreamID userID of the current streamer
+     * @param {number} userID userID of a user to get followed by summary
+     * @returns {Object} { userID, unknown, folowing, admiring}
+     */
+    _getFollowedBySummary(currentStreamID, userID) {
+        if (!this.getUserByID(userID)) {
+            return undefined;
+        }
 
-            this._nameToUser[userNameLower] = user;
-            this._idToUser[userID] = user;
-        });
+        return [...(this.getUserByID(userID)._followedBy || [])].
+            map(id => this.getUserByID(id)).
+            reduce((accumulator, current) => {
+                switch (current.isFollowing(currentStreamID)) {
+                    case undefined:
+                        accumulator.unknown++;
+                        break;
+                    case true:
+                        accumulator.following++;
+                        break;
+                    case false:
+                        accumulator.admiring++;
+                        break;
+                }
+                return accumulator;
+            }, { userID: userID, unknown: 0, following: 0, admiring: 0 });
     }
 }
 

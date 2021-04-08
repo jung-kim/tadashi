@@ -8,59 +8,49 @@ const dataCache = require('../../../simpletons/dataCache');
 class TimeseriesVC extends ChartRoot {
     constructor() {
         super({
-            chartDomSelector: "canvas-timeseries",
+            chartDomSelector: 'canvas-timeseries',
         });
-    }
-
-    reset() {
-        this._chartLabels = [];
-        this._chartDatasets = [];
-        if (this._chartObject) {
-            this._chartObject.destroy();
-        }
-        this._chartObject = undefined;
-
-        for (let msgType = 0; msgType < constants.NUM_TYPES; msgType++) {
-            this._chartDatasets.push({
-                label: constants.CHART_LABEL[msgType],
-                backgroundColor: constants.CHART_BACKGROUND_COLOR[msgType],
-                borderColor: constants.CHART_BORDER_COLOR[msgType],
-                borderWidth: 1,
-                data: [],
-                users: [],
-            });
-        }
     }
 
     async _update() {
         const { interval, startBucket, channel, filter, length } = await this._getParameters();
+        const labels = this._getRootLabels();
+        const datasets = this._getDataset();
 
         for (let i = 0; i < length; i++) {
             const at = startBucket + (i * interval);
-            this._chartLabels[i] = moment.unix(at);
+            labels[i] = moment.unix(at);
 
             const dataAt = dataCache.get(channel, at, interval, filter);
 
             // cache is at time -> type -> data
             // timeseries charts expects type -> time -> data
             for (let type = 0; type < constants.NUM_TYPES; type++) {
-                this._chartDatasets[type].data[i] = dataAt[type]._sum;
-                this._chartDatasets[type].users[i] = dataAt[type]._users;
+                datasets[type].data[i] = dataAt[type]._sum;
+                datasets[type].users[i] = dataAt[type]._users;
             }
         }
 
         for (let type = 0; type < constants.NUM_TYPES; type++) {
-            this._chartDatasets[type].data.length = length;
-            this._chartDatasets[type].users.length = length;
+            datasets[type].data.length = length;
+            datasets[type].users.length = length;
         }
-        this._chartLabels.length = length;
+        labels.length = length;
+    }
+
+    _initializedChartObject() {
+        if (this._chartObject) {
+            this._chartObject.destroy();
+        }
+
+        this._chartObject = new Chart(document.getElementById(this._chartDomSelector), this._defaultChartOptions());
     }
 
     _toolTipAfterLabel(tooltipItem) {
         if (!tooltipItem) {
             return;
         }
-        const chartDatasetsMsgType = this._chartDatasets[tooltipItem.datasetIndex];
+        const chartDatasetsMsgType = this._getDataset()[tooltipItem.datasetIndex];
         if (tooltipItem.yLabel === 0
             || !chartFilter.getUserFilter().isValid()
             || !chartDatasetsMsgType.users
@@ -82,7 +72,7 @@ class TimeseriesVC extends ChartRoot {
     _toolTipTitle(tooltipItem) {
         const dataIndex = ((tooltipItem && tooltipItem[0]) || {}).dataIndex;
         if (dataIndex >= 0) {
-            return this._chartLabels[dataIndex].format(constants.TIMEFORMAT_DISPLAY);
+            return this._getRootLabels()[dataIndex].format(constants.TIMEFORMAT_DISPLAY);
         }
     }
 
@@ -106,7 +96,7 @@ class TimeseriesVC extends ChartRoot {
     }
 
     _scaleTicksCallback(labelIndex) {
-        const value = this._chartLabels[labelIndex]
+        const value = this._getRootLabels()[labelIndex];
         if (value.hours() === 0 && value.minutes() === 0) {
             return value.format("M/D");
         }
@@ -119,72 +109,78 @@ class TimeseriesVC extends ChartRoot {
         }
     }
 
-    _updateChartObject() {
-        if (this._chartObject) {
-            this._chartObject.data.labels = this._chartLabels;
-            this._chartObject.data.datasets = this._chartDatasets;
-            this._chartObject.update();
-        } else {
-            this._chartObject = new Chart(document.getElementById(this._chartDomSelector), {
-                type: 'bar',
-                data: {
-                    labels: this._chartLabels,
-                    label: '# of Events',
-                    datasets: this._chartDatasets,
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            display: true,
-                            stacked: true,
-                            ticks: {
-                                fontColor: '#7d7d7d',
-                                fontSize: 14,
-                                fontStyle: this._scaleTicksFontStyle.bind(this),
-                                // Include a dollar sign in the ticks
-                                callback: this._scaleTicksCallback.bind(this),
-                            },
-                            gridLines: {
-                                display: true,
-                                color: '#7d7d7d',
-                            },
-                        },
-                        y: {
-                            stacked: true,
-                            gridLines: {
-                                display: true,
-                                color: '#7d7d7d',
-                            },
-                            ticks: {
-                                fontColor: '#7d7d7d',
-                                fontSize: 14,
-                                stepSize: 5
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: { display: false },
-                        legend: {
-                            labels: {
-                                display: true,
-                                color: '#7d7d7d',
-                            }
-                        },
-                        tooltip: {
-                            intersect: false,
-                            mode: 'index',
-                            filter: this._toolTipFilter.bind(this),
-                            callbacks: {
-                                title: this._toolTipTitle.bind(this),
-                                label: this._toolTipLabel.bind(this),
-                                afterLabel: this._toolTipAfterLabel.bind(this),
-                            }
-                        }
-                    },
-                }
+    _defaultChartOptions() {
+        const datasets = [];
+        for (let msgType = 0; msgType < constants.NUM_TYPES; msgType++) {
+            datasets.push({
+                label: constants.CHART_LABEL[msgType],
+                backgroundColor: constants.CHART_BACKGROUND_COLOR[msgType],
+                borderColor: constants.CHART_BORDER_COLOR[msgType],
+                borderWidth: 1,
+                data: [],
+                users: [],
             });
+        }
+
+        return {
+            k: 99,
+            type: 'bar',
+            data: {
+                labels: [],
+                label: '# of Events',
+                datasets: datasets,
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        display: true,
+                        stacked: true,
+                        ticks: {
+                            fontColor: '#7d7d7d',
+                            fontSize: 14,
+                            fontStyle: this._scaleTicksFontStyle.bind(this),
+                            callback: this._scaleTicksCallback.bind(this),
+                        },
+                        gridLines: {
+                            display: true,
+                            color: '#7d7d7d',
+                        },
+                    },
+                    y: {
+                        stacked: true,
+                        gridLines: {
+                            display: true,
+                            color: '#7d7d7d',
+                        },
+                        ticks: {
+                            fontColor: '#7d7d7d',
+                            fontSize: 14,
+                            stepSize: 5
+                        }
+                    }
+                },
+                plugins: {
+                    title: { display: false },
+                    legend: {
+                        labels: {
+                            display: true,
+                            color: '#7d7d7d',
+                        }
+                    },
+                    tooltip: {
+                        intersect: false,
+                        mode: 'index',
+                        filter: this._toolTipFilter.bind(this),
+                        callbacks: {
+                            title: this._toolTipTitle.bind(this),
+                            label: this._toolTipLabel.bind(this),
+                            afterLabel: this._toolTipAfterLabel.bind(this),
+                        }
+                    }
+                },
+            }
         }
     }
 }

@@ -3,7 +3,6 @@ const chartFilter = require('../../shared/chartFilter');
 const twitchClient = require('../../../singletons/twitchClient');
 const utils = require('../../../helpers/utils');
 const constants = require('../../../helpers/constants');
-const toMaterialStyle = require('material-color-hash').default;
 const _ = require('lodash');
 
 const MAX_DATAPOINT_LIMIT = 250;
@@ -16,53 +15,62 @@ class ChartRoot {
         this._helpContent = obj.helpContent;
         this._type = obj.type || 'doughnut';
 
-        this.update = _.throttle(() => {
-            this._update();
-            this._updateChartObject();
-        }, obj.updateThrottleTime || 500);
+        this.update = _.throttle(this._update.bind(this), obj.updateThrottleTime || 500);
 
         eventSignals.add(this._eventSignalsFunc.bind(this));
-        this.reset();
     }
 
+    /**
+     * function to run on event signals.  
+     * 
+     * @param {object} payload event signals
+     * @returns {undefined}
+     */
     _eventSignalsFunc(payload) {
         switch (payload.event) {
             case 'channel.input.update':
                 this.reset();
                 break;
             case 'stream.load.ready':
-                this.enable();
+                this._enabled = true;
                 this.reset();
-                this._updateChartObject();
                 break;
             case 'stream.cleanup':
-                this.disable();
+                this._enabled = false;
                 break;
             case 'data.cache.updated':
             case 'filter.change':
                 if (this._enabled) {
                     this.update();
+                    this._chartObject.update();
                 }
                 break;
         }
     }
 
-    enable() {
-        this._enabled = true;
-    }
-
-    disable() {
-        this._enabled = false;
-    }
-
+    /**
+     * logic to update data values and redraws
+     * 
+     * @returns {undefined}
+     */
     async _update() {
-        // override this
+        throw "not implemented";
     }
 
+    /**
+     * called when to disregard existing data and start fresh
+     * 
+     * @returns {undefined}
+     */
     reset() {
-        // override this
+        this._initializedChartObject();
     }
 
+    /**
+     * returns parameters for drawing charts and set context
+     * 
+     * @returns {object} various parameters
+     */
     _getParameters() {
         const start = chartFilter.getStartTime().unix();
         const end = chartFilter.getEndTime().unix();
@@ -92,33 +100,15 @@ class ChartRoot {
         }
     }
 
-    _getBackgroundColor() {
-        return this._labels.map((userName) => {
-            const bgColor = toMaterialStyle(userName, '200').backgroundColor;
-            return `${bgColor}4D`;
-        });
-    }
-
-    _getBorderColor() {
-        return this._labels.map((userName) => {
-            const bgColor = toMaterialStyle(userName, '200').backgroundColor;
-            return `${bgColor}FF`;
-        });
-    }
-
-
-    _updateChartObject() {
+    /**
+     * initialized chart object, destroy if already exists.
+     * Previous data are destroyed
+     * 
+     * @returns {undefined}
+     */
+    _initializedChartObject() {
         if (this._chartObject) {
-            this._chartObject.data.datasets[0].data = this._datasets;
-            if (!Object.isFrozen(this._chartObject.data.labels)) {
-                // static lables, label colors will not change and preconfigured.
-                this._chartObject.data.labels = this._labels;
-                this._chartObject.data.datasets[0].backgroundColor = this._getBackgroundColor()
-                this._chartObject.data.datasets[0].borderColor = this._getBorderColor()
-            }
-
-            this._chartObject.update();
-            return;
+            this._chartObject.destroy();
         }
 
         document.getElementById(this._chartDomSelector).innerHTML = templates[`./hbs/stream/components/chart.hbs`](this);
@@ -128,23 +118,26 @@ class ChartRoot {
             placement: 'left'
         });
 
-        let indexAxis;
-        if (this._type === 'horizontalBar') {
-            this._type = 'bar';
-            indexAxis = 'y';
-        }
+        this._chartObject = new Chart(document.getElementById(`canvas-${this._chartDomSelector}`), this._defaultChartOptions());
+    }
 
-        this._chartObject = new Chart(document.getElementById(`canvas-${this._chartDomSelector}`), {
+    /**
+     * Returns default chart option object to create chart with.
+     * Maybe overwridden to customize
+     * 
+     * @returns {object} chart option object to be passed into `new Chart`
+     */
+    _defaultChartOptions() {
+        return {
+            k: 111,
             type: this._type,
             data: {
-                labels: this._labels,
-
+                labels: [],
                 datasets: [{
-                    data: this._datasets,
-                    backgroundColor: this._getBackgroundColor(),
-                    borderColor: this._getBorderColor(),
+                    data: [],
+                    backgroundColor: [],
+                    borderColor: [],
                     borderWidth: 1,
-                    indexAxis: indexAxis,
                 }]
             },
             options: {
@@ -158,17 +151,29 @@ class ChartRoot {
                         display: true,
                         text: this._title,
                         fontSize: 18,
-                    },
-                    tooltip: {
-                        callbacks: {
-                            afterLabel: (tooltipItem) => {
-                                return this.afterLabel ? this.afterLabel(tooltipItem.label) : undefined;
-                            }
-                        }
                     }
                 },
             },
-        });
+        }
+    }
+
+    /**
+     * Returns root level labels.  
+     * This labels are different then dataset level labels.
+     * 
+     * @returns {Array} root level labels
+     */
+    _getRootLabels() {
+        return this._chartObject.data.labels;
+    }
+
+    /**
+     * returns datasets of chartjs
+     * 
+     * @returns {Array} datasets
+     */
+    _getDataset() {
+        return this._chartObject.data.datasets;
     }
 }
 

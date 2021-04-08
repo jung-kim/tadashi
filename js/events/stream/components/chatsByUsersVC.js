@@ -1,6 +1,7 @@
 const ChartRoot = require('./ChartRoot');
 const constants = require('../../../helpers/constants');
 const dataCache = require('../../../simpletons/dataCache');
+const utils = require('../../../helpers/utils');
 
 const chartChatsByUsersHelperContent = `<p>Chats grouped by user name</p>`
 
@@ -14,25 +15,26 @@ class ChatsByUsersVC extends ChartRoot {
             helpContent: chartChatsByUsersHelperContent,
         });
     }
-    reset() {
-        this._labels = [];
-        this._datasets = [];
-    }
 
     async _update() {
         const { channel, filter, startBucket, endBucket } = await this._getParameters();
+        const labels = this._getRootLabels();
+        const datasets = this._getDataset();
+        const data = datasets[0].data;
 
         const total = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_CHAT, filter);
         const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
         const length = Math.min(sorted.length, DISPLAY_LIMIT);
 
         for (let i = 0; i < length; i++) {
-            this._labels[i] = sorted[i][0];
-            this._datasets[i] = sorted[i][1];
+            labels[i] = sorted[i][0];
+            data[i] = sorted[i][1];
         }
 
-        this._labels.length = length;
-        this._datasets.length = length;
+        labels.length = length;
+        data.length = length;
+        datasets[0].backgroundColor = utils.getBackgroundColor(labels);
+        datasets[0].borderColor = utils.getBorderColor(labels);
     }
 }
 

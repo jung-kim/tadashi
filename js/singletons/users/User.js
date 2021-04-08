@@ -1,12 +1,16 @@
 const cssUnknown = require('../../helpers/constants').CSS_UNKNOWN;
 
 class User {
-    constructor(id, name, follows) {
+    constructor(id, name, following, followedBy) {
         this._id = id;
         this._userName = name;
         this.userNameCSSClass = cssUnknown;
-        if (follows) {
-            this._follows = new Set(Object.keys(follows).map(id => parseInt(id)));
+
+        if (following) {
+            this._following = new Set(following);    // ids of users this user is following
+        }
+        if (followedBy) {
+            this._followedBy = new Set(followedBy);  // ids of users this user is followed by
         }
     }
 
@@ -18,26 +22,60 @@ class User {
         return this._userName;
     }
 
-    setID(id) {
-        this._id = id;
+    /**
+     * Users this user is following
+     * @param {number} userID of a user this user is following
+     * @returns {undefined}
+     */
+    addFollowing(userID) {
+        if (userID) {
+            if (!this._following) {
+                this._following = new Set();
+            }
+            this._following.add(userID);
+        }
     }
 
-    addFollows(newFollows) {
-        if (!newFollows) {
-            return;
+    /**
+     * Useers this user is followed by
+     * @param {number} userID of a user this user is followed by
+     * @returns {undefined}
+     */
+    addFollowedBy(userID) {
+        if (userID) {
+            if (!this._followedBy) {
+                this._followedBy = new Set();
+            }
+            this._followedBy.add(userID);
         }
-        if (!this._follows) {
-            this._follows = new Set();
-        }
-
-        (newFollows.data || []).forEach(follows => this._follows.add(parseInt(follows.to_id)));
     }
 
+    getFollowingCounts() {
+        return this._following ? this._following.size : undefined;
+    }
+
+    getFollowedByCounts() {
+        return this._followedBy ? this._followedBy.size : undefined;
+    }
+
+    /**
+     * Check if this user is following the target user
+     * 
+     * @param {number} targetUserID of a user to check if this user is following by that user
+     * @returns {Boolean|undefined} returns true if this this user is following the target user
+     */
     isFollowing(targetUserID) {
-        if (!this._follows) {
-            return undefined;
-        }
-        return this._follows.has(targetUserID);
+        return this._following ? this._following.has(targetUserID) : undefined;
+    }
+
+    /**
+     * Check if this user is followed by the target user
+     * 
+     * @param {number} targetUserID of a user to check if this user is followed by that user
+     * @returns {Boolean|undefined} returns true if this this user is following the target user
+     */
+    isFollowedBy(targetUserID) {
+        return this._followedBy ? this._followedBy.has(targetUserID) : undefined;
     }
 }
 

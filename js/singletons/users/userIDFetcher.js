@@ -53,7 +53,7 @@ class UserIDFetcher {
             this._names.delete(element.login.toLowerCase());
         }
 
-        eventSignals.dispatch({ event: 'fetch.user.ids.resp', data: json.data });
+        eventSignals.dispatch({ event: 'fetch.user.ids.resp', data: json });
     }
 
 }
