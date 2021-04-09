@@ -5,11 +5,9 @@ const less = require('less');
 const glob = require('glob');
 const mkdirp = require('mkdirp');
 const path = require('path');
-const { ESLint } = require("eslint");
 const browserify = require('browserify');
 const htmlmin = require('htmlmin');
 const Handlebars = require('handlebars');
-const { exception } = require('console');
 const minifyStream = require('minify-stream');
 
 const jsFiles = glob.sync('./js/**/*.js')
@@ -36,24 +34,6 @@ const cssStep = async () => {
         return output.css;
     }))).join('\n');
     return fs.writeFile('./public/styles.css', css);
-}
-
-// run eslint on `./js/**/*.js` files.
-const eslintStep = async () => {
-    console.log(`building eslint...`);
-    const eslint = new ESLint({
-        cache: true,
-        baseConfig: {
-            globals: { 'Twitch': true, 'rangePlugin': true, 'moment': true }
-        }
-    });
-    const results = await eslint.lintFiles(jsFiles.map(jsFile => jsFile.originalFilename));
-    const formatter = await eslint.loadFormatter("stylish");
-    const resultText = formatter.format(results);
-    if (resultText) {
-        console.log(resultText);
-        throw new exception('linting failed!!');
-    }
 }
 
 // Browserify `./js/**/*.js` codes so it would be easier to use within browser
@@ -138,7 +118,6 @@ const handlebarsStep = async () => {
 
     await Promise.all([
         browserifyAll(),
-        eslintStep(),
         browserifyExternal(),
         handlebarsStep(),
         cssStep(),

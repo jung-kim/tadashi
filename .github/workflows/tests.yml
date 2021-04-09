@@ -32,3 +32,5 @@ jobs:
       with:
         commit: ${{ github.event.workflow_run.head_sha }}
         files: "test-results.xml"
+    - name: lint
+      run: npm run lint
