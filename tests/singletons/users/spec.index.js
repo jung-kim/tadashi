@@ -113,10 +113,10 @@ describe('users.js', () => {
         it('default cases', async () => {
             users._nameToUser = { 'a': new User(1, 'a') };
             users._idToUser = { 1: users._nameToUser['a'] };
-            const idFetcherAddStub = sinon.stub(userIDFetcher, 'add')
-                .withArgs('b')
-                .withArgs('c')
-                .withArgs('d');
+            const idFetcherAddStub = sinon.stub(userIDFetcher, 'add').
+                withArgs('b').
+                withArgs('c').
+                withArgs('d');
 
             users.processChattersData({
                 'broadcaster': ['a'],
@@ -200,7 +200,7 @@ describe('users.js', () => {
 
         it('channel.input.update', () => {
             const userIDFetch = sinon.stub(userIDFetcher, 'reset').withArgs();
-            const userFollowsFetch = sinon.stub(userFollowsFetcher, 'reset').withArgs();;
+            const userFollowsFetch = sinon.stub(userFollowsFetcher, 'reset').withArgs();
             users._eventSignalFunc({ event: 'channel.input.update', data: { id: 1111 } });
             sinon.assert.calledOnce(userIDFetch);
             sinon.assert.calledOnce(userFollowsFetch);
@@ -241,9 +241,9 @@ describe('users.js', () => {
             const userFilter = chartFilter.getUserFilter();
             userFilter.changeSearchString('a');
 
-            const filterUsers = sinon.stub(userFilter, 'filterUsers')
-                .withArgs([userA, userB, userC])
-                .returns([userA]);
+            const filterUsers = sinon.stub(userFilter, 'filterUsers').
+                withArgs([userA, userB, userC]).
+                returns([userA]);
 
             assert.deepEqual(users.getUsers(userFilter), [userA]);
             sinon.assert.calledOnce(filterUsers);

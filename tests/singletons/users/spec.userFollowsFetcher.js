@@ -98,9 +98,9 @@ describe('userFollowsFetcher.js', () => {
                     }],
                 "pagination": { "cursor": undefined }
             };
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&from_id=123', authObj)
-                .returns(payload);
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&from_id=123', authObj).
+                returns(payload);
 
             await userFollowsFetcher._fetchUserFollows();
             assert.equal(userFollowsFetcher._running, 0);
@@ -144,11 +144,11 @@ describe('userFollowsFetcher.js', () => {
                     }],
                 "pagination": undefined
             };
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&from_id=123', authObj)
-                .returns(payload1)
-                .withArgs('helix/users/follows?first=100&from_id=123&after=abc', authObj)
-                .returns(payload2);
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&from_id=123', authObj).
+                returns(payload1).
+                withArgs('helix/users/follows?first=100&from_id=123&after=abc', authObj).
+                returns(payload2);
 
             await userFollowsFetcher._fetchUserFollows();
             assert.equal(userFollowsFetcher._running, 0);
@@ -195,11 +195,11 @@ describe('userFollowsFetcher.js', () => {
                     }],
                 "pagination": undefined
             };
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&from_id=123', authObj)
-                .returns(payload1)
-                .withArgs('helix/users/follows?first=100&from_id=124', authObj)
-                .returns(payload2)
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&from_id=123', authObj).
+                returns(payload1).
+                withArgs('helix/users/follows?first=100&from_id=124', authObj).
+                returns(payload2)
 
             await userFollowsFetcher._fetchUserFollows();
 
@@ -251,11 +251,11 @@ describe('userFollowsFetcher.js', () => {
                     }],
                 "pagination": undefined
             };
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&from_id=123', authObj)
-                .returns(payload1)
-                .withArgs('helix/users/follows?first=100&from_id=123&after=hello', authObj)
-                .throws('something');
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&from_id=123', authObj).
+                returns(payload1).
+                withArgs('helix/users/follows?first=100&from_id=123&after=hello', authObj).
+                throws('something');
 
             await userFollowsFetcher._fetchUserFollows();
 
@@ -269,9 +269,9 @@ describe('userFollowsFetcher.js', () => {
             sinon.verifyAndRestore();
             eventSignals.dispatch.reset();
 
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&from_id=123&after=hello', authObj)
-                .returns(payload2);
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&from_id=123&after=hello', authObj).
+                returns(payload2);
 
             userFollowsFetcher._toFetchArray = [123];
 

@@ -1,6 +1,5 @@
 
 const { assert } = require('chai');
-const _ = require('lodash');
 const sinon = require('sinon');
 
 const chartFilter = require('../../../js/events/shared/chartFilter');
@@ -193,7 +192,8 @@ describe('navOptionVC', () => {
             sinon.stub(twitchClient, 'getChannel').returns('a-channel');
             navOptionVC.channelInputAutoComplete = { input: {} };
 
-            const channelDom = {}, descDomc = {};
+            const channelDom = {},
+                descDomc = {};
             document.getElementById = sinon.stub();
             document.getElementById.withArgs('embeded-twitch-channel').returns(channelDom);
             document.getElementById.withArgs('embeded-twitch-desc').returns(descDomc);
@@ -212,7 +212,8 @@ describe('navOptionVC', () => {
             sinon.stub(twitchClient, 'getChannel').returns('a-channel');
             navOptionVC.channelInputAutoComplete = { input: {} };
 
-            const channelDom = {}, descDomc = {};
+            const channelDom = {},
+                descDomc = {};
             document.getElementById = sinon.stub();
             document.getElementById.withArgs('embeded-twitch-channel').returns(channelDom);
             document.getElementById.withArgs('embeded-twitch-desc').returns(descDomc);
@@ -232,7 +233,8 @@ describe('navOptionVC', () => {
             sinon.stub(twitchClient, 'getChannel').returns('a-channel');
             navOptionVC.channelInputAutoComplete = { input: {} };
 
-            const channelDom = {}, descDomc = {};
+            const channelDom = {},
+                descDomc = {};
             document.getElementById = sinon.stub();
             document.getElementById.withArgs('embeded-twitch-channel').returns(channelDom);
             document.getElementById.withArgs('embeded-twitch-desc').returns(descDomc);

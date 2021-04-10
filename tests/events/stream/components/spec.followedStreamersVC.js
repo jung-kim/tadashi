@@ -24,9 +24,9 @@ describe('followedStreamersVC.js', () => {
         }
 
         sinon.stub(twitchClient, 'getChannelID').returns(123);
-        sinon.stub(users, 'getTopFollowedBySummary')
-            .withArgs(123, chartFilter.getUserFilter())
-            .returns([])
+        sinon.stub(users, 'getTopFollowedBySummary').
+            withArgs(123, chartFilter.getUserFilter()).
+            returns([])
 
 
         followedStreamersVC._update();
@@ -38,9 +38,9 @@ describe('followedStreamersVC.js', () => {
         sinon.verifyAndRestore();
 
         sinon.stub(twitchClient, 'getChannelID').returns(123);
-        sinon.stub(users, 'getTopFollowedBySummary')
-            .withArgs(123, chartFilter.getUserFilter())
-            .returns([{
+        sinon.stub(users, 'getTopFollowedBySummary').
+            withArgs(123, chartFilter.getUserFilter()).
+            returns([{
                 userID: 1,
                 unknown: 0,
                 following: 1,
@@ -54,13 +54,12 @@ describe('followedStreamersVC.js', () => {
         assert.deepEqual(followedStreamersVC._getRootLabels(), ['a']);
 
 
-
         sinon.verifyAndRestore();
 
         sinon.stub(twitchClient, 'getChannelID').returns(123);
-        sinon.stub(users, 'getTopFollowedBySummary')
-            .withArgs(123, chartFilter.getUserFilter())
-            .returns([{
+        sinon.stub(users, 'getTopFollowedBySummary').
+            withArgs(123, chartFilter.getUserFilter()).
+            returns([{
                 userID: 1,
                 unknown: 0,
                 following: 6,

@@ -38,23 +38,23 @@ describe('timeseriesVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'get')
-            .withArgs('abc', 1577901600, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(1, { 'a': 1 }))
-            .withArgs('abc', 1577901660, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(2, { 'b': 2 }))
-            .withArgs('abc', 1577901720, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(3, { 'c': 3 }))
-            .withArgs('abc', 1577901780, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(4, { 'e': 4 }))
-            .withArgs('abc', 1577901840, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(5, { 'e': 5 }))
-            .withArgs('abc', 1577901900, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(6, { 'c': 6 }))
-            .withArgs('abc', 1577901960, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(7, { 'c': 7 }))
-            .withArgs('abc', 1577902020, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(16, { 'a': 8, 'd': 8 }));
+        sinon.stub(dataCache, 'get').
+            withArgs('abc', 1577901600, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(1, { 'a': 1 })).
+            withArgs('abc', 1577901660, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(2, { 'b': 2 })).
+            withArgs('abc', 1577901720, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(3, { 'c': 3 })).
+            withArgs('abc', 1577901780, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(4, { 'e': 4 })).
+            withArgs('abc', 1577901840, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(5, { 'e': 5 })).
+            withArgs('abc', 1577901900, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(6, { 'c': 6 })).
+            withArgs('abc', 1577901960, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(7, { 'c': 7 })).
+            withArgs('abc', 1577902020, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(16, { 'a': 8, 'd': 8 }));
 
         await timeseriesVC._update();
 
@@ -162,15 +162,15 @@ describe('timeseriesVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'get')
-            .withArgs('abc', 1577901600, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(1, { 'a': 1 }))
-            .withArgs('abc', 1577901660, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(2, { 'b': 2 }))
-            .withArgs('abc', 1577901720, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(3, { 'c': 3 }))
-            .withArgs('abc', 1577901780, constants.BUCKET_MIN, undefined)
-            .returns(getDummyData(4, { 'e': 4 }))
+        sinon.stub(dataCache, 'get').
+            withArgs('abc', 1577901600, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(1, { 'a': 1 })).
+            withArgs('abc', 1577901660, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(2, { 'b': 2 })).
+            withArgs('abc', 1577901720, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(3, { 'c': 3 })).
+            withArgs('abc', 1577901780, constants.BUCKET_MIN, undefined).
+            returns(getDummyData(4, { 'e': 4 }))
 
         await timeseriesVC._update();
 

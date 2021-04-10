@@ -5,6 +5,7 @@ const glob = require('glob');
 const fs = require('fs');
 const tmi = require('tmi.js');
 const moment = require('../js/helpers/moment');
+const api = require('../js/simpletons/api');
 _ = require('lodash');
 require('node-localstorage/register');
 
@@ -20,8 +21,8 @@ tmi.Client = class fakeClient {
     part() { }
     connect() { }
 }
-sinon.stub(require('../js/simpletons/api'), 'queryTwitchApi')
-    .returns({
+sinon.stub(api, 'queryTwitchApi').
+    returns({
         featured: [{
             stream: {
                 game: 'something',
@@ -44,7 +45,7 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
     // Yes I know, eval is disgusting.  But this is for test only and I don't really see
     // any other way to use precompiled handlebar templates in the serverside.
     // https://github.com/handlebars-lang/handlebars.js/issues/922
-    templates[hbsFile] = Handlebars.template(eval("(function(){return " + precompiled + "}());"));
+    templates[hbsFile] = Handlebars.template(eval(`(function(){return ${precompiled}}());`));
 });
 
 // stub out boostrap functions 

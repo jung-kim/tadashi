@@ -19,41 +19,41 @@ describe('proceedsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal')
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined)
-            .returns({
+        sinon.stub(dataCache, 'getTotal').
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     'a': 3,
                     'b': 1,
                     'c': 1,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     'd': 3,
                     'e': 2,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     'a': 3,
                     'b': 2,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     'f': 5,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     'f': 2,
@@ -87,9 +87,9 @@ describe('proceedsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal')
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined)
-            .returns({
+        sinon.stub(dataCache, 'getTotal').
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     a: 1,
@@ -98,9 +98,9 @@ describe('proceedsByUsersVC.js', () => {
                     d: 1,
                     e: 1,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     f: 2,
@@ -108,9 +108,9 @@ describe('proceedsByUsersVC.js', () => {
                     h: 1,
                     i: 1,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     j: 1,
@@ -119,16 +119,16 @@ describe('proceedsByUsersVC.js', () => {
                     m: 1,
                     n: 1,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     a: 5,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     b: 2,
@@ -163,9 +163,9 @@ describe('proceedsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal')
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined)
-            .returns({
+        sinon.stub(dataCache, 'getTotal').
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     a: 1,
@@ -174,9 +174,9 @@ describe('proceedsByUsersVC.js', () => {
                     d: 1,
                     e: 1,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     f: 2,
@@ -184,9 +184,9 @@ describe('proceedsByUsersVC.js', () => {
                     h: 1,
                     i: 1,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     j: 1,
@@ -195,16 +195,16 @@ describe('proceedsByUsersVC.js', () => {
                     m: 1,
                     n: 1,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     a: 5,
                 }
-            })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined)
-            .returns({
+            }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     b: 2,

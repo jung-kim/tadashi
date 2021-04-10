@@ -1,6 +1,5 @@
 
 const { assert } = require('chai');
-const _ = require('lodash');
 const sinon = require('sinon');
 
 const _eventSignalsFunc = require('../../../js/events/stream');

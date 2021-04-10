@@ -20,9 +20,9 @@ describe('chatsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal')
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHAT, undefined)
-            .returns({
+        sinon.stub(dataCache, 'getTotal').
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHAT, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     'a': 2,
@@ -46,9 +46,9 @@ describe('chatsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal')
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHAT, undefined)
-            .returns({
+        sinon.stub(dataCache, 'getTotal').
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHAT, undefined).
+            returns({
                 _sum: 5,
                 _users: {
                     'a': 2,

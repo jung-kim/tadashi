@@ -6,7 +6,9 @@ const utils = require('../js/helpers/utils');
 const DataBucket = require('../js/simpletons/dataCache/models/DataBucket');
 const DataNode = require('../js/simpletons/dataCache/models/DataNode');
 
+/*eslint-disable no-bitwise */
 const hashCode = s => Math.abs(s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0))
+/*eslint-enable no-bitwise */
 const oldTimestamp = "2020-06-24T20:54:29.953000-07:00";
 const expiryTimestampFormat = "YYYY-MM-DD[T]HH:mm:ss.SSSSSSZ";
 const originalMomentNow = moment.now;

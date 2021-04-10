@@ -29,11 +29,11 @@ describe('channelFollowsFetcher.js', () => {
         });
 
         it('none pagination case', async () => {
-            sinon.stub(auth, 'getAuthObj')
-                .returns('auth');
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&to_id=111', 'auth')
-                .returns({ data: 'something' });
+            sinon.stub(auth, 'getAuthObj').
+                returns('auth');
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&to_id=111', 'auth').
+                returns({ data: 'something' });
 
             await channelFollowsFetcher._fetch(111);
 
@@ -43,13 +43,13 @@ describe('channelFollowsFetcher.js', () => {
         });
 
         it('pagination case', async () => {
-            sinon.stub(auth, 'getAuthObj')
-                .returns('auth');
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&to_id=111', 'auth')
-                .returns({ data: 'something', pagination: { cursor: 'a_cursor' } })
-                .withArgs('helix/users/follows?first=100&to_id=111&after=a_cursor', 'auth')
-                .returns({ data: 'another', pagination: {} });
+            sinon.stub(auth, 'getAuthObj').
+                returns('auth');
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&to_id=111', 'auth').
+                returns({ data: 'something', pagination: { cursor: 'a_cursor' } }).
+                withArgs('helix/users/follows?first=100&to_id=111&after=a_cursor', 'auth').
+                returns({ data: 'another', pagination: {} });
 
             await channelFollowsFetcher._fetch(111);
 
@@ -69,14 +69,14 @@ describe('channelFollowsFetcher.js', () => {
         });
 
         it('err mid pagination case', async () => {
-            sinon.stub(auth, 'getAuthObj')
-                .returns('auth');
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('helix/users/follows?first=100&to_id=111', 'auth')
-                .returns({ data: 'something', pagination: { cursor: 'a_cursor' } })
-                .withArgs('helix/users/follows?first=100&to_id=111&after=a_cursor', 'auth')
-                .returns({ data: 'another', pagination: {} })
-                .throws('an_err');
+            sinon.stub(auth, 'getAuthObj').
+                returns('auth');
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('helix/users/follows?first=100&to_id=111', 'auth').
+                returns({ data: 'something', pagination: { cursor: 'a_cursor' } }).
+                withArgs('helix/users/follows?first=100&to_id=111&after=a_cursor', 'auth').
+                returns({ data: 'another', pagination: {} }).
+                throws('an_err');
 
             await channelFollowsFetcher._fetch(111);
 
