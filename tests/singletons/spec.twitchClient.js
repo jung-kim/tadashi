@@ -54,7 +54,7 @@ describe('twitchClient.js', () => {
 
         it('channel and ID is in localstorage', async () => {
             twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => { } };
+            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
             sinon.stub(localStorage, 'getItem').
                 withArgs('channel').returns('hi').
@@ -73,7 +73,7 @@ describe('twitchClient.js', () => {
 
         it('broadcaster user init', async () => {
             twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => { } };
+            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
             sinon.stub(auth, 'isBroadcaster').returns(true);
             sinon.stub(auth, 'getLogin').returns('someone');
@@ -92,7 +92,7 @@ describe('twitchClient.js', () => {
 
         it('default user init', async () => {
             twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => { } };
+            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
             sinon.stub(tmi, 'Client').
                 callThroughWithNew().

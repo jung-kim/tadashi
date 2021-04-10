@@ -37,7 +37,7 @@ describe('dataCache/index.js', () => {
     it('get', () => {
         assert.deepEqual(dataCache.get('aaa', 1, 60, filter), blankDataBucket);
 
-        dataCache._data['aaa'] = { get: () => { } };
+        dataCache._data['aaa'] = { get: () => ({}) };
         sinon.stub(dataCache._data['aaa'], 'get').withArgs(1, 60, filter).returns('test');
         assert.equal(dataCache.get('aaa', 1, 60, filter), 'test');
     });
@@ -45,7 +45,7 @@ describe('dataCache/index.js', () => {
     it('getTotal', () => {
         assert.deepEqual(dataCache.getTotal('aaa', 1, 60, constants.TYPE_CHAT, filter), blankDataNode);
 
-        dataCache._data['aaa'] = { getTotal: () => { } };
+        dataCache._data['aaa'] = { getTotal: () => ({}) };
         sinon.stub(dataCache._data['aaa'], 'getTotal').withArgs(1, 60, constants.TYPE_CHAT, filter).returns('test');
         assert.equal(dataCache.getTotal('aaa', 1, 60, constants.TYPE_CHAT, filter), 'test');
 

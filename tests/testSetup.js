@@ -16,10 +16,18 @@ const constants = require('../js/helpers/constants');
 // doing this odd setup to stub out the constructor for the twitch client
 // disable tmi client so we wouldn't connect to twich api during tests
 tmi.Client = class fakeClient {
-    on() { }
-    join() { }
-    part() { }
-    connect() { }
+    on() {
+        // do nothing 
+    }
+    join() {
+        // do nothing 
+    }
+    part() {
+        // do nothing 
+    }
+    connect() {
+        // do nothing 
+    }
 }
 sinon.stub(api, 'queryTwitchApi').
     returns({
@@ -68,9 +76,13 @@ Chart = class Chart {
         this.dom = dom;
     }
 
-    update() { }
+    update() {
+        // do nothing
+    }
 
-    destroy() { }
+    destroy() {
+        // do nothing
+    }
 }
 
 // stub dom functions, I'm sure there is a npm package does this...
@@ -115,3 +127,14 @@ reset = () => {
     flatpickr.reset();
     eventSignals.dispatch.reset();
 }
+
+Twitch = {
+    Embed: sinon.stub().withArgs('twitch-embed', {
+        width: '100%',
+        height: '100%',
+        channel: 'abc',
+        autoplay: true,
+        muted: true,
+        allowfullscreen: false
+    })
+};

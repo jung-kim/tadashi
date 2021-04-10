@@ -21,7 +21,7 @@ describe('userIDFetcher.js', () => {
     });
 
     it('add()', () => {
-        userIDFetcher.fetch = () => { };
+        userIDFetcher.fetch = () => ({});
 
         userIDFetcher.add('a');
         assert.deepEqual(userIDFetcher._names, new Set(['a']));
@@ -33,7 +33,7 @@ describe('userIDFetcher.js', () => {
     });
 
     it('_fetch', async () => {
-        userIDFetcher.fetch = () => { };
+        userIDFetcher.fetch = () => ({});
 
         userIDFetcher.add('a');
         userIDFetcher.add('b');

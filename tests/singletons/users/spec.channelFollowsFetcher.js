@@ -1,6 +1,5 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
-const constants = require('../../../js/helpers/constants');
 
 const auth = require('../../../js/simpletons/auth');
 const channelFollowsFetcher = require('../../../js/singletons/users/channelFollowsFetcher');

@@ -85,7 +85,7 @@ describe('api.js', () => {
         });
 
         it('5xx with over limit max await duration should set to max await duration', async () => {
-            t = testUtils.fakeNow + constants.MAX_AWAIT_DURATION_MS + 2000;
+            const t = testUtils.fakeNow + constants.MAX_AWAIT_DURATION_MS + 2000;
             fetchMock.getOnce(testRoutePath, {
                 status: statusCodes.INTERNAL_SERVER_ERROR,
                 body: testBody,

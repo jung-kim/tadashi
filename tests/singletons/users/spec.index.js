@@ -25,7 +25,6 @@ describe('users.js', () => {
         const aUser = new User(0, 'a');
         const bUser = new User(undefined, 'b');
         const cUser = new User(3, 'c');
-        const dUser = new User(4, 'd')
         const stub = sinon.stub(userFollowsFetcher, 'add');
 
         users._idToUser = { 0: aUser, 3: cUser };
@@ -150,7 +149,7 @@ describe('users.js', () => {
 
             const idFetcherAddStub = sinon.stub(userIDFetcher, 'add');
             const fakeViewers = new Array(constants.MAX_VIEWERS_COUNTS_FOR_PROCESS);
-            for (i = 0; i < constants.MAX_VIEWERS_COUNTS_FOR_PROCESS; i++) {
+            for (let i = 0; i < constants.MAX_VIEWERS_COUNTS_FOR_PROCESS; i++) {
                 fakeViewers[i] = i.toString();
             }
 

@@ -104,8 +104,6 @@ describe('chattersTableVC', () => {
     });
 
     it('initialize', () => {
-        const destroy = sinon.stub(chattersTableVC, 'destroy');
-
         const chattersTable = {};
         const chattersSearch = {};
 

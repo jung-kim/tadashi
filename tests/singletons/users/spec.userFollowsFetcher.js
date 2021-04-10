@@ -13,7 +13,6 @@ describe('userFollowsFetcher.js', () => {
     beforeEach(() => {
         fetchMock.reset();
         auth._setAuthToken('testAuth');
-        api.reset;
         userFollowsFetcher._paginations = {};
         reset();
     });
@@ -26,7 +25,7 @@ describe('userFollowsFetcher.js', () => {
 
     it('_fetch', async () => {
         // stub out the fetch user follows for easier testing for now
-        userFollowsFetcher._fetchUserFollows = () => { };
+        userFollowsFetcher._fetchUserFollows = () => ({});
 
         // don't spawn any if there are nothing to work on
         userFollowsFetcher._fetch();
@@ -51,7 +50,7 @@ describe('userFollowsFetcher.js', () => {
     });
 
     it('add()', () => {
-        userFollowsFetcher.fetch = () => { };
+        userFollowsFetcher.fetch = () => ({});
 
         userFollowsFetcher.add(1);
         assert.deepEqual(userFollowsFetcher._toFetch, new Set([1]));
