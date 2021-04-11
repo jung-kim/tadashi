@@ -23,7 +23,7 @@ These are the folders and what files are in each folders.  There are other gener
 - ./html
     - index.html, entry point of the page
 - [./js](./js/README.md)
-    - js logics
+    - bulk of js codes.
 - ./less
     - less files that gets translated into css
 - [./proxy-server](./proxy-server/README.md)
@@ -40,30 +40,76 @@ Tadashi is mostly a front end app therefor node and npm dependencies are mostly 
 1. `node >= 14.4.0`
 2. `npm >= 7.5.2`
 
-### unit tests
-
-There are automatic tests that tests bulk of the logics.
+### npm commands
 
 - `npm run test`
-
-### test coverages
-
-Runs test coverage and relevant data and files will be generated at `./coverage` folder.  `open ./coverage/index.html` will show detailed coverage reports.
-
-Code coverages are automatically posted to [codecov.io](https://codecov.io/gh/jung-kim/tadashi)
-
+    - runs `npm run prep` and then run unit tests
+- `npm run coverage`
+    - runs `npm run prep` and then run unit tests to capture test coverage in `./coverage` folder
+    - code coverages are automatically posted to [codecov.io](https://codecov.io/gh/jung-kim/tadashi) per PR.
 - `npm run cov`
+    - alias for `npm run coverage`
+- `npm run prep`
+    - prepares for runtime execution via doing two things
+        - runs `npm run env-gen` 
+        - replaces babel config for `tmi.js` dependency manually. (I know, this is not recommended...)
+- `npm run env-gen`
+    - generates `./js/env.js` config file
+- `npm run build`
+    - packages all the assets into `./public` folder
+- `npm run lint`
+    - runs eslint on all codes.
+    - one could run `npm run lint -- --fix` to automatically fix what is possible.
 
 ### build and run local instance
+
+#### with twitch client id
+For full featured local runs, one would have to create twich apps because SSO will not work due to security restrictions.
 
 1. create new [twitch application](https://dev.twitch.tv/console/apps/create) for free and get the `CLIENT_ID`
 2. Build the project
     - `npm run install`
-    - `CLIENT_ID=${CLIENT_ID} npm run build`
+    - `CLIENT_ID=${CLIENT_ID} CLIENT_SECRET=${CLIENT_SECRET} npm run build`
 3. start the [helper proxy server](./proxy-server/README.md).
     - `npm --prefix ./proxy-server i` 
     - `npm --prefix ./proxy-server run start`
 4. navigate to the local instance
     - `open ./public/index.html`
 
-Technically, one could skip step 1 and run build the project without the client_id by doing `npm run install; npm run build`.  But some [Twitch API calls](https://dev.twitch.tv/docs/api/reference) that requires client id will not work.
+#### without twitch client id
+Tadashi will work for the most part without the twitch client id.  However, some features will not work including followers count and etc.
+
+1. Build the project
+    - `npm run install`
+    - `npm run build`
+4. navigate to the local instance
+    - `open ./public/index.html`
+
+## dev faq
+
+### What are some of the libraries that are being used?
+not exhaustive
+
+- handlebars
+- less
+- browserify
+- babelify
+- chartjs
+- lodash
+- moment
+- pako
+- awesomplete
+- flatpickr
+- micro-signal
+
+### Why is it not in react?
+Short answer is because I don't want to.  Long answer is that I'm a backend grunt who've actually never done JS devlopment professionally, I've been doing Scala, Java, Python and GoLang.  I wanted to something fun, simple and different before doing things the way others do.
+
+### Where is the twitch API refernce?
+[twitch api](https://dev.twitch.tv/docs/api/)
+
+### API throttling limit
+Twitch have [api limit](https://dev.twitch.tv/docs/api/guide#rate-limits) of 800 points per minute.  [api.js](./js/simpletons/api.js) does catch response codes and automatically retry it when rate limit bucket refilled.
+
+### How is code structured?
+Latest information on this can be found at the separate [documentation](./js/README.md)

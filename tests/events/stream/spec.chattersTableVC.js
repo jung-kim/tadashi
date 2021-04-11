@@ -1,6 +1,5 @@
 
 const { assert } = require('chai');
-const _ = require('lodash');
 const sinon = require('sinon');
 
 const chattersTableVC = require('../../../js/events/stream/chattersTableVC');
@@ -105,8 +104,6 @@ describe('chattersTableVC', () => {
     });
 
     it('initialize', () => {
-        const destroy = sinon.stub(chattersTableVC, 'destroy');
-
         const chattersTable = {};
         const chattersSearch = {};
 

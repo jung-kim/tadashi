@@ -1,3 +1,5 @@
+/*eslint-disable no-global-assign,no-implicit-globals,no-native-reassign*/
+
 const eventSignals = require('../js/helpers/signals').eventSignals;
 const sinon = require('sinon');
 const Handlebars = require('handlebars');
@@ -5,23 +7,30 @@ const glob = require('glob');
 const fs = require('fs');
 const tmi = require('tmi.js');
 const moment = require('../js/helpers/moment');
+const api = require('../js/simpletons/api');
 _ = require('lodash');
 require('node-localstorage/register');
 
 moment.tz.setDefault("America/Los_Angeles");
 
-const constants = require('../js/helpers/constants');
-
 // doing this odd setup to stub out the constructor for the twitch client
 // disable tmi client so we wouldn't connect to twich api during tests
 tmi.Client = class fakeClient {
-    on() { }
-    join() { }
-    part() { }
-    connect() { }
+    on() {
+        // do nothing 
+    }
+    join() {
+        // do nothing 
+    }
+    part() {
+        // do nothing 
+    }
+    connect() {
+        // do nothing 
+    }
 }
-sinon.stub(require('../js/simpletons/api'), 'queryTwitchApi')
-    .returns({
+sinon.stub(api, 'queryTwitchApi').
+    returns({
         featured: [{
             stream: {
                 game: 'something',
@@ -44,7 +53,9 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
     // Yes I know, eval is disgusting.  But this is for test only and I don't really see
     // any other way to use precompiled handlebar templates in the serverside.
     // https://github.com/handlebars-lang/handlebars.js/issues/922
-    templates[hbsFile] = Handlebars.template(eval("(function(){return " + precompiled + "}());"));
+    /*eslint-disable no-eval*/
+    templates[hbsFile] = Handlebars.template(eval(`(function(){return ${precompiled}}());`));
+    /*eslint-enable no-eval*/
 });
 
 // stub out boostrap functions 
@@ -67,9 +78,13 @@ Chart = class Chart {
         this.dom = dom;
     }
 
-    update() { }
+    update() {
+        // do nothing
+    }
 
-    destroy() { }
+    destroy() {
+        // do nothing
+    }
 }
 
 // stub dom functions, I'm sure there is a npm package does this...
@@ -81,26 +96,11 @@ window = {
     addEventListener: sinon.stub().withArgs(sinon.match.any).returns({}),
 }
 
-const users = require('../js/singletons/users');
 const auth = require('../js/simpletons/auth');
 const filter = require('../js/events/shared/chartFilter').getUserFilter();
 
-// setup `userFollowsCSS` helper, remove this once we can include main.js
-Handlebars.registerHelper('userFollowsCSS', (userName) => {
-    const user = users.getUserByName(userName);
-
-    if (!user) {
-        return constants.CSS_UNKNOWN;
-    }
-
-    switch (user.isFollowing(twitchClient.getChannelID())) {
-        case true:
-            return constants.CSS_FOLLOWING;
-        case false:
-            return constants.CSS_NOT_FOLLOWING;
-        default:
-            return constants.CSS_UNKNOWN;
-    }
+Handlebars.registerHelper('userFollowsCSS', () => {
+    // do nothing
 });
 
 Awesomplete = sinon.stub();
@@ -114,3 +114,16 @@ reset = () => {
     flatpickr.reset();
     eventSignals.dispatch.reset();
 }
+
+Twitch = {
+    Embed: sinon.stub().withArgs('twitch-embed', {
+        width: '100%',
+        height: '100%',
+        channel: 'abc',
+        autoplay: true,
+        muted: true,
+        allowfullscreen: false
+    })
+};
+
+/*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

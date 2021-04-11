@@ -81,7 +81,7 @@ describe('Utils.js', () => {
         });
 
         it("tab with noargs", () => {
-            assert.deepEqual(utils.extractTabObj('#' + constants.TABS_OPTIONS[0]), { 'tab': constants.TABS_OPTIONS[0], 'args': {} });
+            assert.deepEqual(utils.extractTabObj(`#${constants.TABS_OPTIONS[0]}`), { 'tab': constants.TABS_OPTIONS[0], 'args': {} });
         });
 
         it("invalid tab no args", () => {

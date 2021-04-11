@@ -12,18 +12,18 @@ describe('twitchAPI.js', () => {
 
     it('getChannelInfo()', async () => {
         auth._setAuthToken('testToken');
-        sinon.stub(api, 'queryTwitchApi')
-            .withArgs(`helix/streams?user_login=abc`, auth.getAuthObj())
-            .returns({ data: ['something'] });
+        sinon.stub(api, 'queryTwitchApi').
+            withArgs(`helix/streams?user_login=abc`, auth.getAuthObj()).
+            returns({ data: ['something'] });
 
         assert.deepEqual(await twitchAPI.getChannelInfo('abc'), { data: ['something'] });
     });
 
     it('getChannelSearch()', async () => {
         auth._setAuthToken('testToken');
-        const stub = sinon.stub(api, 'queryTwitchApi')
-            .withArgs(`helix/search/channels?query=abcdef&first=10`, auth.getAuthObj())
-            .returns({ data: ['nanana'] });
+        const stub = sinon.stub(api, 'queryTwitchApi').
+            withArgs(`helix/search/channels?query=abcdef&first=10`, auth.getAuthObj()).
+            returns({ data: ['nanana'] });
         assert.deepEqual(await twitchAPI.getChannelSearch('!!!!'), {});
         sinon.assert.notCalled(stub);
 

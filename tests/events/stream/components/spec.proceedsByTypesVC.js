@@ -19,17 +19,17 @@ describe('proceedsByTypesVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal')
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined)
-            .returns({ _sum: 5 })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined)
-            .returns({ _sum: 6 })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined)
-            .returns({ _sum: 7 })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined)
-            .returns({ _sum: 8 })
-            .withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined)
-            .returns({ _sum: 9 });
+        sinon.stub(dataCache, 'getTotal').
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined).
+            returns({ _sum: 5 }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined).
+            returns({ _sum: 6 }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined).
+            returns({ _sum: 7 }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined).
+            returns({ _sum: 8 }).
+            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined).
+            returns({ _sum: 9 });
         document.getElementById.withArgs(proceedsByTypesVC._chartDomSelector).returns({});
         proceedsByTypesVC.reset();
         await proceedsByTypesVC._update();

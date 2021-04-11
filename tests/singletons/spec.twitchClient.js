@@ -54,15 +54,15 @@ describe('twitchClient.js', () => {
 
         it('channel and ID is in localstorage', async () => {
             twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => { } };
+            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
-            sinon.stub(localStorage, 'getItem')
-                .withArgs('channel').returns('hi')
-                .withArgs('channel-id').returns('99');
-            sinon.stub(tmi, 'Client')
-                .callThroughWithNew()
-                .withArgs(sinon.match.any)
-                .returns(fakeClient);
+            sinon.stub(localStorage, 'getItem').
+                withArgs('channel').returns('hi').
+                withArgs('channel-id').returns('99');
+            sinon.stub(tmi, 'Client').
+                callThroughWithNew().
+                withArgs(sinon.match.any).
+                returns(fakeClient);
 
             await twitchClient.initializeClient();
 
@@ -73,15 +73,15 @@ describe('twitchClient.js', () => {
 
         it('broadcaster user init', async () => {
             twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => { } };
+            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
             sinon.stub(auth, 'isBroadcaster').returns(true);
             sinon.stub(auth, 'getLogin').returns('someone');
             sinon.stub(auth, 'getID').returns(123);
-            sinon.stub(tmi, 'Client')
-                .callThroughWithNew()
-                .withArgs(sinon.match.any)
-                .returns(fakeClient);
+            sinon.stub(tmi, 'Client').
+                callThroughWithNew().
+                withArgs(sinon.match.any).
+                returns(fakeClient);
 
             await twitchClient.initializeClient();
 
@@ -92,12 +92,12 @@ describe('twitchClient.js', () => {
 
         it('default user init', async () => {
             twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => { } };
+            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
-            sinon.stub(tmi, 'Client')
-                .callThroughWithNew()
-                .withArgs(sinon.match.any)
-                .returns(fakeClient);
+            sinon.stub(tmi, 'Client').
+                callThroughWithNew().
+                withArgs(sinon.match.any).
+                returns(fakeClient);
             await twitchClient.initializeClient();
 
             sinon.assert.calledOnce(fakeClient.connect);
@@ -216,9 +216,9 @@ describe('twitchClient.js', () => {
 
 
         sinon.stub(twitchClient, 'getChannel').returns('abc');
-        sinon.stub(api, 'queryTwitchApi')
-            .withArgs(`kraken/users?login=abc`)
-            .returns({ users: [{ _id: '111' }] });
+        sinon.stub(api, 'queryTwitchApi').
+            withArgs(`kraken/users?login=abc`).
+            returns({ users: [{ _id: '111' }] });
         await twitchClient._setChannelID();
         assert.equal(twitchClient._channelID, 111);
 
@@ -232,9 +232,9 @@ describe('twitchClient.js', () => {
     describe('changeToRandomFeaturedStream', () => {
         it('should be able to select a channel within range', async () => {
             sinon.stub(twitchClient._client, 'join').withArgs('two');
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs('kraken/streams/featured?limit=100')
-                .returns({
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs('kraken/streams/featured?limit=100').
+                returns({
                     featured: [{
                         stream: {
                             game: 'something',
@@ -272,8 +272,8 @@ describe('twitchClient.js', () => {
 
         it('should default to xqcow with any fails', async () => {
             sinon.stub(twitchClient._client, 'join').withArgs('xqcow');
-            sinon.stub(api, 'queryTwitchApi')
-                .throws("something");
+            sinon.stub(api, 'queryTwitchApi').
+                throws("something");
 
             await twitchClient.changeToRandomFeaturedStream();
 
