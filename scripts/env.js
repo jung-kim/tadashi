@@ -1,5 +1,5 @@
 const execSync = require("child_process").execSync;
-
+/*eslint-disable no-process-env*/
 const environment = process.env.ENVIRONMENT ? process.env.ENVIRONMENT : 'local';
 
 const env = require('@ladjs/env')({
@@ -19,6 +19,7 @@ if (process.env.CLIENT_SECRET) {
 
 env.CLIENT_ID = process.env.CLIENT_ID;
 env.GIT_HASH = execSync('git rev-parse --short HEAD').toString().trim();
-env.TAG = `${env.ENVIRONMENT === 'local' ? env.ENVIRONMENT + '-' : ''}${env.GIT_HASH}`;
+env.TAG = `${env.ENVIRONMENT === 'local' ? `${env.ENVIRONMENT}-` : ''}${env.GIT_HASH}`;
 
 module.exports = env;
+/*eslint-enable no-process-env*/

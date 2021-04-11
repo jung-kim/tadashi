@@ -1,3 +1,5 @@
+/*eslint-disable no-global-assign,no-implicit-globals,no-native-reassign*/
+
 const eventSignals = require('../js/helpers/signals').eventSignals;
 const sinon = require('sinon');
 const Handlebars = require('handlebars');
@@ -10,8 +12,6 @@ _ = require('lodash');
 require('node-localstorage/register');
 
 moment.tz.setDefault("America/Los_Angeles");
-
-const constants = require('../js/helpers/constants');
 
 // doing this odd setup to stub out the constructor for the twitch client
 // disable tmi client so we wouldn't connect to twich api during tests
@@ -53,7 +53,9 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
     // Yes I know, eval is disgusting.  But this is for test only and I don't really see
     // any other way to use precompiled handlebar templates in the serverside.
     // https://github.com/handlebars-lang/handlebars.js/issues/922
+    /*eslint-disable no-eval*/
     templates[hbsFile] = Handlebars.template(eval(`(function(){return ${precompiled}}());`));
+    /*eslint-enable no-eval*/
 });
 
 // stub out boostrap functions 
@@ -94,26 +96,11 @@ window = {
     addEventListener: sinon.stub().withArgs(sinon.match.any).returns({}),
 }
 
-const users = require('../js/singletons/users');
 const auth = require('../js/simpletons/auth');
 const filter = require('../js/events/shared/chartFilter').getUserFilter();
 
-// setup `userFollowsCSS` helper, remove this once we can include main.js
-Handlebars.registerHelper('userFollowsCSS', (userName) => {
-    const user = users.getUserByName(userName);
-
-    if (!user) {
-        return constants.CSS_UNKNOWN;
-    }
-
-    switch (user.isFollowing(twitchClient.getChannelID())) {
-        case true:
-            return constants.CSS_FOLLOWING;
-        case false:
-            return constants.CSS_NOT_FOLLOWING;
-        default:
-            return constants.CSS_UNKNOWN;
-    }
+Handlebars.registerHelper('userFollowsCSS', () => {
+    // do nothing
 });
 
 Awesomplete = sinon.stub();
@@ -138,3 +125,5 @@ Twitch = {
         allowfullscreen: false
     })
 };
+
+/*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

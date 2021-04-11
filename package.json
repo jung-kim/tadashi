@@ -10,7 +10,7 @@
     "cov": "npm run coverage",
     "coverage": "npm run prep && ./node_modules/nyc/bin/nyc.js --reporter=json --reporter=text --reporter=html ./node_modules/mocha/bin/mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-multi-config.json --timeout 5000 --exit --file ./tests/testSetup.js './tests/**/*'",
     "build": "npm run prep && node ./scripts/build.js",
-    "lint": "node ./node_modules/eslint/bin/eslint.js './js/**/*.js' './tests/**/*.js' --global Twitch --global moment"
+    "lint": "node ./node_modules/eslint/bin/eslint.js './js/**/*.js' './tests/**/*.js' './scripts/**/*.js' './proxy-server/**/*.js' --global Twitch --global moment"
   },
   "author": "jung-kim.github.io",
   "license": "MIT",

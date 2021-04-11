@@ -10,8 +10,8 @@ const htmlmin = require('htmlmin');
 const Handlebars = require('handlebars');
 const minifyStream = require('minify-stream');
 
-const jsFiles = glob.sync('./js/**/*.js')
-    .map(jsFilename => {
+const jsFiles = glob.sync('./js/**/*.js').
+    map(jsFilename => {
         const parsedPath = path.parse(jsFilename);
         const objectName = parsedPath.base === 'index.js' ? path.basename(parsedPath.dir) : parsedPath.name;
         return {
@@ -45,14 +45,14 @@ const browserifyAll = async () => {
         builtins: false,
     }).transform('exposify', { expose: { moment: 'moment', lodash: '_', pako: 'pako' } });
 
-    jsFiles.map(jsFileObj => {
+    jsFiles.forEach(jsFileObj => {
         b.require(jsFileObj.originalFilename, { expose: jsFileObj.toExposeAs });
     });
 
-    return (env.ENVIRONMENT === 'local' ? b : b.transform("babelify", { presets: ["@babel/preset-env"] }))
-        .bundle()
-        .pipe(minifyStream({ sourceMap: false, mangle: { reserved: ['moment', '_', 'Twitch'] } }))
-        .pipe(fsSync.createWriteStream(`./public/script.js`))
+    return (env.ENVIRONMENT === 'local' ? b : b.transform("babelify", { presets: ["@babel/preset-env"] })).
+        bundle().
+        pipe(minifyStream({ sourceMap: false, mangle: { reserved: ['moment', '_', 'Twitch'] } })).
+        pipe(fsSync.createWriteStream(`./public/script.js`))
 }
 
 // Browserify external 3rd party libraries
@@ -64,17 +64,17 @@ const browserifyExternal = async () => {
         noParse: ['window', 'lodash', 'moment', 'moment-timezone', 'node-localstorage'],
     });
     pkgs.forEach(pkg => b.require(pkg, { expose: pkg }));
-    return (env.ENVIRONMENT === 'local' ? b : b.transform("babelify", { presets: ["@babel/preset-env"] })).bundle()
-        .pipe(minifyStream({ sourceMap: false, mangle: { reserved: ['moment', '_', 'Twitch'] } }))
-        .pipe(fsSync.createWriteStream('./public/bundle.js'));
+    return (env.ENVIRONMENT === 'local' ? b : b.transform("babelify", { presets: ["@babel/preset-env"] })).bundle().
+        pipe(minifyStream({ sourceMap: false, mangle: { reserved: ['moment', '_', 'Twitch'] } })).
+        pipe(fsSync.createWriteStream('./public/bundle.js'));
 }
 
 // Minimize generated html
 const htmlminStep = async () => {
     console.log(`building htmlMinStep...`);
-    const html = (await fs.readFile('./html/index.html')).toString()
-        .replace(/{{HOST_ENDPOINT}}/g, env.HOST_ENDPOINT)
-        .replace(/{{TAG}}/g, env.TAG);
+    const html = (await fs.readFile('./html/index.html')).toString().
+        replace(/{{HOST_ENDPOINT}}/g, env.HOST_ENDPOINT).
+        replace(/{{TAG}}/g, env.TAG);
     const minifiedHtml = htmlmin(html, {
         collapseWhitespace: true,
         removeComments: true,
@@ -108,13 +108,7 @@ const handlebarsStep = async () => {
 
 (async () => {
     await fs.rmdir('./public', { recursive: true });
-
-    await Promise.all([
-        await mkdirp('./public'),
-        fs.readFile('./package.json').then(buf => {
-            packageJson = JSON.parse(buf.toString());
-        }),
-    ])
+    await mkdirp('./public');
 
     await Promise.all([
         browserifyAll(),
