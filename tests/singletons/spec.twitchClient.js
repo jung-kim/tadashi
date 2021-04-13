@@ -52,6 +52,27 @@ describe('twitchClient.js', () => {
             sinon.assert.notCalled(getChannelStub);
         });
 
+        it('channel is in localstorage but not id', async () => {
+            twitchClient._client = undefined;
+            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
+
+            sinon.stub(localStorage, 'getItem').
+                withArgs('channel').returns('hi');
+            sinon.stub(tmi, 'Client').
+                callThroughWithNew().
+                withArgs(sinon.match.any).
+                returns(fakeClient);
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs(`kraken/users?login=hi`).
+                returns({ users: [{ _id: 88 }] });
+
+            await twitchClient.initializeClient();
+
+            assert.equal(twitchClient._channel, 'hi');
+            assert.equal(twitchClient._channelID, 88);
+            sinon.assert.calledOnce(fakeClient.connect);
+        });
+
         it('channel and ID is in localstorage', async () => {
             twitchClient._client = undefined;
             const fakeClient = { connect: sinon.stub(), on: () => ({}) };

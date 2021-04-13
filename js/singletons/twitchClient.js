@@ -52,19 +52,13 @@ class TwitchClient {
         if (!this.getChannel()) {
             if (localStorage.getItem(CHANNEL_LS_KEY)) {
                 this._setChannel(localStorage.getItem(CHANNEL_LS_KEY));
+                this._setChannelID(localStorage.getItem(CHANNEL_LS_ID_KEY));
             } else if (auth.isBroadcaster()) {
                 this._setChannel(auth.getLogin());
                 this._setChannelID(auth.getID());
             } else {
-                this.changeChannel(constants.DEFAULT_CHANNEL, constants.DEFAULT_CHANNEL_ID);
-            }
-        }
-
-        if (this.getChannel() && !this.getChannelID()) {
-            if (localStorage.getItem(CHANNEL_LS_ID_KEY)) {
-                this._setChannelID(parseInt(localStorage.getItem(CHANNEL_LS_ID_KEY)));
-            } else {
-                this._setChannelID();
+                this._setChannel(constants.DEFAULT_CHANNEL);
+                this._setChannelID(constants.DEFAULT_CHANNEL_ID);
             }
         }
 

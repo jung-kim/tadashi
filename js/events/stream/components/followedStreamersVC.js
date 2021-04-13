@@ -5,9 +5,9 @@ const twitchClient = require('../../../singletons/twitchClient');
 
 const chartFollowedStreamersHelperContent = `<p>Top 19 followed streamers from viewers<br>
 Includes data from both current viewers and the viewers who have left as well.
-</br>
-- Followed by admirers: following another streamer but not following current streamer amongst viewers.
-- Followed by followers: following another streamer and following current streamer amongst viewers.
+</br></br>
+- followed by admirers: number of another stream is followed from current stream viewers who are not following current streamer.</br>
+- Followed by followers: number of another stream is followed from current stream viewers who are following current streamer.</br>
 - unknown: data hasn't beent fetched yet and is unkonwn.
 </p>`
 
@@ -50,14 +50,14 @@ class FollowedStreamersVC extends ChartRoot {
             backgroundColor: '#B346A3',
             borderColor: '#B34650',
             borderWidth: 1,
-            label: 'followed admirers',
+            label: 'followed by admirers',
         },
         {
             data: [],
             backgroundColor: '#46B356',
             borderColor: '#46B380',
             borderWidth: 1,
-            label: 'Followed by current stream followers',
+            label: 'followed by followers',
         },
         {
             data: [],
