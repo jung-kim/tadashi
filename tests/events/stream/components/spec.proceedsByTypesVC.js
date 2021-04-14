@@ -48,11 +48,11 @@ describe('proceedsByTypesVC.js', () => {
     });
     it('_borderColor', () => {
         assert.deepEqual(proceedsByTypesVC._borderColor, [
-            "rgb(51, 255, 255, 0.3)",
-            "rgb(0, 128, 225, 0.3)",
-            "rgb(153, 255, 51, 0.3)",
-            "rgb(255, 128, 0, 0.3)",
-            "rgb(128, 128, 128, 0.3)",
+            "rgb(51, 255, 255, 1.0)",
+            "rgb(0, 128, 225, 1.0)",
+            "rgb(153, 255, 51, 1.0)",
+            "rgb(255, 128, 0, 1.0)",
+            "rgb(128, 128, 128, 1.0)",
         ]);
     });
 });

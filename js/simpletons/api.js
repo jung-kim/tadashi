@@ -1,10 +1,12 @@
 const env = require('../env');
 const moment = require('../helpers/moment');
 const statusCodes = require('http-status-codes').StatusCodes;
-const constants = require('../helpers/constants');
 const eventSignals = require('../helpers/signals').eventSignals;
 const pako = require('pako');
 
+const RATELIMIT_REMAINING = 'Ratelimit-Remaining';
+const RATELIMIT_RESET = 'Ratelimit-Reset';
+const MAX_AWAIT_DURATION_SEC = 15;
 const DEFAULT_REQ_OPT = {
     headers: {
         'Client-ID': env.CLIENT_ID,
@@ -31,16 +33,16 @@ class API {
             this.waitForReset = null;
         }
         const response = await fetch(url, authObj || DEFAULT_REQ_OPT);
-        const remaining = parseInt(response.headers.get(constants.RATELIMIT_REMAINING) || 10);
+        const remaining = parseInt(response.headers.get(RATELIMIT_REMAINING) || 10);
         const now = moment().unix();
-        let resetAt = parseInt(response.headers.get(constants.RATELIMIT_RESET) || now + constants.MAX_AWAIT_DURATION_SEC);
+        let resetAt = parseInt(response.headers.get(RATELIMIT_RESET) || (now + MAX_AWAIT_DURATION_SEC));
 
         if (remaining === 0 || response.status === statusCodes.TOO_MANY_REQUESTS) {
             console.warn(`too many requests! ${resetAt} ${response.headers}`);
             // status too many requests
             if (!this.waitForReset) {
                 // set waitForReset
-                const sleepForSec = Math.min(resetAt - now, constants.MAX_AWAIT_DURATION_SEC);
+                const sleepForSec = Math.min(resetAt - now, MAX_AWAIT_DURATION_SEC);
                 resetAt = now + sleepForSec;
                 this.waitForReset = new Promise(resolve => {
                     this._waitForTimeOut = setTimeout(() => {

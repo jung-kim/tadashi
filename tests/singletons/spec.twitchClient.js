@@ -122,8 +122,8 @@ describe('twitchClient.js', () => {
             await twitchClient.initializeClient();
 
             sinon.assert.calledOnce(fakeClient.connect);
-            assert.equal(twitchClient._channel, constants.DEFAULT_CHANNEL);
-            assert.equal(twitchClient._channelID, constants.DEFAULT_CHANNEL_ID);
+            assert.equal(twitchClient._channel, 'xqcow');
+            assert.equal(twitchClient._channelID, 71092938);
         });
     });
 

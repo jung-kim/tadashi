@@ -10,6 +10,10 @@ const dataCache = require('../simpletons/dataCache');
 
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';
+const CHATTERS_KEY = 'chatters';
+
+const DEFAULT_CHANNEL = 'xqcow';
+const DEFAULT_CHANNEL_ID = 71092938;
 
 class TwitchClient {
     constructor() {
@@ -57,8 +61,8 @@ class TwitchClient {
                 this._setChannel(auth.getLogin());
                 this._setChannelID(auth.getID());
             } else {
-                this._setChannel(constants.DEFAULT_CHANNEL);
-                this._setChannelID(constants.DEFAULT_CHANNEL_ID);
+                this._setChannel(DEFAULT_CHANNEL);
+                this._setChannelID(DEFAULT_CHANNEL_ID);
             }
         }
 
@@ -163,7 +167,7 @@ class TwitchClient {
 
         eventSignals.dispatch({
             event: "chatters.data.update",
-            data: json[constants.KEY_CHATTERS],
+            data: json[CHATTERS_KEY],
             channelID: this.getChannelID(),
         });
     }

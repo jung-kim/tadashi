@@ -5,6 +5,8 @@ const constants = require('../../../helpers/constants');
 const ChartRoot = require('./ChartRoot');
 const dataCache = require('../../../simpletons/dataCache');
 
+const TIMEFORMAT_DISPLAY = 'YYYY/MM/DD HH:mm';
+
 class TimeseriesVC extends ChartRoot {
     constructor() {
         super({
@@ -72,7 +74,7 @@ class TimeseriesVC extends ChartRoot {
     _toolTipTitle(tooltipItem) {
         const dataIndex = ((tooltipItem && tooltipItem[0]) || {}).dataIndex;
         if (dataIndex >= 0) {
-            return this._getRootLabels()[dataIndex].format(constants.TIMEFORMAT_DISPLAY);
+            return this._getRootLabels()[dataIndex].format(TIMEFORMAT_DISPLAY);
         }
     }
 

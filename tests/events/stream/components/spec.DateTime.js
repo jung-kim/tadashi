@@ -51,7 +51,7 @@ describe('DateTime.js', () => {
 
         dateTime.set(now);
 
-        sinon.assert.calledOnce(dateTime.timeSelector.setDate.withArgs([now.format(constants.MOMENT_DISPLAY_FORMAT)]));
+        sinon.assert.calledOnce(dateTime.timeSelector.setDate.withArgs([now.format('YYYY-MM-DD HH:mm')]));
     });
 
     it('destroy', () => {

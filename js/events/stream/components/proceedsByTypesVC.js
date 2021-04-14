@@ -32,7 +32,7 @@ class ProceedsByTypesVC extends ChartRoot {
             return constants.CHART_BACKGROUND_COLOR[msgType];
         }));
         this._borderColor = Object.freeze(this._messageTypes.map((msgType) => {
-            return constants.CHART_BACKGROUND_COLOR[msgType];
+            return constants.CHART_BORDER_COLOR[msgType];
         }));
     }
 
