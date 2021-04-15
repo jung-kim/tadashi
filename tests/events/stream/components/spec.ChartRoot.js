@@ -105,7 +105,6 @@ describe('ChartRoot.js', () => {
             chartRoot._enabled = false;
             chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
             sinon.assert.calledOnce(update);
-            sinon.assert.calledOnce(chartRoot._chartObject.update);
         });
 
         it('filter.change', () => {
@@ -118,7 +117,6 @@ describe('ChartRoot.js', () => {
             chartRoot._enabled = false;
             chartRoot._eventSignalsFunc({ event: 'filter.change' });
             sinon.assert.calledOnce(update);
-            sinon.assert.calledOnce(chartRoot._chartObject.update);
         });
     });
 
