@@ -4,7 +4,7 @@ const sinon = require('sinon')
 
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const constants = require('../../../../js/helpers/constants');
-const ChartRoot = require('../../../../js/events/stream/components/ChartRoot');
+const ChartRoot = require('../../../../js/events/stream/charts/ChartRoot');
 const twitchClient = require('../../../../js/singletons/twitchClient');
 
 describe('ChartRoot.js', () => {

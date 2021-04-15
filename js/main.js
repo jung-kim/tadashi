@@ -21,6 +21,10 @@ const getNearestId = (target) => {
     return 'undefined';
 }
 
+const updateAuth = () => {
+    document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth);
+}
+
 window.env = require('./env.js');
 
 // default page load
@@ -32,7 +36,7 @@ window.onload = async () => {
 
     await twitchClient.initializeClient();
 
-    document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth);
+    updateAuth();
     eventSignals.dispatch({ event: `stream.load` });
 };
 
@@ -84,9 +88,13 @@ Handlebars.registerHelper('userFollowsCSS', (userName) => {
 });
 
 eventSignals.add((payload) => {
-    if (payload.alert && payload.alert.body) {
-        document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
-        new BSN.Alert(document.querySelector('.alert'));
-        return;
+    switch (true) {
+        case payload.alert && payload.alert.body:
+            document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
+            new BSN.Alert(document.querySelector('.alert'));
+            break;
+        case payload.event === 'draw.nav.auth':
+            updateAuth();
+            break;
     }
 });

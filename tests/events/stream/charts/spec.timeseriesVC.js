@@ -4,7 +4,7 @@ const moment = require('../../../../js/helpers/moment');
 
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
-const timeseriesVC = require('../../../../js/events/stream/components/timeseriesVC');
+const timeseriesVC = require('../../../../js/events/stream/charts/timeseriesVC');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 
 const getDummyData = ((sum, users) => {

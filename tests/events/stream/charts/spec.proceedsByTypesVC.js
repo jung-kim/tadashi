@@ -3,7 +3,7 @@ const { assert } = require('chai');
 
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
-const proceedsByTypesVC = require('../../../../js/events/stream/components/proceedsByTypesVC');
+const proceedsByTypesVC = require('../../../../js/events/stream/charts/proceedsByTypesVC');
 
 describe('proceedsByTypesVC.js', () => {
     afterEach(() => {
