@@ -9,6 +9,12 @@ const auth = require('./simpletons/auth');
 const users = require('./singletons/users');
 const chartFilter = require('./events/shared/chartFilter');
 
+const ACTIVE = 'cir-active';
+const INACTIVE = 'cir-inactive';
+const ACTIVE_NO_AUTH = 'cir-active-no-auth';
+
+let currentActiveLevel = undefined;
+
 const getNearestId = (target) => {
     if (target.id) {
         return target.id;
@@ -21,8 +27,22 @@ const getNearestId = (target) => {
     return 'undefined';
 }
 
+const getActivity() {
+    if (!twitchClient.isConnected()) {
+        return INACTIVE;
+    }
+    if (!auth.isAuthenticated()) {
+        return ACTIVE_NO_AUTH;
+    }
+    return ACTIVE;
+}
+
 const updateAuth = () => {
-    document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth);
+    const newActiveLevel = getActivity();
+    if (newActiveLevel !== currentActiveLevel) {
+        currentActiveLevel = newActiveLevel;
+        document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth, currentActiveLevel);
+    }
 }
 
 window.env = require('./env.js');

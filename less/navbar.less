@@ -24,4 +24,31 @@ nav {
             }
         }
     }
+
+    .blink {
+        animation: blinker 1s cubic-bezier(.5, 0, 1, 1) infinite alternate;  
+    }
+    @keyframes blinker {  
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    
+    .circle:before {
+        content: ' \25CF';
+        font-size: 10px;
+        position: absolute;
+        margin-top: -4px;
+    }
+
+    .cir-active {
+        color:#62E255;
+    }
+
+    .cir-inactive {
+        color:#F15634;
+    }
+
+    .cir-active-no-auth {
+        color:#F4F140;
+    }
 }
