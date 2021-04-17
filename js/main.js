@@ -14,6 +14,7 @@ const INACTIVE = 'cir-inactive';
 const ACTIVE_NO_AUTH = 'cir-active-no-auth';
 
 let currentActiveLevel = undefined;
+let activityStatusPopup = undefined;
 
 const getNearestId = (target) => {
     if (target.id) {
@@ -27,7 +28,7 @@ const getNearestId = (target) => {
     return 'undefined';
 }
 
-const getActivity() {
+const getActivity = () => {
     if (!twitchClient.isConnected()) {
         return INACTIVE;
     }
@@ -37,11 +38,34 @@ const getActivity() {
     return ACTIVE;
 }
 
+const getActivityTitle = (activity) => {
+    if (activity === INACTIVE) {
+        return 'Disconnected - data collection is halted';
+    } else if (activity === ACTIVE_NO_AUTH) {
+        return 'Connected with no Auth - data collection is limited';
+    } else {
+        return 'Connected - data is being collected';
+    }
+}
+
 const updateAuth = () => {
     const newActiveLevel = getActivity();
     if (newActiveLevel !== currentActiveLevel) {
         currentActiveLevel = newActiveLevel;
+
+        if (activityStatusPopup) {
+            activityStatusPopup.dispose();
+        }
+
         document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth, currentActiveLevel);
+        activityStatusPopup = new BSN.Popover(document.getElementById('activity-status'), {
+            title: getActivityTitle(currentActiveLevel),
+            content: '',
+            placement: 'left'
+        });
+        activityStatusPopup.on('show.bs.popover', () => {
+            activityStatusPopup.data('bs.popover').options.content(` tests = ${moment().toString()}`);
+        });
     }
 }
 
@@ -72,7 +96,7 @@ window.authLogout = () => {
     auth.logout();
 }
 
-window.minIntervalEvent = setInterval(() => {
+window.minuteEventDispatcher = () => {
     eventSignals.dispatch({
         event: 'main.minute',
         channel: twitchClient.getChannel(),
@@ -84,7 +108,9 @@ window.minIntervalEvent = setInterval(() => {
     window.minTopTimeoutEvent = setTimeout(() => {
         eventSignals.dispatch({ event: 'main.minute.top' });
     }, tickAt + 5);
-}, 60 * 1000);
+}
+
+window.minuteEventInterval = setInterval(window.minuteEventDispatcher, 60 * 1000);
 
 window.domEvent = (event, id) => {
     domSignals.dispatch({ id: id || getNearestId(event.target), type: event.type, event: event });

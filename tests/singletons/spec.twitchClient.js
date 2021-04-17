@@ -364,5 +364,30 @@ describe('twitchClient.js', () => {
             twitchClient._eventSignalFunc({ event: 'channel.changed', channel: 'new_channel' });
             sinon.assert.calledOnce(changeChannel);
         });
-    })
+    });
+
+    describe('isConnected', () => {
+        it('client is not connected', () => {
+            sinon.stub(twitchClient._client, '_isConnected').returns(false);
+            assert.isFalse(twitchClient.isConnected());
+        });
+
+        it('client is connected but missing channel', () => {
+            sinon.stub(twitchClient._client, '_isConnected').returns(true);
+            twitchClient._client.channels = undefined;
+            assert.isFalse(twitchClient.isConnected());
+        });
+
+        it('client is connected but channel is empty ', () => {
+            sinon.stub(twitchClient._client, '_isConnected').returns(true);
+            twitchClient._client.channels = [];
+            assert.isFalse(twitchClient.isConnected());
+        });
+
+        it('client is connected and channel is valid ', () => {
+            sinon.stub(twitchClient._client, '_isConnected').returns(true);
+            twitchClient._client.channels = ['aaa'];
+            assert.isTrue(twitchClient.isConnected());
+        });
+    });
 });

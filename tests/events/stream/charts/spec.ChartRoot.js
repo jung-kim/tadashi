@@ -98,7 +98,6 @@ describe('ChartRoot.js', () => {
         it('data.cache.updated', () => {
             const chartRoot = new ChartRoot({});
             const update = sinon.stub(chartRoot, 'update');
-            chartRoot._chartObject = { update: sinon.stub() };
 
             chartRoot._enabled = true;
             chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
@@ -110,7 +109,6 @@ describe('ChartRoot.js', () => {
         it('filter.change', () => {
             const chartRoot = new ChartRoot({});
             const update = sinon.stub(chartRoot, 'update');
-            chartRoot._chartObject = { update: sinon.stub() };
 
             chartRoot._enabled = true;
             chartRoot._eventSignalsFunc({ event: 'filter.change' });
@@ -147,5 +145,17 @@ describe('ChartRoot.js', () => {
             assert.isObject(chartRoot._helpDom);
             assert.isObject(chartRoot._chartObject);
         });
+    });
+
+    it('update', () => {
+        const chartRoot = new ChartRoot({ chartDomSelector: 'something' });
+
+        const update = sinon.stub(chartRoot, '_update');
+        chartRoot._chartObject = { update: sinon.stub() };
+
+        chartRoot.update();
+
+        sinon.assert.calledOnce(chartRoot._chartObject.update);
+        sinon.assert.calledOnce(update);
     });
 });

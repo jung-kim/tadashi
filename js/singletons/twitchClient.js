@@ -234,7 +234,7 @@ class TwitchClient {
     }
 
     isConnected() {
-        return this._client._isConnected() && this._client.channels && this._client.channels.length > 0;
+        return Boolean(this._client._isConnected() && this._client.channels && this._client.channels.length > 0);
     }
 }
 

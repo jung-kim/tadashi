@@ -2,7 +2,7 @@
 
 const eventSignals = require('../js/helpers/signals').eventSignals;
 const sinon = require('sinon');
-const Handlebars = require('handlebars');
+Handlebars = require('handlebars');
 const glob = require('glob');
 const fs = require('fs');
 const tmi = require('tmi.js');
@@ -27,6 +27,9 @@ tmi.Client = class fakeClient {
     }
     connect() {
         // do nothing 
+    }
+    _isConnected() {
+        // do nothing
     }
 }
 sinon.stub(api, 'queryTwitchApi').
