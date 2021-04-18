@@ -13,7 +13,7 @@ const ACTIVE = 'cir-active';
 const INACTIVE = 'cir-inactive';
 const ACTIVE_NO_AUTH = 'cir-active-no-auth';
 
-let currentActiveLevel = undefined;
+let currentConnectivityLevel = undefined;
 let activityStatusPopup = undefined;
 
 const getNearestId = (target) => {
@@ -28,7 +28,7 @@ const getNearestId = (target) => {
     return 'undefined';
 }
 
-const getActivity = () => {
+const getConnectivityLevel = () => {
     if (!twitchClient.isConnected()) {
         return INACTIVE;
     }
@@ -48,25 +48,32 @@ const getActivityTitle = (activity) => {
     }
 }
 
-const updateAuth = () => {
-    const newActiveLevel = getActivity();
-    if (newActiveLevel !== currentActiveLevel) {
-        currentActiveLevel = newActiveLevel;
+const configureAuthView = () => {
+    document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth);
+}
 
-        if (activityStatusPopup) {
-            activityStatusPopup.dispose();
-        }
+const configureConnectivityStatus = () => {
+    const newConnectivityLevel = getConnectivityLevel();
 
-        document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth, currentActiveLevel);
-        activityStatusPopup = new BSN.Popover(document.getElementById('activity-status'), {
-            title: getActivityTitle(currentActiveLevel),
-            content: '',
-            placement: 'left'
-        });
-        activityStatusPopup.on('show.bs.popover', () => {
-            activityStatusPopup.data('bs.popover').options.content(` tests = ${moment().toString()}`);
-        });
+    if (currentConnectivityLevel === newConnectivityLevel) {
+        return;
     }
+
+    const activityStatusDom = document.getElementById('activity-status');
+
+    switch (newConnectivityLevel) {
+        case ACTIVE:
+            activityStatusDom.className = `blink circle ${ACTIVE}`;
+            break;
+        case INACTIVE:
+            activityStatusDom.className = `circle ${INACTIVE}`;
+            break;
+        case ACTIVE_NO_AUTH:
+            activityStatusDom.className = `blink circle ${ACTIVE_NO_AUTH}`;
+            break;
+    }
+
+    currentConnectivityLevel = newConnectivityLevel;
 }
 
 window.env = require('./env.js');
@@ -80,7 +87,19 @@ window.onload = async () => {
 
     await twitchClient.initializeClient();
 
-    updateAuth();
+    configureAuthView();
+
+    const activityStatusDom = document.getElementById('activity-status');
+    activityStatusPopup = new BSN.Popover(activityStatusDom, {
+        title: '',
+        content: '',
+        placement: 'auto'
+    });
+    activityStatusDom.addEventListener('show.bs.popover', () => {
+        activityStatusPopup.data('bs.popover').options.title(getActivityTitle(currentConnectivityLevel));
+        activityStatusPopup.data('bs.popover').options.content(` tests = ${moment().toString()}`);
+    });
+
     eventSignals.dispatch({ event: `stream.load` });
 };
 
@@ -139,8 +158,13 @@ eventSignals.add((payload) => {
             document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
             new BSN.Alert(document.querySelector('.alert'));
             break;
+        case payload.event === 'channel.input.update':
         case payload.event === 'draw.nav.auth':
-            updateAuth();
+            configureAuthView();
+            configureConnectivityStatus();
+            break;
+        case payload.event === 'draw.nav.actvitiy-status':
+            configureConnectivityStatus();
             break;
     }
 });
