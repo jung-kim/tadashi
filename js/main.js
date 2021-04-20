@@ -86,7 +86,7 @@ window.onload = async () => {
     }
 
     await twitchClient.initializeClient();
-
+    configureConnectivityStatus();
     configureAuthView();
 
     const activityStatusDom = document.getElementById('activity-status');
@@ -101,6 +101,7 @@ window.onload = async () => {
     });
 
     eventSignals.dispatch({ event: `stream.load` });
+    eventSignals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
 };
 
 window.authenticate = async () => {
@@ -158,11 +159,11 @@ eventSignals.add((payload) => {
             document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
             new BSN.Alert(document.querySelector('.alert'));
             break;
-        case payload.event === 'channel.input.update':
         case payload.event === 'draw.nav.auth':
             configureAuthView();
             configureConnectivityStatus();
             break;
+        case payload.event === 'data.cache.updated':
         case payload.event === 'draw.nav.actvitiy-status':
             configureConnectivityStatus();
             break;

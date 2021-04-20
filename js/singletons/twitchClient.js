@@ -22,6 +22,8 @@ class TwitchClient {
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
         this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
+        this.ping = _.debounce(this._ping.bind(this), 5000, { leading: false });
+        this._lastPingSuccess = true;
         eventSignals.add(this._eventSignalFunc.bind(this));
     }
 
@@ -106,8 +108,8 @@ class TwitchClient {
             this._processChatMessage(channel, events.MysterySubGift, userstate, methods, numbOfSubs);
         });
 
-        this._client.connect();
-        eventSignals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
+        await this._client.connect();
+        this.ping();
         this._initPromise = undefined;
     }
 
@@ -137,6 +139,7 @@ class TwitchClient {
     }
 
     _processChatMessage(channel, clazz, arg1, arg2, arg3, arg4) {
+        this.ping();
         const raw = new clazz(arg1, arg2, arg3, arg4);
 
         if (channel.charAt(0) === '#') {
@@ -234,7 +237,25 @@ class TwitchClient {
     }
 
     isConnected() {
-        return Boolean(this._client._isConnected() && this._client.channels && this._client.channels.length > 0);
+        return Boolean(this._client._isConnected() &&
+            this._client.channels &&
+            this._client.channels.length > 0 &&
+            this._lastPingSuccess);
+    }
+
+    async _ping() {
+        if (this._client) {
+            try {
+                await this._client.ping();
+                this._lastPingSuccess = true;
+            } catch (err) {
+                this._lastPingSuccess = false;
+            }
+        } else {
+            this._lastPingSuccess = false;
+        }
+        this.ping();
+        eventSignals.dispatch({ event: 'draw.nav.actvitiy-status' });
     }
 }
 
