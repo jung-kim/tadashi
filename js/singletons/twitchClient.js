@@ -22,7 +22,8 @@ class TwitchClient {
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
         this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
-        this.ping = _.debounce(this._ping.bind(this), 5000, { leading: false });
+        this._debouncedPing = _.debounce(this._ping.bind(this), 5000, { leading: false });
+        this._throttledPing = _.throttle(this._ping.bind(this), 1000, { leading: false });
         this._lastPingSuccess = true;
         eventSignals.add(this._eventSignalFunc.bind(this));
     }
@@ -254,8 +255,18 @@ class TwitchClient {
         } else {
             this._lastPingSuccess = false;
         }
-        this.ping();
         eventSignals.dispatch({ event: 'draw.nav.actvitiy-status' });
+        this.ping();
+    }
+
+    ping() {
+        if (this.isConnected()) {
+            // connected, call debounced to reduce traffic
+            this._debouncedPing();
+        } else {
+            // not connected, call once every seconds
+            this._throttledPing();
+        }
     }
 }
 

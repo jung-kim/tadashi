@@ -65,6 +65,7 @@ describe('twitchClient.js', () => {
             sinon.stub(api, 'queryTwitchApi').
                 withArgs(`kraken/users?login=hi`).
                 returns({ users: [{ _id: 88 }] });
+            let ping = sinon.stub(twitchClient, 'ping');
 
             await twitchClient.initializeClient();
 
@@ -84,9 +85,11 @@ describe('twitchClient.js', () => {
                 callThroughWithNew().
                 withArgs(sinon.match.any).
                 returns(fakeClient);
+            let ping = sinon.stub(twitchClient, 'ping');
 
             await twitchClient.initializeClient();
 
+            sinon.assert.calledOnce(ping);
             assert.equal(twitchClient._channel, 'hi');
             assert.equal(twitchClient._channelID, 99);
             sinon.assert.calledOnce(fakeClient.connect);
@@ -103,9 +106,11 @@ describe('twitchClient.js', () => {
                 callThroughWithNew().
                 withArgs(sinon.match.any).
                 returns(fakeClient);
+            let ping = sinon.stub(twitchClient, 'ping');
 
             await twitchClient.initializeClient();
 
+            sinon.assert.calledOnce(ping);
             assert.equal(twitchClient._channel, 'someone');
             assert.equal(twitchClient._channelID, 123);
             sinon.assert.calledOnce(fakeClient.connect);
@@ -119,8 +124,11 @@ describe('twitchClient.js', () => {
                 callThroughWithNew().
                 withArgs(sinon.match.any).
                 returns(fakeClient);
+            let ping = sinon.stub(twitchClient, 'ping');
+
             await twitchClient.initializeClient();
 
+            sinon.assert.calledOnce(ping);
             sinon.assert.calledOnce(fakeClient.connect);
             assert.equal(twitchClient._channel, 'xqcow');
             assert.equal(twitchClient._channelID, 71092938);
@@ -179,14 +187,9 @@ describe('twitchClient.js', () => {
         it('enabled', () => {
             twitchClient._enable();
             const cacheAddStub = sinon.stub(dataCache, 'add').withArgs('abc', new test(1, 2, 3));
+            let ping = sinon.stub(twitchClient, 'ping');
             twitchClient._processChatMessage('#abc', test, 1, 2, 3);
-            sinon.assert.calledOnce(cacheAddStub);
-        });
-
-        it('disabled', () => {
-            twitchClient._disable();
-            const cacheAddStub = sinon.stub(dataCache, 'add').withArgs('abc', new test(1));
-            twitchClient._processChatMessage('abc', test, 1);
+            sinon.assert.calledOnce(ping);
             sinon.assert.calledOnce(cacheAddStub);
         });
     });
@@ -368,26 +371,99 @@ describe('twitchClient.js', () => {
 
     describe('isConnected', () => {
         it('client is not connected', () => {
+            twitchClient._lastPingSuccess = false;
             sinon.stub(twitchClient._client, '_isConnected').returns(false);
             assert.isFalse(twitchClient.isConnected());
         });
 
         it('client is connected but missing channel', () => {
+            twitchClient._lastPingSuccess = false;
             sinon.stub(twitchClient._client, '_isConnected').returns(true);
             twitchClient._client.channels = undefined;
             assert.isFalse(twitchClient.isConnected());
         });
 
-        it('client is connected but channel is empty ', () => {
+        it('client is connected but channel is empty', () => {
+            twitchClient._lastPingSuccess = false;
             sinon.stub(twitchClient._client, '_isConnected').returns(true);
             twitchClient._client.channels = [];
             assert.isFalse(twitchClient.isConnected());
         });
 
-        it('client is connected and channel is valid ', () => {
+        it('client is connected and channel is valid', () => {
+            twitchClient._lastPingSuccess = false;
+            sinon.stub(twitchClient._client, '_isConnected').returns(true);
+            twitchClient._client.channels = ['aaa'];
+            assert.isFalse(twitchClient.isConnected());
+        });
+
+        it('client is connected and channel is valid and last ping is suscessful', () => {
+            twitchClient._lastPingSuccess = true;
             sinon.stub(twitchClient._client, '_isConnected').returns(true);
             twitchClient._client.channels = ['aaa'];
             assert.isTrue(twitchClient.isConnected());
+        });
+    });
+
+    describe('_ping', () => {
+        it('client is not initialized', async () => {
+            twitchClient._client = undefined;
+            const ping = sinon.stub(twitchClient, 'ping');
+
+            await twitchClient._ping();
+
+            sinon.assert.calledOnce(ping);
+            assert.isFalse(twitchClient._lastPingSuccess);
+        });
+
+        it('client is initialized but failed ping', async () => {
+            twitchClient._client = {
+                ping: sinon.stub().throws('error')
+            };
+            const ping = sinon.stub(twitchClient, 'ping');
+
+            await twitchClient._ping();
+
+            sinon.assert.calledOnce(ping);
+            assert.isFalse(twitchClient._lastPingSuccess);
+            sinon.assert.calledOnce(twitchClient._client.ping);
+        });
+
+        it('client is initialized but failed ping', async () => {
+            twitchClient._client = {
+                ping: sinon.stub()
+            };
+            const ping = sinon.stub(twitchClient, 'ping');
+
+            await twitchClient._ping();
+
+            sinon.assert.calledOnce(ping);
+            assert.isTrue(twitchClient._lastPingSuccess);
+            sinon.assert.calledOnce(twitchClient._client.ping);
+        });
+    });
+
+    describe('ping', () => {
+        it('connected', () => {
+            sinon.stub(twitchClient, 'isConnected').returns(true);
+            const debouncedPing = sinon.stub(twitchClient, '_debouncedPing');
+            const throttledPing = sinon.stub(twitchClient, '_throttledPing');
+
+            twitchClient.ping();
+
+            sinon.assert.calledOnce(debouncedPing);
+            sinon.assert.notCalled(throttledPing);
+        });
+
+        it('disconnected', () => {
+            sinon.stub(twitchClient, 'isConnected').returns(false);
+            const debouncedPing = sinon.stub(twitchClient, '_debouncedPing');
+            const throttledPing = sinon.stub(twitchClient, '_throttledPing');
+
+            twitchClient.ping();
+
+            sinon.assert.notCalled(debouncedPing);
+            sinon.assert.calledOnce(throttledPing);
         });
     });
 });
