@@ -8,13 +8,13 @@ const twitchClient = require('./singletons/twitchClient');
 const auth = require('./simpletons/auth');
 const users = require('./singletons/users');
 const chartFilter = require('./events/shared/chartFilter');
+const dataCache = require('./simpletons/dataCache');
 
 const ACTIVE = 'cir-active';
 const INACTIVE = 'cir-inactive';
 const ACTIVE_NO_AUTH = 'cir-active-no-auth';
 
 let currentConnectivityLevel = undefined;
-let activityStatusPopup = undefined;
 
 const getNearestId = (target) => {
     if (target.id) {
@@ -36,16 +36,6 @@ const getConnectivityLevel = () => {
         return ACTIVE_NO_AUTH;
     }
     return ACTIVE;
-}
-
-const getActivityTitle = (activity) => {
-    if (activity === INACTIVE) {
-        return 'Disconnected - data collection is halted';
-    } else if (activity === ACTIVE_NO_AUTH) {
-        return 'Connected with no Auth - data collection is limited';
-    } else {
-        return 'Connected - data is being collected';
-    }
 }
 
 const configureAuthView = () => {
@@ -89,19 +79,38 @@ window.onload = async () => {
     configureConnectivityStatus();
     configureAuthView();
 
-    const activityStatusDom = document.getElementById('activity-status');
-    activityStatusPopup = new BSN.Popover(activityStatusDom, {
-        title: '',
-        content: '',
-        placement: 'auto'
-    });
-    activityStatusDom.addEventListener('show.bs.popover', () => {
-        activityStatusPopup.data('bs.popover').options.title(getActivityTitle(currentConnectivityLevel));
-        activityStatusPopup.data('bs.popover').options.content(` tests = ${moment().toString()}`);
-    });
+    const activityStatusDom = document.getElementById('activity-status-popover');
+    activityStatusDom.addEventListener("mouseenter", () => {
+        let title, content;
+        switch (getConnectivityLevel()) {
+            case ACTIVE:
+                title = 'Disconnected';
+                content = 'Data collection is halted';
+                break;
+            case INACTIVE:
+                title = 'Connected with no Auth';
+                content = 'Data collection is limited';
+                break;
+            case ACTIVE_NO_AUTH:
+                title = 'Connected';
+                content = 'Data is being collected';
+                break;
+        }
+        content += `</br>Last data collection: ${moment(dataCache.getLatestTimestampMS()).format('YYYY-MM-DD HH:mm:ss')}`;
 
+        new BSN.Popover(activityStatusDom, {
+            title: title,
+            content: content,
+            placement: 'bottom'
+        }).show();
+    });
+    activityStatusDom.addEventListener('mouseleave', () => {
+        const dispose = (activityStatusDom.Popover || {}).dispose;
+        if (dispose) {
+            dispose();
+        }
+    });
     eventSignals.dispatch({ event: `stream.load` });
-    eventSignals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
 };
 
 window.authenticate = async () => {

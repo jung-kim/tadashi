@@ -6,6 +6,7 @@ const eventSignals = require('../../helpers/signals').eventSignals;
 class DataCache {
     constructor() {
         this.reset();
+        this._latestTimestamp = undefined;
     }
 
     reset() {
@@ -37,6 +38,7 @@ class DataCache {
             return;
         }
 
+        this._latestTimestamp = Math.max(raw.timestamp, (this._latestTimestamp || 0));
         this._ensureChannelExists(channel);
 
         this._data[channel].add(raw);
@@ -55,6 +57,10 @@ class DataCache {
 
     getNewDataNode() {
         return new DataNode();
+    }
+
+    getLatestTimestampMS() {
+        return this._latestTimestamp;
     }
 }
 
