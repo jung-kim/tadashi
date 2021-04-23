@@ -8,62 +8,96 @@ const twitchClient = require('./singletons/twitchClient');
 const auth = require('./simpletons/auth');
 const users = require('./singletons/users');
 const chartFilter = require('./events/shared/chartFilter');
-const dataCache = require('./simpletons/dataCache');
 
 const ACTIVE = 'cir-active';
 const INACTIVE = 'cir-inactive';
 const ACTIVE_NO_AUTH = 'cir-active-no-auth';
 
-let currentConnectivityLevel = undefined;
-
-const getNearestId = (target) => {
-    if (target.id) {
-        return target.id;
+class Main {
+    constructor() {
+        this.currentConnectivityLevel = undefined
+        this.activityStatusDom = document.getElementById('activity-status');
+        this.updateLatestProcessTime = _.throttle(this._updateLatestProcessTime.bind(this), 1000, { leading: false });
+        this._latestProcessTime = 0;
+        eventSignals.add(this._eventSignalFunc.bind(this));
     }
 
-    if (target.parentElement) {
-        return getNearestId(target.parentElement);
+    _eventSignalFunc(payload) {
+        switch (true) {
+            case payload.alert && payload.alert.body:
+                document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
+                new BSN.Alert(document.querySelector('.alert'));
+                break;
+            case payload.event === 'draw.nav.auth':
+                this.configureAuthView();
+                this.configureConnectivityStatus();
+                break;
+            case payload.event === 'data.cache.updated':
+                this.configureConnectivityStatus();
+                this.updateLatestProcessTime();
+                // update latest data time
+                break;
+            case payload.event === 'draw.nav.actvitiy-status':
+                this.configureConnectivityStatus();
+                break;
+        }
     }
 
-    return 'undefined';
-}
+    getNearestId(target) {
+        if (target.id) {
+            return target.id;
+        }
 
-const getConnectivityLevel = () => {
-    if (!twitchClient.isConnected()) {
-        return INACTIVE;
-    }
-    if (!auth.isAuthenticated()) {
-        return ACTIVE_NO_AUTH;
-    }
-    return ACTIVE;
-}
+        if (target.parentElement) {
+            return this.getNearestId(target.parentElement);
+        }
 
-const configureAuthView = () => {
-    document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth);
-}
-
-const configureConnectivityStatus = () => {
-    const newConnectivityLevel = getConnectivityLevel();
-
-    if (currentConnectivityLevel === newConnectivityLevel) {
-        return;
+        return 'undefined';
     }
 
-    const activityStatusDom = document.getElementById('activity-status');
-
-    switch (newConnectivityLevel) {
-        case ACTIVE:
-            activityStatusDom.className = `blink circle ${ACTIVE}`;
-            break;
-        case INACTIVE:
-            activityStatusDom.className = `circle ${INACTIVE}`;
-            break;
-        case ACTIVE_NO_AUTH:
-            activityStatusDom.className = `blink circle ${ACTIVE_NO_AUTH}`;
-            break;
+    getConnectivityLevel() {
+        if (!twitchClient.isConnected()) {
+            return INACTIVE;
+        }
+        if (!auth.isAuthenticated()) {
+            return ACTIVE_NO_AUTH;
+        }
+        return ACTIVE;
     }
 
-    currentConnectivityLevel = newConnectivityLevel;
+    configureAuthView() {
+        document.getElementById('nav-auth').innerHTML = templates[`./hbs/components/nav-auth.hbs`](auth);
+    }
+
+    _updateLatestProcessTime() {
+        this._latestProcessTime = moment.now();
+    }
+
+    getLatestProcessTimeMS() {
+        return this._latestProcessTime;
+    }
+
+    configureConnectivityStatus() {
+        const newConnectivityLevel = this.getConnectivityLevel();
+
+        if (this.currentConnectivityLevel === newConnectivityLevel) {
+            return;
+        }
+
+        switch (newConnectivityLevel) {
+            case ACTIVE:
+                this.activityStatusDom.className = `blink circle ${ACTIVE}`;
+                break;
+            case INACTIVE:
+                this.activityStatusDom.className = `circle ${INACTIVE}`;
+                break;
+            case ACTIVE_NO_AUTH:
+                this.activityStatusDom.className = `blink circle ${ACTIVE_NO_AUTH}`;
+                break;
+        }
+
+        this.currentConnectivityLevel = newConnectivityLevel;
+    }
 }
 
 window.env = require('./env.js');
@@ -76,8 +110,8 @@ window.onload = async () => {
     }
 
     await twitchClient.initializeClient();
-    configureConnectivityStatus();
-    configureAuthView();
+    main.configureConnectivityStatus();
+    main.configureAuthView();
 
     const activityStatusDom = document.getElementById('activity-status-popover');
     activityStatusDom.addEventListener("mouseenter", () => {
@@ -96,7 +130,7 @@ window.onload = async () => {
                 content = 'Data is being collected';
                 break;
         }
-        content += `</br>Last data collection: ${moment(dataCache.getLatestTimestampMS()).format('YYYY-MM-DD HH:mm:ss')}`;
+        content += `</br>Last data collection: ${moment(main.getLatestProcessTimeMS()).format('YYYY-MM-DD HH:mm:ss')}`;
 
         new BSN.Popover(activityStatusDom, {
             title: title,
@@ -162,19 +196,5 @@ Handlebars.registerHelper('userFollowsCSS', (userName) => {
     }
 });
 
-eventSignals.add((payload) => {
-    switch (true) {
-        case payload.alert && payload.alert.body:
-            document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
-            new BSN.Alert(document.querySelector('.alert'));
-            break;
-        case payload.event === 'draw.nav.auth':
-            configureAuthView();
-            configureConnectivityStatus();
-            break;
-        case payload.event === 'data.cache.updated':
-        case payload.event === 'draw.nav.actvitiy-status':
-            configureConnectivityStatus();
-            break;
-    }
-});
+const main = new Main();
+module.exports = main;
