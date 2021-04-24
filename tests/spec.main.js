@@ -134,4 +134,94 @@ describe('main.js', () => {
 
         assert.equal(main.getLatestProcessTimeMS(), 999);
     });
+
+    describe('configureConnectivityStatus', () => {
+        const ACTIVE = 'cir-active';
+        const INACTIVE = 'cir-inactive';
+        const ACTIVE_NO_AUTH = 'cir-active-no-auth';
+
+        it('no change', () => {
+            sinon.stub(main, 'getConnectivityLevel').returns('cir-active');
+
+            main.activityStatusDom = {};
+            main.currentConnectivityLevel = 'cir-active';
+
+            main.configureConnectivityStatus();
+
+            assert.deepEqual(main.activityStatusDom, {});
+            assert.equal(main.currentConnectivityLevel, 'cir-active');
+        });
+
+        it('to active', () => {
+            sinon.stub(main, 'getConnectivityLevel').returns('cir-active');
+
+            main.activityStatusDom = {};
+            main.currentConnectivityLevel = 'cir-inactive';
+
+            main.configureConnectivityStatus();
+
+            assert.deepEqual(main.activityStatusDom, {
+                className: `blink circle cir-active`
+            });
+            assert.equal(main.currentConnectivityLevel, 'cir-active');
+        });
+
+        it('to inactive', () => {
+            sinon.stub(main, 'getConnectivityLevel').returns('cir-inactive');
+
+            main.activityStatusDom = {};
+            main.currentConnectivityLevel = 'cir-active';
+
+            main.configureConnectivityStatus();
+
+            assert.deepEqual(main.activityStatusDom, {
+                className: `circle cir-inactive`
+            });
+            assert.equal(main.currentConnectivityLevel, 'cir-inactive');
+        });
+
+        it('to active no auth', () => {
+            sinon.stub(main, 'getConnectivityLevel').returns('cir-active-no-auth');
+
+            main.activityStatusDom = {};
+            main.currentConnectivityLevel = 'cir-active';
+
+            main.configureConnectivityStatus();
+
+            assert.deepEqual(main.activityStatusDom, {
+                className: `blink circle cir-active-no-auth`
+            });
+            assert.equal(main.currentConnectivityLevel, 'cir-active-no-auth');
+        });
+    });
+
+    it('env', () => {
+        assert.deepEqual(window.env, require('./../js/env'));
+    });
+
+    describe('authenticate', () => {
+        it('undefined', async () => {
+            sinon.stub(auth, 'authenticate').returns(undefined);
+
+            await window.authenticate();
+
+            assert.isUndefined(window.location);
+        });
+
+        it('redirect', async () => {
+            sinon.stub(auth, 'authenticate').returns('https://somewhere..com');
+
+            await window.authenticate();
+
+            assert.equal(window.location, 'https://somewhere..com');
+        });
+    });
+
+    it('authLogout', () => {
+        const logout = sinon.stub(auth, 'logout');
+
+        window.authLogout();
+
+        sinon.assert.calledOnce(logout);
+    });
 });
