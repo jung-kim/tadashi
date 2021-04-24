@@ -65,7 +65,8 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
 BSN = {
     Collapse: sinon.stub(),
     Popover: sinon.stub(),
-    Dropdown: sinon.stub()
+    Dropdown: sinon.stub(),
+    Alert: sinon.stub(),
 }
 
 // disable signal dispatch
@@ -93,6 +94,7 @@ Chart = class Chart {
 // stub dom functions, I'm sure there is a npm package does this...
 document = {
     getElementById: sinon.stub().withArgs(sinon.match.any).returns({}),
+    querySelector: sinon.stub().returns({}),
 };
 
 window = {
@@ -119,14 +121,7 @@ reset = () => {
 }
 
 Twitch = {
-    Embed: sinon.stub().withArgs('twitch-embed', {
-        width: '100%',
-        height: '100%',
-        channel: 'abc',
-        autoplay: true,
-        muted: true,
-        allowfullscreen: false
-    })
+    Embed: sinon.stub(),
 };
 
 /*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

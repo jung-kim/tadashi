@@ -17,29 +17,23 @@ class Main {
     constructor() {
         this.currentConnectivityLevel = undefined
         this.activityStatusDom = document.getElementById('activity-status');
-        this.updateLatestProcessTime = _.throttle(this._updateLatestProcessTime.bind(this), 1000, { leading: false });
+        this.updateLatestProcessTime = _.throttle(this._updateLatestProcessTime.bind(this), 1000);
         this._latestProcessTime = 0;
         eventSignals.add(this._eventSignalFunc.bind(this));
     }
 
     _eventSignalFunc(payload) {
-        switch (true) {
-            case payload.alert && payload.alert.body:
-                document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
-                new BSN.Alert(document.querySelector('.alert'));
-                break;
-            case payload.event === 'draw.nav.auth':
-                this.configureAuthView();
-                this.configureConnectivityStatus();
-                break;
-            case payload.event === 'data.cache.updated':
-                this.configureConnectivityStatus();
-                this.updateLatestProcessTime();
-                // update latest data time
-                break;
-            case payload.event === 'draw.nav.actvitiy-status':
-                this.configureConnectivityStatus();
-                break;
+        if (payload.alert && payload.alert.body) {
+            document.getElementById('alerts').insertAdjacentHTML('afterbegin', templates[`./hbs/shared/alerts.hbs`](payload.alert));
+            new BSN.Alert(document.querySelector('.alert'));
+        } else if (payload.event === 'draw.nav.auth') {
+            this.configureAuthView();
+            this.configureConnectivityStatus();
+        } else if (payload.event === 'data.cache.updated') {
+            this.configureConnectivityStatus();
+            this.updateLatestProcessTime();
+        } else if (payload.event === 'draw.nav.actvitiy-status') {
+            this.configureConnectivityStatus();
         }
     }
 
@@ -116,16 +110,16 @@ window.onload = async () => {
     const activityStatusDom = document.getElementById('activity-status-popover');
     activityStatusDom.addEventListener("mouseenter", () => {
         let title, content;
-        switch (getConnectivityLevel()) {
-            case ACTIVE:
+        switch (main.getConnectivityLevel()) {
+            case INACTIVE:
                 title = 'Disconnected';
                 content = 'Data collection is halted';
                 break;
-            case INACTIVE:
+            case ACTIVE_NO_AUTH:
                 title = 'Connected with no Auth';
                 content = 'Data collection is limited';
                 break;
-            case ACTIVE_NO_AUTH:
+            case ACTIVE:
                 title = 'Connected';
                 content = 'Data is being collected';
                 break;
