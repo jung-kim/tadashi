@@ -7,6 +7,11 @@ const main = require('../js/main');
 const auth = require('../js/simpletons/auth');
 const twitchClient = require('../js/singletons/twitchClient');
 const moment = require('../js/helpers/moment');
+const chartFilter = require('../js/events/shared/chartFilter');
+const utils = require('../js/helpers/utils');
+const { domSignals, eventSignals } = require('../js/helpers/signals');
+const users = require('../js/singletons/users');
+const constants = require('../js/helpers/constants');
 
 describe('main.js', () => {
     afterEach(() => {
@@ -224,4 +229,87 @@ describe('main.js', () => {
 
         sinon.assert.calledOnce(logout);
     });
+
+    it('minuteEventDispatcher', () => {
+        sinon.stub(twitchClient, 'getChannel').returns('abc');
+        sinon.stub(chartFilter, 'getUserFilter').returns('a filter');
+        sinon.stub(utils, 'getNow').returns(moment(100));
+        sinon.stub(moment, 'now').returns(60072);
+        const setMinTopTimeoutEvent = sinon.stub(window, 'setMinTopTimeoutEvent').withArgs(33);
+
+        window.minuteEventDispatcher();
+
+        sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
+            event: 'main.minute',
+            channel: 'abc',
+            filter: 'a filter',
+        }));
+        sinon.assert.calledOnce(setMinTopTimeoutEvent);
+    });
+
+    describe('domEvent', () => {
+        it('id is provided', () => {
+            window.domEvent({
+                target: 'a-target',
+                type: 'a-type',
+            }, 'an-id');
+
+            sinon.assert.calledOnce(domSignals.dispatch.withArgs({
+                id: 'an-id',
+                type: 'a-type',
+                event: {
+                    target: 'a-target',
+                    type: 'a-type',
+                }
+            }));
+        });
+
+        it('id is not provided', () => {
+            sinon.stub(main, 'getNearestId').withArgs('a-target').returns('an-id');
+
+            window.domEvent({
+                target: 'a-target',
+                type: 'a-type',
+            });
+
+            sinon.assert.calledOnce(domSignals.dispatch.withArgs({
+                id: 'an-id',
+                type: 'a-type',
+                event: {
+                    target: 'a-target',
+                    type: 'a-type',
+                }
+            }));
+        });
+
+    });
+
+    describe('userFollowsCSS', () => {
+        it('user does not exist', () => {
+            sinon.stub(users, 'getUserByName').withArgs('abc').returns(undefined);
+
+            assert.equal(main.userFollowsCSS('abc'), constants.CSS_UNKNOWN);
+        });
+
+        it('user exists and follows', () => {
+            const isFollowing = sinon.stub().withArgs(111).returns(true);
+            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            sinon.stub(users, 'getUserByName').withArgs('abc').returns({
+                isFollowing: isFollowing
+            });
+
+            assert.equal(main.userFollowsCSS('abc'), constants.CSS_FOLLOWING);
+        });
+
+        it('user exists and not following', () => {
+            const isFollowing = sinon.stub().withArgs(111).returns(false);
+            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            sinon.stub(users, 'getUserByName').withArgs('abc').returns({
+                isFollowing: isFollowing
+            });
+
+            assert.equal(main.userFollowsCSS('abc'), constants.CSS_NOT_FOLLOWING);
+        });
+    });
+
 });

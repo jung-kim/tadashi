@@ -92,6 +92,20 @@ class Main {
 
         this.currentConnectivityLevel = newConnectivityLevel;
     }
+
+    userFollowsCSS(userName) {
+        const user = users.getUserByName(userName);
+
+        if (!user) {
+            return constants.CSS_UNKNOWN;
+        }
+
+        if (user.isFollowing(twitchClient.getChannelID())) {
+            return constants.CSS_FOLLOWING;
+        } else {
+            return constants.CSS_NOT_FOLLOWING;
+        }
+    }
 }
 
 window.env = require('./env.js');
@@ -162,33 +176,23 @@ window.minuteEventDispatcher = () => {
 
     const nextTopOfMin = utils.getNow().add(1, 'minute').valueOf();
     const tickAt = nextTopOfMin - moment.now();
+    window.setMinTopTimeoutEvent(tickAt + 5);
+}
+
+window.setMinTopTimeoutEvent = (tickAt) => {
     window.minTopTimeoutEvent = setTimeout(() => {
         eventSignals.dispatch({ event: 'main.minute.top' });
-    }, tickAt + 5);
+    }, tickAt);
 }
 
 window.minuteEventInterval = setInterval(window.minuteEventDispatcher, 60 * 1000);
 
 window.domEvent = (event, id) => {
-    domSignals.dispatch({ id: id || getNearestId(event.target), type: event.type, event: event });
+    domSignals.dispatch({ id: id || main.getNearestId(event.target), type: event.type, event: event });
 }
 
-Handlebars.registerHelper('userFollowsCSS', (userName) => {
-    const user = users.getUserByName(userName);
-
-    if (!user) {
-        return constants.CSS_UNKNOWN;
-    }
-
-    switch (user.isFollowing(twitchClient.getChannelID())) {
-        case true:
-            return constants.CSS_FOLLOWING;
-        case false:
-            return constants.CSS_NOT_FOLLOWING;
-        default:
-            return constants.CSS_UNKNOWN;
-    }
-});
-
 const main = new Main();
+
+Handlebars.registerHelper('userFollowsCSS', main.userFollowsCSS);
+
 module.exports = main;

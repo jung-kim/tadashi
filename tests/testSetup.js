@@ -1,6 +1,6 @@
 /*eslint-disable no-global-assign,no-implicit-globals,no-native-reassign*/
 
-const eventSignals = require('../js/helpers/signals').eventSignals;
+const { eventSignals, domSignals } = require('../js/helpers/signals');
 const sinon = require('sinon');
 Handlebars = require('handlebars');
 const glob = require('glob');
@@ -71,6 +71,7 @@ BSN = {
 
 // disable signal dispatch
 eventSignals.dispatch = sinon.stub();
+domSignals.dispatch = sinon.stub();
 
 // flatpickr the time picking lib
 flatpickr = sinon.stub();
@@ -118,6 +119,7 @@ reset = () => {
     filter.changeSearchString();
     flatpickr.reset();
     eventSignals.dispatch.reset();
+    domSignals.dispatch.reset();
 }
 
 Twitch = {
