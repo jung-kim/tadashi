@@ -6,13 +6,12 @@ const sinon = require('sinon');
 const auth = require('../../../js/simpletons/auth');
 const api = require('../../../js/simpletons/api');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
+const { eventSignals } = require('../../../js/helpers/signals');
 
 describe('userIDFetcher.js', () => {
     beforeEach(() => {
         fetchMock.reset();
-        auth._setAuthToken('testAuth');
-        api.reset();
-        sinon.verifyAndRestore();
+        reset();
     });
 
     afterEach(() => {
@@ -33,24 +32,34 @@ describe('userIDFetcher.js', () => {
     });
 
     it('_fetch', async () => {
+        sinon.stub(auth, 'getAuthObj').returns({});
         userIDFetcher.fetch = () => ({});
 
         userIDFetcher.add('a');
         userIDFetcher.add('b');
         userIDFetcher.add('c');
 
-        fetchMock.getOnce(`end:helix/users?login=a&login=b&login=c`, {
-            status: statusCodes.ACCEPTED,
-            body: { data: [{ login: 'a', id: 1 }, { login: 'c', id: 3 }] },
-        });
+        const fetchUserIDsForNames = sinon.stub(userIDFetcher, '_fetchUserIDsForNames');
+
         await userIDFetcher._fetch();
 
-        assert.deepEqual(userIDFetcher._names, new Set(['b']));
+        sinon.assert.calledOnce(fetchUserIDsForNames.withArgs({}, ['a', 'b', 'c']));
+    });
 
-        fetchMock.getOnce(`end:helix/users?login=b`, {
-            status: statusCodes.TOO_MANY_REQUESTS,
-        });
-        await userIDFetcher._fetch();
-        assert.deepEqual(userIDFetcher._names, new Set(['b']));
+    it('_fetchUserIDsForNames', async () => {
+        const apiRes = {
+            data: [
+                { login: 'a' },
+                { login: 'c' }]
+        };
+        userIDFetcher._names = new Set(['a', 'b', 'c'])
+        sinon.stub(auth, 'getAuthObj').returns({});
+        sinon.stub(api, 'queryTwitchApi').withArgs('helix/users?login=a&login=b&login=c', {})
+            .returns(apiRes);
+
+        await userIDFetcher._fetchUserIDsForNames({}, ['a', 'b', 'c']);
+
+        sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: 'fetch.user.ids.resp', data: apiRes }));
+        assert.deepEqual(Array.from(userIDFetcher._names), ['b']);
     });
 });

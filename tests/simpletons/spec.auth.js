@@ -5,6 +5,7 @@ const sinon = require('sinon');
 
 const auth = require('../../js/simpletons/auth');
 const env = require('../../js/env');
+const eventSignals = require('../../js/helpers/signals').eventSignals;
 
 describe('auth.js', () => {
     beforeEach(() => {
@@ -60,13 +61,12 @@ describe('auth.js', () => {
     });
 
     it('logout', () => {
-        auth.logout();
-
         auth._setAuthToken('abc');
         auth._user = {};
         auth.logout();
         assert.isUndefined(auth._authToken);
         assert.isUndefined(auth._user);
+        sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ 'event': 'draw.nav.auth' }));
     });
 
     it('getAuthObj', () => {
@@ -149,7 +149,10 @@ describe('auth.js', () => {
             fetchMock.getOnce(`end:/helix/users`, {
                 status: statusCodes.OK,
                 body: {
-                    data: [{ broadcaster_type: 'someone' }]
+                    data: [{
+                        broadcaster_type: 'someone',
+                        login: 'a-login'
+                    }]
                 },
                 headers: {
                     'Client-ID': env.CLIENT_ID,
@@ -162,7 +165,9 @@ describe('auth.js', () => {
 
             assert.equal(auth._authToken, '1111');
             assert.isTrue(auth.isBroadcaster());
-            assert.deepEqual(auth._user, { broadcaster_type: 'someone' });
+            assert.deepEqual(auth._user, { broadcaster_type: 'someone', login: 'a-login' });
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ 'event': 'draw.nav.auth' }));
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ 'event': 'channel.changed', channel: 'a-login' }));
         });
 
         it('user fetch fail', async () => {
@@ -185,6 +190,8 @@ describe('auth.js', () => {
 
             assert.equal(auth._authToken, '1111');
             assert.isUndefined(auth._user);
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ 'event': 'draw.nav.auth' }));
+            sinon.assert.notCalled(eventSignals.dispatch.withArgs({ 'event': 'channel.changed', channel: sinon.match.any }));
         });
     });
 

@@ -7,6 +7,7 @@ const navOptionVC = require('../../../js/events/stream/navOptionVC');
 const constants = require('../../../js/helpers/constants');
 const twitchAPI = require('../../../js/singletons/twitchAPI');
 const twitchClient = require('../../../js/singletons/twitchClient');
+const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 describe('navOptionVC', () => {
     beforeEach(() => {
@@ -184,6 +185,12 @@ describe('navOptionVC', () => {
             sinon.assert.calledOnce(changeChannel);
             sinon.assert.notCalled(populateStreamInfo);
             sinon.assert.calledOnce(close);
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
+                alert: {
+                    type: 'warning',
+                    body: sinon.match.any,
+                }
+            }))
         });
     });
 
