@@ -7,7 +7,6 @@ const api = require('../../../js/simpletons/api');
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
-const fetchUserFollowsBackup = userFollowsFetcher._fetchUserFollows;
 
 describe('userFollowsFetcher.js', () => {
     beforeEach(() => {
@@ -20,12 +19,11 @@ describe('userFollowsFetcher.js', () => {
     afterEach(() => {
         userFollowsFetcher.reset();
         auth._auth = undefined;
-        userFollowsFetcher._fetchUserFollows = fetchUserFollowsBackup;
     });
 
     it('_fetch', async () => {
         // stub out the fetch user follows for easier testing for now
-        userFollowsFetcher._fetchUserFollows = () => ({});
+        sinon.stub(userFollowsFetcher, '_fetchUserFollows');
 
         // don't spawn any if there are nothing to work on
         userFollowsFetcher._fetch();
