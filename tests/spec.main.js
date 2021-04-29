@@ -15,6 +15,8 @@ const constants = require('../js/helpers/constants');
 
 describe('main.js', () => {
     afterEach(() => {
+        window.location = undefined;
+        main.activityStatusDom = {};
         reset();
     });
 
@@ -312,4 +314,73 @@ describe('main.js', () => {
         });
     });
 
+    describe('activityStatusDomMouseleave', () => {
+        it('with popover', () => {
+            main.activityStatusDom = {
+                Popover: {
+                    dispose: sinon.stub()
+                }
+            }
+            main.activityStatusDomMouseleave();
+            sinon.assert.calledOnce(main.activityStatusDom.Popover.dispose);
+        });
+
+        it('without Popover', () => {
+            main.activityStatusDomMouseleave();
+        });
+    });
+
+    it('setMinTopTimeoutEvent', () => {
+        window.setMinTopTimeoutEvent(777);
+
+        assert.equal(window.minTopTimeoutEvent._idleTimeout, 777);
+        clearTimeout(window.minTopTimeoutEvent);
+    });
+
+    describe('onload', async () => {
+        it('with hash', async () => {
+            window.location = {
+                hash: '?abcde=1'
+            }
+            const authenticate = sinon.stub(auth, 'authenticate').withArgs(new URLSearchParams('abcde=1'));
+            const initializeClient = sinon.stub(twitchClient, 'initializeClient');
+            const configureConnectivityStatus = sinon.stub(main, 'configureConnectivityStatus');
+            const configureAuthView = sinon.stub(main, 'configureAuthView');
+            const addEventListener = sinon.stub().withArgs('mouseenter', sinon.match.func)
+            document.getElementById.withArgs('activity-status-popover').returns({
+                addEventListener: addEventListener
+            });
+
+            await window.onload();
+
+            sinon.assert.calledOnce(authenticate);
+            sinon.assert.calledOnce(initializeClient);
+            sinon.assert.calledOnce(configureConnectivityStatus);
+            sinon.assert.calledOnce(configureAuthView);
+            sinon.assert.calledWith(addEventListener, 'mouseenter', sinon.match.func);
+            sinon.assert.calledWith(addEventListener, 'mouseleave', sinon.match.func);
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: `stream.load` }));
+        });
+
+        it('without hash', async () => {
+            const authenticate = sinon.stub(auth, 'authenticate');
+            const initializeClient = sinon.stub(twitchClient, 'initializeClient');
+            const configureConnectivityStatus = sinon.stub(main, 'configureConnectivityStatus');
+            const configureAuthView = sinon.stub(main, 'configureAuthView');
+            const addEventListener = sinon.stub().withArgs('mouseenter', sinon.match.func)
+            document.getElementById.withArgs('activity-status-popover').returns({
+                addEventListener: addEventListener
+            });
+
+            await window.onload();
+
+            sinon.assert.notCalled(authenticate);
+            sinon.assert.calledOnce(initializeClient);
+            sinon.assert.calledOnce(configureConnectivityStatus);
+            sinon.assert.calledOnce(configureAuthView);
+            sinon.assert.calledWith(addEventListener, 'mouseenter', sinon.match.func);
+            sinon.assert.calledWith(addEventListener, 'mouseleave', sinon.match.func);
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: `stream.load` }));
+        });
+    });
 });

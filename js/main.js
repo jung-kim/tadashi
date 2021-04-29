@@ -106,23 +106,8 @@ class Main {
             return constants.CSS_NOT_FOLLOWING;
         }
     }
-}
 
-window.env = require('./env.js');
-
-// default page load
-window.onload = async () => {
-    if (window.location.hash) {
-        const parsedHash = new URLSearchParams(window.location.hash.substr(1));
-        auth.authenticate(parsedHash);
-    }
-
-    await twitchClient.initializeClient();
-    main.configureConnectivityStatus();
-    main.configureAuthView();
-
-    const activityStatusDom = document.getElementById('activity-status-popover');
-    activityStatusDom.addEventListener("mouseenter", () => {
+    activityStatusDomMouseenter() {
         let title, content;
         switch (main.getConnectivityLevel()) {
             case INACTIVE:
@@ -140,18 +125,36 @@ window.onload = async () => {
         }
         content += `</br>Last data collection: ${moment(main.getLatestProcessTimeMS()).format('YYYY-MM-DD HH:mm:ss')}`;
 
-        new BSN.Popover(activityStatusDom, {
+        new BSN.Popover(this.activityStatusDom, {
             title: title,
             content: content,
             placement: 'bottom'
         }).show();
-    });
-    activityStatusDom.addEventListener('mouseleave', () => {
-        const dispose = (activityStatusDom.Popover || {}).dispose;
+    }
+    activityStatusDomMouseleave() {
+        const dispose = (this.activityStatusDom.Popover || {}).dispose;
         if (dispose) {
             dispose();
         }
-    });
+    }
+}
+
+window.env = require('./env.js');
+
+// default page load
+window.onload = async () => {
+    if (window.location && window.location.hash) {
+        const parsedHash = new URLSearchParams(window.location.hash.substr(1));
+        auth.authenticate(parsedHash);
+    }
+
+    await twitchClient.initializeClient();
+    main.configureConnectivityStatus();
+    main.configureAuthView();
+
+    const activityStatusDom = document.getElementById('activity-status-popover');
+    activityStatusDom.addEventListener("mouseenter", main.activityStatusDomMouseenter);
+    activityStatusDom.addEventListener('mouseleave', main.activityStatusDomMouseleave);
     eventSignals.dispatch({ event: `stream.load` });
 };
 
@@ -180,9 +183,7 @@ window.minuteEventDispatcher = () => {
 }
 
 window.setMinTopTimeoutEvent = (tickAt) => {
-    window.minTopTimeoutEvent = setTimeout(() => {
-        eventSignals.dispatch({ event: 'main.minute.top' });
-    }, tickAt);
+    window.minTopTimeoutEvent = setTimeout(eventSignals.dispatch.bind(eventSignals, { event: 'main.minute.top' }), tickAt);
 }
 
 window.minuteEventInterval = setInterval(window.minuteEventDispatcher, 60 * 1000);
