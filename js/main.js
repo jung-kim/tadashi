@@ -107,9 +107,9 @@ class Main {
         }
     }
 
-    activityStatusDomMouseenter() {
+    activityStatusPopover() {
         let title, content;
-        switch (main.getConnectivityLevel()) {
+        switch (this.getConnectivityLevel()) {
             case INACTIVE:
                 title = 'Disconnected';
                 content = 'Data collection is halted';
@@ -123,19 +123,9 @@ class Main {
                 content = 'Data is being collected';
                 break;
         }
-        content += `</br>Last data collection: ${moment(main.getLatestProcessTimeMS()).format('YYYY-MM-DD HH:mm:ss')}`;
-
-        new BSN.Popover(this.activityStatusDom, {
-            title: title,
-            content: content,
-            placement: 'bottom'
-        }).show();
-    }
-    activityStatusDomMouseleave() {
-        const dispose = (this.activityStatusDom.Popover || {}).dispose;
-        if (dispose) {
-            dispose();
-        }
+        content += `</br>Last data collection: ${moment(this.getLatestProcessTimeMS()).format('YYYY-MM-DD HH:mm:ss')}`;
+        document.getElementsByClassName('popover-header')[0].innerHTML = title;
+        document.getElementsByClassName('popover-body')[0].innerHTML = content;
     }
 }
 
@@ -152,9 +142,13 @@ window.onload = async () => {
     main.configureConnectivityStatus();
     main.configureAuthView();
 
-    const activityStatusDom = document.getElementById('activity-status-popover');
-    activityStatusDom.addEventListener("mouseenter", main.activityStatusDomMouseenter);
-    activityStatusDom.addEventListener('mouseleave', main.activityStatusDomMouseleave);
+    new BSN.Popover(main.activityStatusDom, {
+        title: ' ',
+        content: ' ',
+        placement: 'bottom'
+    });
+    main.activityStatusDom.addEventListener('shown.bs.popover', main.activityStatusPopover.bind(main));
+
     eventSignals.dispatch({ event: `stream.load` });
 };
 
