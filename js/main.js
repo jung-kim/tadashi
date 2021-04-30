@@ -150,6 +150,7 @@ window.onload = async () => {
     main.activityStatusDom.addEventListener('shown.bs.popover', main.activityStatusPopover.bind(main));
 
     eventSignals.dispatch({ event: `stream.load` });
+    window.setMinTopTimeoutEvent();
 };
 
 window.authenticate = async () => {
@@ -171,13 +172,13 @@ window.minuteEventDispatcher = () => {
         filter: chartFilter.getUserFilter(),
     });
 
-    const nextTopOfMin = utils.getNow().add(1, 'minute').valueOf();
-    const tickAt = nextTopOfMin - moment.now();
-    window.setMinTopTimeoutEvent(tickAt + 5);
+    window.setMinTopTimeoutEvent();
 }
 
-window.setMinTopTimeoutEvent = (tickAt) => {
-    window.minTopTimeoutEvent = setTimeout(eventSignals.dispatch.bind(eventSignals, { event: 'main.minute.top' }), tickAt);
+window.setMinTopTimeoutEvent = () => {
+    const nextTopOfMin = utils.getNow().add(1, 'minute').valueOf();
+    const tickAt = nextTopOfMin - moment.now();
+    window.minTopTimeoutEvent = setTimeout(eventSignals.dispatch.bind(eventSignals, { event: 'main.minute.top' }), tickAt + 5);
 }
 
 window.minuteEventInterval = setInterval(window.minuteEventDispatcher, 60 * 1000);

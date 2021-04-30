@@ -235,9 +235,7 @@ describe('main.js', () => {
     it('minuteEventDispatcher', () => {
         sinon.stub(twitchClient, 'getChannel').returns('abc');
         sinon.stub(chartFilter, 'getUserFilter').returns('a filter');
-        sinon.stub(utils, 'getNow').returns(moment(100));
-        sinon.stub(moment, 'now').returns(60072);
-        const setMinTopTimeoutEvent = sinon.stub(window, 'setMinTopTimeoutEvent').withArgs(33);
+        const setMinTopTimeoutEvent = sinon.stub(window, 'setMinTopTimeoutEvent');
 
         window.minuteEventDispatcher();
 
@@ -314,26 +312,12 @@ describe('main.js', () => {
         });
     });
 
-    describe('activityStatusDomMouseleave', () => {
-        it('with popover', () => {
-            main.activityStatusDom = {
-                Popover: {
-                    dispose: sinon.stub()
-                }
-            }
-            main.activityStatusDomMouseleave();
-            sinon.assert.calledOnce(main.activityStatusDom.Popover.dispose);
-        });
-
-        it('without Popover', () => {
-            main.activityStatusDomMouseleave();
-        });
-    });
-
     it('setMinTopTimeoutEvent', () => {
-        window.setMinTopTimeoutEvent(777);
+        sinon.stub(utils, 'getNow').returns(moment(100));
+        sinon.stub(moment, 'now').returns(60072);
+        window.setMinTopTimeoutEvent();
 
-        assert.equal(window.minTopTimeoutEvent._idleTimeout, 777);
+        assert.equal(window.minTopTimeoutEvent._idleTimeout, 33);
         clearTimeout(window.minTopTimeoutEvent);
     });
 
@@ -350,6 +334,9 @@ describe('main.js', () => {
             document.getElementById.withArgs('activity-status-popover').returns({
                 addEventListener: addEventListener
             });
+            main.activityStatusDom = {
+                addEventListener: sinon.stub().withArgs('shown.bs.popover', sinon.match.func)
+            }
 
             await window.onload();
 
@@ -357,9 +344,9 @@ describe('main.js', () => {
             sinon.assert.calledOnce(initializeClient);
             sinon.assert.calledOnce(configureConnectivityStatus);
             sinon.assert.calledOnce(configureAuthView);
-            sinon.assert.calledWith(addEventListener, 'mouseenter', sinon.match.func);
-            sinon.assert.calledWith(addEventListener, 'mouseleave', sinon.match.func);
             sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: `stream.load` }));
+            sinon.assert.calledOnce(main.activityStatusDom.addEventListener);
+            sinon.assert.calledOnce(BSN.Popover.withArgs(main.activityStatusDom, sinon.match.object));
         });
 
         it('without hash', async () => {
@@ -371,6 +358,9 @@ describe('main.js', () => {
             document.getElementById.withArgs('activity-status-popover').returns({
                 addEventListener: addEventListener
             });
+            main.activityStatusDom = {
+                addEventListener: sinon.stub().withArgs('shown.bs.popover', sinon.match.func)
+            }
 
             await window.onload();
 
@@ -378,9 +368,9 @@ describe('main.js', () => {
             sinon.assert.calledOnce(initializeClient);
             sinon.assert.calledOnce(configureConnectivityStatus);
             sinon.assert.calledOnce(configureAuthView);
-            sinon.assert.calledWith(addEventListener, 'mouseenter', sinon.match.func);
-            sinon.assert.calledWith(addEventListener, 'mouseleave', sinon.match.func);
             sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: `stream.load` }));
+            sinon.assert.calledOnce(main.activityStatusDom.addEventListener);
+            sinon.assert.calledOnce(BSN.Popover.withArgs(main.activityStatusDom, sinon.match.object));
         });
     });
 });
