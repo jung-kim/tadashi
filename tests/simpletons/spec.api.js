@@ -1,5 +1,6 @@
 const { assert } = require('chai');
 const fetchMock = require('fetch-mock');
+const sinon = require('sinon');
 const statusCodes = require('http-status-codes').StatusCodes;
 
 const testUtils = require('../testUtils');
@@ -21,6 +22,7 @@ describe('api.js', () => {
 
     afterEach(() => {
         testUtils.unsetFakeNow();
+        reset();
     });
 
     describe('_makeAPIQuery', () => {
@@ -162,5 +164,14 @@ describe('api.js', () => {
         const resp = await api.queryTmiApi(path);
 
         assert.deepEqual(resp, { h: "hello" });
+    });
+
+    it('queryTwitchApi', async () => {
+        const _makeAPIQuery = sinon.stub(api, '_makeAPIQuery')
+            .withArgs(`${env.TWITCH_ENDPOINT}/abc/edf`, 'an-auth');
+
+        await api.queryTwitchApi('abc/edf', 'an-auth');
+
+        sinon.assert.calledOnce(_makeAPIQuery);
     });
 });

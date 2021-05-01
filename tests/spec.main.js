@@ -373,4 +373,45 @@ describe('main.js', () => {
             sinon.assert.calledOnce(BSN.Popover.withArgs(main.activityStatusDom, sinon.match.object));
         });
     });
+
+    describe('activityStatusPopover', () => {
+        it('active', () => {
+            sinon.stub(main, 'getConnectivityLevel').returns('cir-active');
+            const headerDom = {};
+            const bodyDom = {};
+            document.getElementsByClassName.withArgs('popover-header').returns([headerDom]);
+            document.getElementsByClassName.withArgs('popover-body').returns([bodyDom]);
+
+            main.activityStatusPopover();
+
+            assert.equal(headerDom.innerHTML, 'Connected');
+            assert.isTrue(bodyDom.innerHTML.startsWith('Data is being collected'));
+        });
+
+        it('inactive', () => {
+            sinon.stub(main, 'getConnectivityLevel').returns('cir-inactive');
+            const headerDom = {};
+            const bodyDom = {};
+            document.getElementsByClassName.withArgs('popover-header').returns([headerDom]);
+            document.getElementsByClassName.withArgs('popover-body').returns([bodyDom]);
+
+            main.activityStatusPopover();
+
+            assert.equal(headerDom.innerHTML, 'Disconnected');
+            assert.isTrue(bodyDom.innerHTML.startsWith('Data collection is halted'));
+        });
+
+        it('active-no-auth', () => {
+            sinon.stub(main, 'getConnectivityLevel').returns('cir-active-no-auth');
+            const headerDom = {};
+            const bodyDom = {};
+            document.getElementsByClassName.withArgs('popover-header').returns([headerDom]);
+            document.getElementsByClassName.withArgs('popover-body').returns([bodyDom]);
+
+            main.activityStatusPopover();
+
+            assert.equal(headerDom.innerHTML, 'Connected with no Auth');
+            assert.isTrue(bodyDom.innerHTML.startsWith('Data collection is limited'));
+        });
+    })
 });

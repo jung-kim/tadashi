@@ -68,7 +68,8 @@ class API {
     }
 
     /**
-     * fetch twitch api with rate limiting loic.
+     * fetch twitch api with rate limiting logic.
+     * 
      * @param {string} path path to query
      * @param {object} authObj auth info
      * @return {object} query result

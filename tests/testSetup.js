@@ -95,6 +95,7 @@ Chart = class Chart {
 // stub dom functions, I'm sure there is a npm package does this...
 document = {
     getElementById: sinon.stub().withArgs(sinon.match.any).returns({}),
+    getElementsByClassName: sinon.stub(),
     querySelector: sinon.stub().returns({}),
 };
 
