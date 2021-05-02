@@ -4,7 +4,6 @@ const sinon = require('sinon');
 
 const DateTime = require('../../../../js/events/stream/components/DateTime');
 const moment = require('../../../..//js/helpers/moment');
-const constants = require('../../../../js/helpers/constants');
 
 describe('DateTime.js', () => {
     beforeEach(() => {

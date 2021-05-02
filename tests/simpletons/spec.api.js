@@ -167,8 +167,8 @@ describe('api.js', () => {
     });
 
     it('queryTwitchApi', async () => {
-        const _makeAPIQuery = sinon.stub(api, '_makeAPIQuery')
-            .withArgs(`${env.TWITCH_ENDPOINT}/abc/edf`, 'an-auth');
+        const _makeAPIQuery = sinon.stub(api, '_makeAPIQuery').
+            withArgs(`${env.TWITCH_ENDPOINT}/abc/edf`, 'an-auth');
 
         await api.queryTwitchApi('abc/edf', 'an-auth');
 

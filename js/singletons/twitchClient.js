@@ -238,10 +238,10 @@ class TwitchClient {
     }
 
     isConnected() {
-        return Boolean(this._client._isConnected() &&
-            this._client.channels &&
-            this._client.channels.length > 0 &&
-            this._lastPingSuccess);
+        return Boolean(this._client._isConnected()
+            && this._client.channels
+            && this._client.channels.length > 0
+            && this._lastPingSuccess);
     }
 
     async _ping() {

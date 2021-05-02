@@ -1,6 +1,5 @@
 const fetchMock = require('fetch-mock');
 const { assert } = require('chai');
-const statusCodes = require('http-status-codes').StatusCodes;
 const sinon = require('sinon');
 
 const auth = require('../../../js/simpletons/auth');
@@ -54,8 +53,8 @@ describe('userIDFetcher.js', () => {
         };
         userIDFetcher._names = new Set(['a', 'b', 'c'])
         sinon.stub(auth, 'getAuthObj').returns({});
-        sinon.stub(api, 'queryTwitchApi').withArgs('helix/users?login=a&login=b&login=c', {})
-            .returns(apiRes);
+        sinon.stub(api, 'queryTwitchApi').withArgs('helix/users?login=a&login=b&login=c', {}).
+            returns(apiRes);
 
         await userIDFetcher._fetchUserIDsForNames({}, ['a', 'b', 'c']);
 

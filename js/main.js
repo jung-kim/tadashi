@@ -108,7 +108,7 @@ class Main {
     }
 
     activityStatusPopover() {
-        let title, content;
+        let content, title;
         switch (this.getConnectivityLevel()) {
             case INACTIVE:
                 title = 'Disconnected';

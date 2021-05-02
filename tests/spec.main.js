@@ -143,10 +143,6 @@ describe('main.js', () => {
     });
 
     describe('configureConnectivityStatus', () => {
-        const ACTIVE = 'cir-active';
-        const INACTIVE = 'cir-inactive';
-        const ACTIVE_NO_AUTH = 'cir-active-no-auth';
-
         it('no change', () => {
             sinon.stub(main, 'getConnectivityLevel').returns('cir-active');
 

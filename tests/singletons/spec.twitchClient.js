@@ -66,7 +66,7 @@ describe('twitchClient.js', () => {
             sinon.stub(api, 'queryTwitchApi').
                 withArgs(`kraken/users?login=hi`).
                 returns({ users: [{ _id: 88 }] });
-            let ping = sinon.stub(twitchClient, 'ping');
+            sinon.stub(twitchClient, 'ping');
 
             await twitchClient.initializeClient();
 
