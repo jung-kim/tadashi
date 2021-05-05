@@ -68,7 +68,7 @@ class API {
 
             console.warn(`too many requests! sleeping for ${sleepDuration}`);
 
-            this.waitForResetProm = new Promise(resolve => {
+            this.waitForReset = new Promise(resolve => {
                 setTimeout(() => {
                     resolve();
                     eventSignals.dispatch({ event: 'api.unthrottled' });

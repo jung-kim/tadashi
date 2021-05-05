@@ -5,7 +5,8 @@ const sinon = require('sinon');
 const chartFilter = require('../../../js/events/shared/chartFilter');
 const navOptionVC = require('../../../js/events/stream/navOptionVC');
 const constants = require('../../../js/helpers/constants');
-const twitchAPI = require('../../../js/singletons/twitchAPI');
+const api = require('../../../js/simpletons/api');
+const auth = require('../../../js/simpletons/auth');
 const twitchClient = require('../../../js/singletons/twitchClient');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
@@ -147,7 +148,8 @@ describe('navOptionVC', () => {
     it('_fetchList', async () => {
         navOptionVC.lastSearchedChannel = 'a-channel';
         navOptionVC.channelInputAutoComplete = {};
-        const getChannelSearch = sinon.stub(twitchAPI, 'getChannelSearch').withArgs('a-channel').returns({
+        sinon.stub(auth, 'getAuthObj').returns('auth-obj');
+        const getChannelSearch = sinon.stub(api, 'getChannelSearch').withArgs('a-channel', 'auth-obj').returns({
             data: [{ display_name: 'aaa' }, { display_name: 'bbb' }]
         });
 
@@ -205,7 +207,8 @@ describe('navOptionVC', () => {
             document.getElementById.withArgs('embeded-twitch-channel').returns(channelDom);
             document.getElementById.withArgs('embeded-twitch-desc').returns(descDomc);
 
-            sinon.stub(twitchAPI, 'getChannelInfo').withArgs('a-channel').returns({
+            sinon.stub(auth, 'getAuthObj').returns('auth-obj');
+            sinon.stub(api, 'getChannelInfo').withArgs('a-channel', 'auth-obj').returns({
                 data: [{ title: 'a-title' }]
             });
 
@@ -225,7 +228,8 @@ describe('navOptionVC', () => {
             document.getElementById.withArgs('embeded-twitch-channel').returns(channelDom);
             document.getElementById.withArgs('embeded-twitch-desc').returns(descDomc);
 
-            sinon.stub(twitchAPI, 'getChannelInfo').withArgs('a-channel').returns({
+            sinon.stub(auth, 'getAuthObj').returns('auth-obj');
+            sinon.stub(api, 'getChannelInfo').withArgs('a-channel', 'auth-obj').returns({
                 data: undefined
             });
 
@@ -246,7 +250,8 @@ describe('navOptionVC', () => {
             document.getElementById.withArgs('embeded-twitch-channel').returns(channelDom);
             document.getElementById.withArgs('embeded-twitch-desc').returns(descDomc);
 
-            sinon.stub(twitchAPI, 'getChannelInfo').withArgs('a-channel').throws('something');
+            sinon.stub(auth, 'getAuthObj').returns('auth-obj');
+            sinon.stub(api, 'getChannelInfo').withArgs('a-channel', 'auth-obj').throws('something');
 
             await navOptionVC._populateStreamInfo();
 
