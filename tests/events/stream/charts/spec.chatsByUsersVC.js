@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const { assert } = require('chai');
 
-const chatsByUsersVC = require('../../../../js/events/stream/components/chatsByUsersVC');
+const chatsByUsersVC = require('../../../../js/events/stream/charts/chatsByUsersVC');
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 

@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
 
-const followedStreamersVC = require('../../../../js/events/stream/components/followedStreamersVC');
+const followedStreamersVC = require('../../../../js/events/stream/charts/followedStreamersVC');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const twitchClient = require('../../../../js/singletons/twitchClient');
 const users = require('../../../../js/singletons/users');

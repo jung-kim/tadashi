@@ -1,5 +1,6 @@
 const { assert } = require('chai');
 const fetchMock = require('fetch-mock');
+const sinon = require('sinon');
 const statusCodes = require('http-status-codes').StatusCodes;
 
 const testUtils = require('../testUtils');
@@ -21,6 +22,7 @@ describe('api.js', () => {
 
     afterEach(() => {
         testUtils.unsetFakeNow();
+        reset();
     });
 
     describe('_makeAPIQuery', () => {
@@ -57,7 +59,7 @@ describe('api.js', () => {
                 await api._makeAPIQuery(testURL, undefined);
                 assert.fail("should not be called");
             } catch (err) {
-                assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'query failed', resetAt: testUtils.fakeNow + constants.MAX_AWAIT_DURATION_SEC });
+                assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'query failed', resetAt: testUtils.fakeNow + 15 });
             }
             assert.isNull(api.waitForReset);
         });
@@ -68,8 +70,8 @@ describe('api.js', () => {
                 status: statusCodes.INTERNAL_SERVER_ERROR,
                 body: testBody,
                 headers: {
-                    [constants.RATELIMIT_REMAINING]: 0,
-                    [constants.RATELIMIT_RESET]: t,
+                    'Ratelimit-Remaining': 0,
+                    'Ratelimit-Reset': t,
                 }
             }, {
                 overwriteRoutes: true,
@@ -90,8 +92,8 @@ describe('api.js', () => {
                 status: statusCodes.INTERNAL_SERVER_ERROR,
                 body: testBody,
                 headers: {
-                    [constants.RATELIMIT_REMAINING]: 0,
-                    [constants.RATELIMIT_RESET]: t,
+                    'Ratelimit-Remaining': 0,
+                    'Ratelimit-Reset': t,
                 }
             }, {
                 overwriteRoutes: true,
@@ -115,8 +117,8 @@ describe('api.js', () => {
                 status: statusCodes.TOO_MANY_REQUESTS,
                 body: testBody,
                 headers: {
-                    [constants.RATELIMIT_REMAINING]: 2,
-                    [constants.RATELIMIT_RESET]: testUtils.fakeNow + 1,
+                    'Ratelimit-Remaining': 2,
+                    'Ratelimit-Reset': testUtils.fakeNow + 1,
                 }
             }, {
                 overwriteRoutes: true,
@@ -162,5 +164,14 @@ describe('api.js', () => {
         const resp = await api.queryTmiApi(path);
 
         assert.deepEqual(resp, { h: "hello" });
+    });
+
+    it('queryTwitchApi', async () => {
+        const _makeAPIQuery = sinon.stub(api, '_makeAPIQuery').
+            withArgs(`${env.TWITCH_ENDPOINT}/abc/edf`, 'an-auth');
+
+        await api.queryTwitchApi('abc/edf', 'an-auth');
+
+        sinon.assert.calledOnce(_makeAPIQuery);
     });
 });

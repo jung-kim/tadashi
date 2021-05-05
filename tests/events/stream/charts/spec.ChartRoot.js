@@ -4,7 +4,7 @@ const sinon = require('sinon')
 
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const constants = require('../../../../js/helpers/constants');
-const ChartRoot = require('../../../../js/events/stream/components/ChartRoot');
+const ChartRoot = require('../../../../js/events/stream/charts/ChartRoot');
 const twitchClient = require('../../../../js/singletons/twitchClient');
 
 describe('ChartRoot.js', () => {
@@ -98,27 +98,23 @@ describe('ChartRoot.js', () => {
         it('data.cache.updated', () => {
             const chartRoot = new ChartRoot({});
             const update = sinon.stub(chartRoot, 'update');
-            chartRoot._chartObject = { update: sinon.stub() };
 
             chartRoot._enabled = true;
             chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
             chartRoot._enabled = false;
             chartRoot._eventSignalsFunc({ event: 'data.cache.updated' });
             sinon.assert.calledOnce(update);
-            sinon.assert.calledOnce(chartRoot._chartObject.update);
         });
 
         it('filter.change', () => {
             const chartRoot = new ChartRoot({});
             const update = sinon.stub(chartRoot, 'update');
-            chartRoot._chartObject = { update: sinon.stub() };
 
             chartRoot._enabled = true;
             chartRoot._eventSignalsFunc({ event: 'filter.change' });
             chartRoot._enabled = false;
             chartRoot._eventSignalsFunc({ event: 'filter.change' });
             sinon.assert.calledOnce(update);
-            sinon.assert.calledOnce(chartRoot._chartObject.update);
         });
     });
 
@@ -149,5 +145,17 @@ describe('ChartRoot.js', () => {
             assert.isObject(chartRoot._helpDom);
             assert.isObject(chartRoot._chartObject);
         });
+    });
+
+    it('update', () => {
+        const chartRoot = new ChartRoot({ chartDomSelector: 'something' });
+
+        const update = sinon.stub(chartRoot, '_update');
+        chartRoot._chartObject = { update: sinon.stub() };
+
+        chartRoot.update();
+
+        sinon.assert.calledOnce(chartRoot._chartObject.update);
+        sinon.assert.calledOnce(update);
     });
 });

@@ -15,7 +15,10 @@ class ChartRoot {
         this._helpContent = obj.helpContent;
         this._type = obj.type || 'doughnut';
 
-        this.update = _.throttle(this._update.bind(this), obj.updateThrottleTime || 500);
+        this.update = _.throttle(() => {
+            this._update();
+            this._chartObject.update();
+        }, obj.updateThrottleTime || 500);
 
         eventSignals.add(this._eventSignalsFunc.bind(this));
     }
@@ -42,7 +45,6 @@ class ChartRoot {
             case 'filter.change':
                 if (this._enabled) {
                     this.update();
-                    this._chartObject.update();
                 }
                 break;
         }
@@ -153,6 +155,13 @@ class ChartRoot {
                         fontSize: 18,
                     }
                 },
+                animation: {
+                    duartion: 250,
+                },
+                hover: {
+                    animationDuration: 0,
+                },
+                responsiveAnimationDuration: 250,
             },
         }
     }

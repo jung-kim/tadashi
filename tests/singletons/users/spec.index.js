@@ -78,6 +78,7 @@ describe('users.js', () => {
             aa: new User(11, 'aa', undefined, [1]),
             bb: new User(22, 'bb', undefined, [1]),
         });
+        sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: `chatters.data.update.partial` }));
 
         // with valid get user
         users.processUserFollowsResp({
@@ -106,6 +107,7 @@ describe('users.js', () => {
             cc: new User(33, 'cc', undefined, [1]),
             dd: new User(44, 'dd', undefined, [2]),
         });
+        sinon.assert.calledTwice(eventSignals.dispatch.withArgs({ event: `chatters.data.update.partial` }));
     });
 
     describe('processChattersData()', () => {
@@ -160,6 +162,7 @@ describe('users.js', () => {
 
             assert.isTrue(users._channelWarned[111]);
             sinon.assert.notCalled(idFetcherAddStub);
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ alert: { type: 'warning', body: sinon.match.any } }));
         });
     });
 

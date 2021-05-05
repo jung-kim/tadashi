@@ -1,8 +1,8 @@
 /*eslint-disable no-global-assign,no-implicit-globals,no-native-reassign*/
 
-const eventSignals = require('../js/helpers/signals').eventSignals;
+const { eventSignals, domSignals } = require('../js/helpers/signals');
 const sinon = require('sinon');
-const Handlebars = require('handlebars');
+Handlebars = require('handlebars');
 const glob = require('glob');
 const fs = require('fs');
 const tmi = require('tmi.js');
@@ -27,6 +27,9 @@ tmi.Client = class fakeClient {
     }
     connect() {
         // do nothing 
+    }
+    _isConnected() {
+        // do nothing
     }
 }
 sinon.stub(api, 'queryTwitchApi').
@@ -62,11 +65,13 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
 BSN = {
     Collapse: sinon.stub(),
     Popover: sinon.stub(),
-    Dropdown: sinon.stub()
+    Dropdown: sinon.stub(),
+    Alert: sinon.stub(),
 }
 
 // disable signal dispatch
 eventSignals.dispatch = sinon.stub();
+domSignals.dispatch = sinon.stub();
 
 // flatpickr the time picking lib
 flatpickr = sinon.stub();
@@ -90,6 +95,8 @@ Chart = class Chart {
 // stub dom functions, I'm sure there is a npm package does this...
 document = {
     getElementById: sinon.stub().withArgs(sinon.match.any).returns({}),
+    getElementsByClassName: sinon.stub(),
+    querySelector: sinon.stub().returns({}),
 };
 
 window = {
@@ -113,17 +120,11 @@ reset = () => {
     filter.changeSearchString();
     flatpickr.reset();
     eventSignals.dispatch.reset();
+    domSignals.dispatch.reset();
 }
 
 Twitch = {
-    Embed: sinon.stub().withArgs('twitch-embed', {
-        width: '100%',
-        height: '100%',
-        channel: 'abc',
-        autoplay: true,
-        muted: true,
-        allowfullscreen: false
-    })
+    Embed: sinon.stub(),
 };
 
 /*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

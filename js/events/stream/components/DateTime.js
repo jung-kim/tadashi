@@ -1,7 +1,8 @@
-const constants = require('../../../helpers/constants');
 const eventSignals = require('../../../helpers/signals').eventSignals;
 
 const moment = require('../../../helpers/moment');
+
+const MOMENT_DISPLAY_FORMAT = 'YYYY-MM-DD HH:mm';
 
 class DateTime {
     constructor(id) {
@@ -24,7 +25,7 @@ class DateTime {
     }
 
     set(momentObj) {
-        this.timeSelector.setDate([momentObj.format(constants.MOMENT_DISPLAY_FORMAT)], true);
+        this.timeSelector.setDate([momentObj.format(MOMENT_DISPLAY_FORMAT)], true);
     }
 
     destroy() {

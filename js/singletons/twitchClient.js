@@ -10,6 +10,10 @@ const dataCache = require('../simpletons/dataCache');
 
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';
+const CHATTERS_KEY = 'chatters';
+
+const DEFAULT_CHANNEL = 'xqcow';
+const DEFAULT_CHANNEL_ID = 71092938;
 
 class TwitchClient {
     constructor() {
@@ -18,6 +22,9 @@ class TwitchClient {
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
         this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
+        this._debouncedPing = _.debounce(this._ping.bind(this), 5000, { leading: false });
+        this._throttledPing = _.throttle(this._ping.bind(this), 1000, { leading: false });
+        this._lastPingSuccess = true;
         eventSignals.add(this._eventSignalFunc.bind(this));
     }
 
@@ -52,19 +59,13 @@ class TwitchClient {
         if (!this.getChannel()) {
             if (localStorage.getItem(CHANNEL_LS_KEY)) {
                 this._setChannel(localStorage.getItem(CHANNEL_LS_KEY));
+                this._setChannelID(localStorage.getItem(CHANNEL_LS_ID_KEY));
             } else if (auth.isBroadcaster()) {
                 this._setChannel(auth.getLogin());
                 this._setChannelID(auth.getID());
             } else {
-                this.changeChannel(constants.DEFAULT_CHANNEL, constants.DEFAULT_CHANNEL_ID);
-            }
-        }
-
-        if (this.getChannel() && !this.getChannelID()) {
-            if (localStorage.getItem(CHANNEL_LS_ID_KEY)) {
-                this._setChannelID(parseInt(localStorage.getItem(CHANNEL_LS_ID_KEY)));
-            } else {
-                this._setChannelID();
+                this._setChannel(DEFAULT_CHANNEL);
+                this._setChannelID(DEFAULT_CHANNEL_ID);
             }
         }
 
@@ -108,8 +109,8 @@ class TwitchClient {
             this._processChatMessage(channel, events.MysterySubGift, userstate, methods, numbOfSubs);
         });
 
-        this._client.connect();
-        eventSignals.dispatch({ event: 'channel.input.update', data: { id: this.getChannelID(), channe: this.getChannel() } });
+        await this._client.connect();
+        this.ping();
         this._initPromise = undefined;
     }
 
@@ -139,6 +140,7 @@ class TwitchClient {
     }
 
     _processChatMessage(channel, clazz, arg1, arg2, arg3, arg4) {
+        this.ping();
         const raw = new clazz(arg1, arg2, arg3, arg4);
 
         if (channel.charAt(0) === '#') {
@@ -169,7 +171,7 @@ class TwitchClient {
 
         eventSignals.dispatch({
             event: "chatters.data.update",
-            data: json[constants.KEY_CHATTERS],
+            data: json[CHATTERS_KEY],
             channelID: this.getChannelID(),
         });
     }
@@ -233,6 +235,38 @@ class TwitchClient {
                 body: `Successfully saved channel`
             }
         });
+    }
+
+    isConnected() {
+        return Boolean(this._client._isConnected()
+            && this._client.channels
+            && this._client.channels.length > 0
+            && this._lastPingSuccess);
+    }
+
+    async _ping() {
+        if (this._client) {
+            try {
+                await this._client.ping();
+                this._lastPingSuccess = true;
+            } catch (err) {
+                this._lastPingSuccess = false;
+            }
+        } else {
+            this._lastPingSuccess = false;
+        }
+        eventSignals.dispatch({ event: 'draw.nav.actvitiy-status' });
+        this.ping();
+    }
+
+    ping() {
+        if (this.isConnected()) {
+            // connected, call debounced to reduce traffic
+            this._debouncedPing();
+        } else {
+            // not connected, call once every seconds
+            this._throttledPing();
+        }
     }
 }
 

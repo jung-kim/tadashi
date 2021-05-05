@@ -6,6 +6,7 @@ const Chat = require('../../../js/models/events/Chat');
 const dataCache = require("../../../js/simpletons/dataCache");
 const { blankDataBucket, blankDataNode } = require('../../../js/simpletons/dataCache/models/blanks');
 const filter = require('../../../js/events/shared/chartFilter').getUserFilter();
+const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 
 describe('dataCache/index.js', () => {
@@ -32,6 +33,8 @@ describe('dataCache/index.js', () => {
         }));
         assert.deepEqual(Object.keys(dataCache._data), ['aaa']);
         assert.deepEqual(Object.keys(dataCache._data['aaa']._data), ['0']);
+
+        sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: 'data.cache.updated' }));
     });
 
     it('get', () => {

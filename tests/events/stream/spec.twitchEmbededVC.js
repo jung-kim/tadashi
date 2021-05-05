@@ -33,10 +33,18 @@ describe('twitchEmbededVC', () => {
             sinon.stub(twitchEmbededVC, '_getIsOpenTwitchEmbeded').returns(true);
             sinon.stub(twitchClient, 'getChannel').returns('abc');
 
+            const embed = Twitch.Embed.withArgs('twitch-embed', {
+                width: '100%',
+                height: '100%',
+                channel: 'abc',
+                autoplay: true,
+                muted: true,
+                allowfullscreen: false
+            });
 
             twitchEmbededVC._handleEmbededTwitch();
 
-            sinon.assert.calledOnce(Twitch.Embed);
+            sinon.assert.calledOnce(embed);
         });
 
         it('_getIsOpenTwitchEmbeded false with valid embeded twitch', () => {
