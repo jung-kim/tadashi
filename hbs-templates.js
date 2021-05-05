@@ -76,7 +76,7 @@ this["templates"]['./hbs/about/features.hbs'] = Handlebars.template({"1":functio
 },"useData":true});
 
 this["templates"]['./hbs/components/nav-auth.hbs'] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.lambda, alias2=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
         }
@@ -84,11 +84,24 @@ this["templates"]['./hbs/components/nav-auth.hbs'] = Handlebars.template({"1":fu
     };
 
   return "<button class=\"btn disabled btn-outline-info my-2 my-sm-0\" type=\"button\">\n    <img src=\""
-    + alias2(alias1(((stack1 = (depth0 != null ? lookupProperty(depth0,"_user") : depth0)) != null ? lookupProperty(stack1,"profile_image_url") : stack1), depth0))
-    + "\" />\n    "
-    + alias2(alias1(((stack1 = (depth0 != null ? lookupProperty(depth0,"_user") : depth0)) != null ? lookupProperty(stack1,"login") : stack1), depth0))
-    + "\n</button>\n<button class=\"btn btn-outline-warning my-2 my-sm-0\" onclick=\"authLogout()\" type=\"button\">\n    Logout\n</button>\n";
-},"3":function(container,depth0,helpers,partials,data) {
+    + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? lookupProperty(depth0,"_user") : depth0)) != null ? lookupProperty(stack1,"profile_image_url") : stack1), depth0))
+    + "\" />\n"
+    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),((stack1 = (depth0 != null ? lookupProperty(depth0,"_user") : depth0)) != null ? lookupProperty(stack1,"login") : stack1),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.program(4, data, 0),"data":data,"loc":{"start":{"line":4,"column":4},"end":{"line":8,"column":11}}})) != null ? stack1 : "")
+    + "</button>\n<button class=\"btn btn-outline-warning my-2 my-sm-0\" onclick=\"authLogout()\" type=\"button\">\n    Logout\n</button>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "    "
+    + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? lookupProperty(depth0,"_user") : depth0)) != null ? lookupProperty(stack1,"login") : stack1), depth0))
+    + "\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    return "    unknown-user\n";
+},"6":function(container,depth0,helpers,partials,data) {
     return "<button class=\"btn btn-outline-success my-2 my-sm-0\" onclick=\"authenticate()\" type=\"button\">\n    Login / Sign up\n</button>\n";
 },"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -98,7 +111,7 @@ this["templates"]['./hbs/components/nav-auth.hbs'] = Handlebars.template({"1":fu
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"_authToken") : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data,"loc":{"start":{"line":1,"column":0},"end":{"line":13,"column":7}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"_authToken") : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(6, data, 0),"data":data,"loc":{"start":{"line":1,"column":0},"end":{"line":17,"column":7}}})) != null ? stack1 : "");
 },"useData":true});
 
 this["templates"]['./hbs/shared/alerts.hbs'] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {

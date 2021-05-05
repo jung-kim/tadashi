@@ -72,6 +72,37 @@ nav .nav-auth button img {
   height: 20px;
   margin-right: 2px;
 }
+nav .blink {
+  animation: blinker 1s cubic-bezier(0.5, 0, 1, 1) infinite alternate;
+}
+@keyframes blinker {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+nav #activity-status-popover {
+  padding-top: 20px;
+}
+nav .circle:before {
+  content: ' \25CF';
+  font-size: 15px;
+  position: absolute;
+  margin-top: -20px;
+  height: 10px;
+  margin-left: -13px;
+}
+nav .cir-active {
+  color: #62E255;
+}
+nav .cir-inactive {
+  color: #F15634;
+}
+nav .cir-active-no-auth {
+  color: #F4F140;
+}
 
 /* Popover Header */
 .popover-header {
