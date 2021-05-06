@@ -30,18 +30,16 @@ class API {
      * @returns time to await for in seconds
      */
     _getThrottledSleepDuration(response) {
-        try {
-            const resetAt = parseInt(response.headers.get(RATELIMIT_RESET));
-
-            if (resetAt > MAX_AWAIT_DURATION_SEC) {
-                console.warn(`reset at is larger than max : ${resetAt}`);
-            }
-
-            return Math.min(resetAt, MAX_AWAIT_DURATION_SEC);
-        } catch (err) {
-            console.warn(`error parssing header: ${response.headers.get(RATELIMIT_RESET)}`);
+        const resetAt = parseInt(response.headers.get(RATELIMIT_RESET));
+        if (isNaN(resetAt)) {
+            return MAX_AWAIT_DURATION_SEC;
         }
-        return MAX_AWAIT_DURATION_SEC;
+
+        if (resetAt > MAX_AWAIT_DURATION_SEC) {
+            console.warn(`reset at is larger than max : ${resetAt}`);
+        }
+
+        return Math.min(resetAt, MAX_AWAIT_DURATION_SEC);
     }
 
     /**
@@ -57,6 +55,7 @@ class API {
     async _makeTwitchAPIQuery(url, authObj) {
         if (this.waitForReset) {
             await this.waitForReset;
+            eventSignals.dispatch({ event: 'api.unthrottled' });
             this.waitForReset = null;
         }
         const response = await fetch(url, authObj || DEFAULT_REQ_OPT);
@@ -69,10 +68,7 @@ class API {
             console.warn(`too many requests! sleeping for ${sleepDuration}`);
 
             this.waitForReset = new Promise(resolve => {
-                setTimeout(() => {
-                    resolve();
-                    eventSignals.dispatch({ event: 'api.unthrottled' });
-                }, sleepDuration * 1000 + 5)
+                setTimeout(resolve, sleepDuration * 1000 + 5)
             });
             throw { status: response.status, msg: 'too many requests' };
         }
@@ -125,14 +121,14 @@ class API {
 
     async getChannelSearch(channel, authObj) {
         if (TIWTCH_NAME_REGEX.test(channel)) {
-            return await api.queryTwitchApi(`helix/search/channels?query=${channel}&first=10`, authObj);
+            return await this.queryTwitchApi(`helix/search/channels?query=${channel}&first=10`, authObj);
         }
 
         return {};
     }
 
     async getChannelInfo(channel, authObj) {
-        return await api.queryTwitchApi(`helix/streams?user_login=${channel}`, authObj);
+        return await this.queryTwitchApi(`helix/streams?user_login=${channel}`, authObj);
     }
 }
 

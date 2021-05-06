@@ -7,7 +7,7 @@ const pako = require('pako');
 const testUtils = require('../testUtils');
 const api = require('../../js/simpletons/api');
 const env = require('../../js/env');
-const constants = require('../../js/helpers/constants');
+const eventSignals = require('../../js/helpers/signals').eventSignals;
 
 describe('api.js', () => {
     const testPath = "test"
@@ -48,6 +48,8 @@ describe('api.js', () => {
             const start = Date.now();
             assert.deepEqual(await api._makeTwitchAPIQuery(testPath), testBody);
             const diff = Date.now() - start;
+
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: 'api.unthrottled' }));
 
             assert.deepEqual(fetchMock.lastOptions().headers, defaultAuth)
             assert.isTrue(diff >= 500);
@@ -157,5 +159,69 @@ describe('api.js', () => {
         await api.queryTwitchApi('abc/edf', 'an-auth');
 
         sinon.assert.calledOnce(_makeTwitchAPIQuery);
+    });
+
+    describe('_getThrottledSleepDuration', () => {
+        it('error case', () => {
+            const sleepDuration = api._getThrottledSleepDuration({
+                headers: {
+                    get: (key) => {
+                        assert.equal(key, 'Ratelimit-Reset');
+                        return 'abc';
+                    }
+                }
+            });
+            assert.equal(sleepDuration, 15);
+        });
+
+        it('value is too large', () => {
+            const sleepDuration = api._getThrottledSleepDuration({
+                headers: {
+                    get: (key) => {
+                        assert.equal(key, 'Ratelimit-Reset');
+                        return '9999';
+                    }
+                }
+            });
+            assert.equal(sleepDuration, 15);
+        });
+
+        it('value is appropriate', () => {
+            const sleepDuration = api._getThrottledSleepDuration({
+                headers: {
+                    get: (key) => {
+                        assert.equal(key, 'Ratelimit-Reset');
+                        return '9';
+                    }
+                }
+            });
+            assert.equal(sleepDuration, 9);
+        });
+    });
+
+    describe('getChannelSearch', () => {
+        it('valid name', async () => {
+            const queryTwitchApi = sinon.stub(api, 'queryTwitchApi').withArgs('helix/search/channels?query=abcsfwerw&first=10', 'auth-obj');
+
+            await api.getChannelSearch('abcsfwerw', 'auth-obj');
+
+            sinon.assert.calledOnce(queryTwitchApi);
+        });
+
+        it('invalid name', async () => {
+            const queryTwitchApi = sinon.stub(api, 'queryTwitchApi');
+
+            assert.deepEqual(await api.getChannelSearch('!!', 'auth-obj'), {});
+
+            sinon.assert.notCalled(queryTwitchApi);
+        });
+    });
+
+    it('getChannelInfo', async () => {
+        const queryTwitchApi = sinon.stub(api, 'queryTwitchApi').withArgs('helix/streams?user_login=abc', 'auth-obj');
+
+        await api.getChannelInfo('abc', 'auth-obj');
+
+        sinon.assert.calledOnce(queryTwitchApi);
     });
 });
