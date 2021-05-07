@@ -1,11 +1,7 @@
 {{#if _authToken }}
 <button class="btn disabled btn-outline-info my-2 my-sm-0" type="button">
     <img src="{{_user.profile_image_url}}" />
-    {{#if _user.login}}
     {{_user.login}}
-    {{else}}
-    unknown-user
-    {{/if}}
 </button>
 <button class="btn btn-outline-warning my-2 my-sm-0" onclick="authLogout()" type="button">
     Logout
