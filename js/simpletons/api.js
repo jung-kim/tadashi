@@ -7,12 +7,12 @@ const TIWTCH_NAME_REGEX = /[0-9a-zA-Z][\w]{3,23}/;
 const RATELIMIT_REMAINING = 'Ratelimit-Remaining';
 const RATELIMIT_RESET = 'Ratelimit-Reset';
 const MAX_AWAIT_DURATION_SEC = 15;
-const DEFAULT_REQ_OPT = {
+const DEFAULT_REQ_OPT = Object.freeze({
     headers: {
         'Client-ID': env.CLIENT_ID,
         'Accept': 'application/vnd.twitchtv.v5+json',
     }
-};
+});
 
 class API {
     constructor() {

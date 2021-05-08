@@ -8,6 +8,7 @@ const fs = require('fs');
 const tmi = require('tmi.js');
 const moment = require('../js/helpers/moment');
 const api = require('../js/simpletons/api');
+const fetchMock = require('fetch-mock');
 _ = require('lodash');
 require('node-localstorage/register');
 
@@ -116,7 +117,9 @@ Awesomplete = sinon.stub();
 reset = () => {
     sinon.verifyAndRestore();
     document.getElementById.reset();
-    auth._authToken = undefined;
+    auth.logout();
+    localStorage.clear();
+    fetchMock.reset();
     filter.changeSearchString();
     flatpickr.reset();
     eventSignals.dispatch.reset();

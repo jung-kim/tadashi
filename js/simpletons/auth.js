@@ -11,13 +11,17 @@ const scope = 'scope=user:read:email+bits:read+moderation:read+channel:read:subs
 
 class Auth {
     constructor() {
+        this._initialize();
+    }
+
+    async _initialize() {
         try {
             this._authToken = JSON.parse(localStorage.getItem(KEY_AUTH_TOKEN));
-            this._postAuth();
         } catch (err) {
             this._authToken = undefined;
             console.warn("failed to parse localstorage cache", err);
         }
+        await this._postAuth();
     }
 
     _setAuthToken(authToken) {
@@ -56,18 +60,16 @@ class Auth {
     }
 
     async _postAuth() {
-        if (!this.isAuthenticated()) {
-            return;
-        }
-
-        try {
-            const res = await fetch(`${env.TWITCH_ENDPOINT}/helix/users`, this.getAuthObj());
-            const json = await res.json();
-            if (json) {
-                this._user = json.data[0];
+        if (this.isAuthenticated()) {
+            try {
+                const res = await fetch(`${env.TWITCH_ENDPOINT}/helix/users`, this.getAuthObj());
+                const json = await res.json();
+                if (json) {
+                    this._user = json.data[0];
+                }
+            } catch (err) {
+                console.warn(`failed to fetch logged in user info: ${err}`);
             }
-        } catch (err) {
-            console.warn(`failed to fetch logged in user info: ${err}`);
         }
 
         if (!this._user) {

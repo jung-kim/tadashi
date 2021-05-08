@@ -9,12 +9,30 @@ const eventSignals = require('../../js/helpers/signals').eventSignals;
 
 describe('auth.js', () => {
     beforeEach(() => {
-        auth._authToken = undefined;
-        localStorage.clear();
-        fetchMock.reset();
         env.CLIENT_SECRET = undefined;
-        auth.logout();
         reset();
+    });
+
+    describe('_initialize', () => {
+        it('success', () => {
+            const _postAuth = sinon.stub(auth, '_postAuth');
+            localStorage.setItem('auth', '{1:1}');
+
+            auth._initialize();
+
+            sinon.assert.calledOnce(_postAuth);
+            assert.deepEqual(auth._authToken);
+        });
+
+        it('error', () => {
+            const _postAuth = sinon.stub(auth, '_postAuth');
+            localStorage.setItem('auth', '{1}');
+
+            auth._initialize();
+
+            sinon.assert.calledOnce(_postAuth);
+            assert.isUndefined(auth._authToken);
+        });
     });
 
     it('_setAuthToken', () => {
@@ -161,7 +179,11 @@ describe('auth.js', () => {
 
             await auth._postAuth();
 
-            sinon.assert.notCalled(eventSignals.dispatch);
+            assert.deepEqual(auth._user, {
+                profile_image_url: 'https://static-cdn.jtvnw.net/user-default-pictures-uv/294c98b5-e34d-42cd-a8f0-140b72fba9b0-profile_image-300x300.png',
+                login: 'unknown-user'
+            });
+            sinon.assert.calledOnce(eventSignals.dispatch);
         });
 
         it('authenticated and not broacaster', async () => {
