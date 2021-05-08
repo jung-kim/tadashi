@@ -229,7 +229,7 @@ describe('auth.js', () => {
             await auth._postAuth();
 
             assert.deepEqual(auth._user, {
-                profile_image_url: 'default-image',
+                profile_image_url: 'https://static-cdn.jtvnw.net/user-default-pictures-uv/294c98b5-e34d-42cd-a8f0-140b72fba9b0-profile_image-300x300.png',
                 login: 'unknown-user'
             });
             sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ 'event': 'draw.nav.auth' }));

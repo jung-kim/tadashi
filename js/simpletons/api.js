@@ -26,8 +26,8 @@ class API {
     /**
      * returns time to sleep until throttling is resolved.
      * 
-     * @param {object} response 
-     * @returns time to await for in seconds
+     * @param {object} response object from fetch
+     * @returns {number} time to await for in seconds
      */
     _getThrottledSleepDuration(response) {
         const resetAt = parseInt(response.headers.get(RATELIMIT_RESET));
@@ -48,8 +48,8 @@ class API {
      * 
      * Will thro error if query fails, including being throttled.
      * 
-     * @param {string} url 
-     * @param {object} authObj 
+     * @param {string} url to fetch
+     * @param {object} authObj options to pass into fetch
      * @returns {object} result of api request
      */
     async _makeTwitchAPIQuery(url, authObj) {
@@ -68,7 +68,7 @@ class API {
             console.warn(`too many requests! sleeping for ${sleepDuration}`);
 
             this.waitForReset = new Promise(resolve => {
-                setTimeout(resolve, sleepDuration * 1000 + 5)
+                setTimeout(resolve, (sleepDuration * 1000) + 5)
             });
             throw { status: response.status, msg: 'too many requests' };
         }
@@ -128,7 +128,7 @@ class API {
     }
 
     async getChannelInfo(channel, authObj) {
-        return await this.queryTwitchApi(`helix/streams?user_login=${channel}`, authObj);
+        return await this.queryTwitchApi(`helix/streams?user-login=${channel}`, authObj);
     }
 }
 

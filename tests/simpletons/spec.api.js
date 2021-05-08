@@ -12,7 +12,6 @@ const eventSignals = require('../../js/helpers/signals').eventSignals;
 describe('api.js', () => {
     const testPath = "test"
     const testRoutePath = `path:/${testPath}`;
-    const testURL = `${env.TWITCH_ENDPOINT}/${testPath}`
     const testBody = { "test": "test" };
 
     beforeEach(() => {
@@ -218,7 +217,7 @@ describe('api.js', () => {
     });
 
     it('getChannelInfo', async () => {
-        const queryTwitchApi = sinon.stub(api, 'queryTwitchApi').withArgs('helix/streams?user_login=abc', 'auth-obj');
+        const queryTwitchApi = sinon.stub(api, 'queryTwitchApi').withArgs('helix/streams?user-login=abc', 'auth-obj');
 
         await api.getChannelInfo('abc', 'auth-obj');
 

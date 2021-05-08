@@ -2,6 +2,11 @@ const env = require('../env');
 const eventSignals = require('../helpers/signals').eventSignals;
 
 const KEY_AUTH_TOKEN = 'auth';
+const DEFAULT_PROFILE_IMAGE = 'https://static-cdn.jtvnw.net/user-default-pictures-uv/294c98b5-e34d-42cd-a8f0-140b72fba9b0-profile_image-300x300.png';
+const DEFAULT_USER = Object.freeze({
+    profile_image_url: DEFAULT_PROFILE_IMAGE,
+    login: 'unknown-user'
+});
 const scope = 'scope=user:read:email+bits:read+moderation:read+channel:read:subscriptions+analytics:read:games'
 
 class Auth {
@@ -55,7 +60,6 @@ class Auth {
             return;
         }
 
-        eventSignals.dispatch({ 'event': 'draw.nav.auth' });
         try {
             const res = await fetch(`${env.TWITCH_ENDPOINT}/helix/users`, this.getAuthObj());
             const json = await res.json();
@@ -67,11 +71,9 @@ class Auth {
         }
 
         if (!this._user) {
-            this._user = {
-                profile_image_url: 'default-image',
-                login: 'unknown-user'
-            }
+            this._user = DEFAULT_USER;
         }
+        eventSignals.dispatch({ 'event': 'draw.nav.auth' });
 
         if (this.isBroadcaster()) {
             eventSignals.dispatch({ 'event': 'channel.changed', channel: this.getLogin() });
