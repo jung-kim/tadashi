@@ -12,6 +12,7 @@ const utils = require('../js/helpers/utils');
 const { domSignals, eventSignals } = require('../js/helpers/signals');
 const users = require('../js/singletons/users');
 const constants = require('../js/helpers/constants');
+const User = require('../js/singletons/users/User');
 
 describe('main.js', () => {
     afterEach(() => {
@@ -287,22 +288,26 @@ describe('main.js', () => {
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_UNKNOWN);
         });
 
-        it('user exists and follows', () => {
-            const isFollowing = sinon.stub().withArgs(111).returns(true);
+        it('user exists and not following is not fetched', () => {
+            const user = new User(1, 'abc');
             sinon.stub(twitchClient, 'getChannelID').returns(111);
-            sinon.stub(users, 'getUserByName').withArgs('abc').returns({
-                isFollowing: isFollowing
-            });
+            sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
+
+            assert.equal(main.userFollowsCSS('abc'), constants.CSS_UNKNOWN);
+        });
+
+        it('user exists and follows', () => {
+            const user = new User(1, 'abc', [111]);
+            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_FOLLOWING);
         });
 
         it('user exists and not following', () => {
-            const isFollowing = sinon.stub().withArgs(111).returns(false);
+            const user = new User(1, 'abc', [222]);
             sinon.stub(twitchClient, 'getChannelID').returns(111);
-            sinon.stub(users, 'getUserByName').withArgs('abc').returns({
-                isFollowing: isFollowing
-            });
+            sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_NOT_FOLLOWING);
         });

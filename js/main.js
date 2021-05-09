@@ -100,10 +100,14 @@ class Main {
             return constants.CSS_UNKNOWN;
         }
 
-        if (user.isFollowing(twitchClient.getChannelID())) {
+        const following = user.isFollowing(twitchClient.getChannelID());
+
+        if (following === false) {
+            return constants.CSS_NOT_FOLLOWING;
+        } else if (following) {
             return constants.CSS_FOLLOWING;
         } else {
-            return constants.CSS_NOT_FOLLOWING;
+            return constants.CSS_UNKNOWN;
         }
     }
 
