@@ -20,16 +20,6 @@ describe('DataNode.js', () => {
         assert.deepEqual(node2, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
     });
 
-    it('split()', () => {
-        const node1 = new DataNode(6, { 'aa': 3, 'a': 2, 'c': 1 });
-        node1.split(new DataNode(1, { 'a': 1 }));
-        assert.deepEqual(node1, { _sum: 5, _users: { 'aa': 3, 'a': 1, 'c': 1 } });
-
-        node1.split(new DataNode(3, { 'a': 1, 'aa': 2 }));
-        assert.deepEqual(node1, { _sum: 2, _users: { 'aa': 1, 'c': 1 } });
-    });
-
-
     it('add() for cheers', () => {
         const node = new DataNode();
 

@@ -18,11 +18,6 @@ class BlankDataNode {
     getCopy() {
         return new DataNode(0, {});
     }
-
-    split() {
-        // this shouldn't happen....
-        return this.getCopy();
-    }
 }
 const blankDataNode = new BlankDataNode();
 
@@ -56,11 +51,6 @@ class BlankDataBucket {
         toReturn[constants.TYPE_SUBGIFT] = new DataNode();
         toReturn[constants.TYPE_SUBMYSTERY] = new DataNode();
         return toReturn;
-    }
-
-    split() {
-        // this shouldn't happen....
-        return this.getCopy();
     }
 }
 const blankDataBucket = new BlankDataBucket();

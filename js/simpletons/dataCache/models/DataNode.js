@@ -1,15 +1,39 @@
+
+/**
+ * Holds aggregate of event data that holds
+ * - total number of all counts
+ * - map of users and it's counts
+ * for a time period
+ */
 class DataNode {
     constructor(sum, users) {
         this._sum = sum || 0;
         this._users = users || {};
     }
 
+    /**
+     * Add received raw event data object int to this data node.
+     * 
+     * Degree of "value" associated with an object is 1 for all event data objects
+     * except for the Cheer event.  For Cheer, it's bits / 100.
+     * 
+     * This some what normalize value of data across all events for easier comparisons
+     * as Cheers is likely to overshadow other events in comparison charts.
+     * 
+     * @param {Object} raw event data
+     */
     add(raw) {
         const value = raw.bits ? raw.bits / 100 : 1;
         this._sum += value;
         this._users[raw.displayName] = (this._users[raw.displayName] || 0) + value;
     }
 
+    /**
+     * get a copy of data node that returns a new object
+     * 
+     * @param {object} filter object
+     * @returns {DataNode} new object with same data as this
+     */
     getCopy(filter) {
         // @todo search
         if (!filter) {
@@ -27,33 +51,20 @@ class DataNode {
         return new DataNode(sum, users);
     }
 
-    // merge values of `dggNode` into `this`. 
-    merge(dggNode) {
-        if (dggNode) {
-            this._sum += dggNode._sum;
+    /**
+     * merge targetDataNode's values into this
+     * 
+     * @param {DataNode} targetDataNode to be added into this
+     * @returns {DataNode} this
+     */
+    merge(targetDataNode) {
+        if (targetDataNode) {
+            this._sum += targetDataNode._sum;
 
-            Object.keys(dggNode._users).forEach(key => {
-                this._users[key] = (this._users[key] || 0) + dggNode._users[key];
+            Object.keys(targetDataNode._users).forEach(key => {
+                this._users[key] = (this._users[key] || 0) + targetDataNode._users[key];
             });
         }
-        return this;
-    }
-
-    split(dggNode) {
-        this._sum -= dggNode._sum;
-
-        Object.keys(dggNode._users).forEach(key => {
-            if (this._users[key]) {
-                this._users[key] -= dggNode._users[key];
-            } else {
-                /// this shouldn't happen???
-            }
-
-            if (this._users[key] <= 0) {
-                delete this._users[key];
-            }
-        });
-
         return this;
     }
 }

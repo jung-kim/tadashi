@@ -5,6 +5,8 @@ const DataBucket = require("./DataBucket");
 const DataNode = require("./DataNode");
 const blanks = require("./blanks");
 
+const MIN_MS = constants.BUCKET_MIN * 1000;
+const HOUR_MS = constants.BUCKET_HOUR * 1000;
 
 class DataChannel {
     constructor() {
@@ -30,7 +32,7 @@ class DataChannel {
     }
 
     /**
-     * get data at the time.
+     * get data at the time from _data without using _cache.
      * 
      * @param {*} timeBucket: time to get
      * @param {*} filter: search value
@@ -42,7 +44,7 @@ class DataChannel {
     }
 
     /**
-     * get an aggregated value from {startBucket} ~ {startBucket + inerval} without using cache
+     * get an aggregated value from {startBucket} ~ {startBucket + inerval} without using _cache
      * 
      * @param {*} startBucket: seconds since epoch normalized to {interval}
      * @param {*} interval: number of seconds to gather from the {startBucket}
@@ -54,7 +56,7 @@ class DataChannel {
         for (let value = startBucket + constants.BUCKET_MIN; value < startBucket + interval; value += constants.BUCKET_MIN) {
             toReturn = toReturn.merge(this._getAt(value, filter));
         }
-        return Object.freeze(toReturn);
+        return toReturn;
     }
 
     _validateCache(interval, filter) {
@@ -142,6 +144,47 @@ class DataChannel {
         }
 
         return toReturn;
+    }
+
+    __validateCache(searchString) {
+        if (this.__cachedSearchString === searchString) {
+            return;
+        }
+        this.__cache = {};
+        this.__cachedSearchString = searchString
+    }
+
+    __getAnInterval(startBucket, endBucket, filter) {
+        const toReturn = this._getAt(startBucket, filter);
+        for (let value = startBucket + constants.BUCKET_MIN; value < endBucket; value += constants.BUCKET_MIN) {
+            toReturn.merge(this._getAt(value, filter));
+        }
+        return toReturn;
+    }
+
+    getAt(startBucket, endBucket, filter) {
+        // if single minute value, just return without any caching value from _data
+        if (!filter.isValid() && (endBucket - startBucket) === constants.BUCKET_MIN) {
+            return this._getAt(start, filter);
+        }
+
+        // esnure if filter is applicable
+        this.__validateCache(filter._searchString);
+
+        const res = new DataNode();
+        for (let start = startBucket; start < endBucket; start += constants.BUCKET_FIVE) {
+            const end = Math.min(start + HOUR_MS, endBucket);
+            const cacheKey = `${start}-${end}`;
+            const value = this.__cache[cacheKey] || this.__getAnInterval(startBucket, endBucket, filter);
+
+            res.merge(value);
+
+            if (!this.__cache[cacheKey]) {
+                this.__cache[cacheKey] = value;
+            }
+        }
+
+        return Object.freeze(res);
     }
 }
 

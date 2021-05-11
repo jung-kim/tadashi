@@ -39,14 +39,6 @@ class DataBucket {
         });
         return this;
     }
-
-    split(dataBucket) {
-        Object.keys(dataBucket).forEach(key => {
-            if (this[key]) {
-                this[key].split(dataBucket[key]);
-            }
-        });
-    }
 }
 
 module.exports = DataBucket;

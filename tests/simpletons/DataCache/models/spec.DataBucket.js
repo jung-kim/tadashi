@@ -249,47 +249,4 @@ describe('DataBucket.js', () => {
         });
 
     });
-
-    it('split()', () => {
-        const node1 = new DataNode();
-        node1.add({ displayName: 'a' });
-        node1.add({ displayName: 'a' });
-        const dataBucket1 = new DataBucket({
-            [constants.TYPE_CHAT]: node1,
-            [constants.TYPE_RESUB]: node1,
-            [constants.TYPE_CHEER]: node1,
-            [constants.TYPE_SUB]: node1,
-            [constants.TYPE_BAN]: node1,
-            [constants.TYPE_ANONGIFT]: node1,
-            [constants.TYPE_SUBGIFT]: node1,
-            [constants.TYPE_SUBMYSTERY]: node1,
-        });
-
-        const node2 = new DataNode();
-        node2.add({ displayName: 'a' });
-        const dataBucket2 = new DataBucket({
-            [constants.TYPE_CHAT]: node2,
-            [constants.TYPE_RESUB]: node2,
-            [constants.TYPE_CHEER]: node2,
-            [constants.TYPE_SUB]: node2,
-            [constants.TYPE_BAN]: node2,
-            [constants.TYPE_ANONGIFT]: node2,
-            [constants.TYPE_SUBGIFT]: node2,
-            [constants.TYPE_SUBMYSTERY]: node2,
-        });
-
-        dataBucket1.split(dataBucket2);
-
-        assert.deepEqual(dataBucket1, {
-            [constants.TYPE_CHAT]: node2,
-            [constants.TYPE_RESUB]: node2,
-            [constants.TYPE_CHEER]: node2,
-            [constants.TYPE_SUB]: node2,
-            [constants.TYPE_BAN]: node2,
-            [constants.TYPE_ANONGIFT]: node2,
-            [constants.TYPE_SUBGIFT]: node2,
-            [constants.TYPE_SUBMYSTERY]: node2,
-        });
-
-    });
 });
