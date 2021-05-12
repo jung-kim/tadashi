@@ -1,4 +1,5 @@
 const { assert } = require('chai');
+const sinon = require('sinon');
 
 const testUtils = require('../../../testUtils');
 const constants = require('../../../../js/helpers/constants');
@@ -6,8 +7,7 @@ const Ban = require('../../../../js/models/events/Ban');
 const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
 const DataChannel = require('../../../../js/simpletons/dataCache/models/DataChannel');
-const chartFilter = require('../../../../js/events/shared/chartFilter');
-const filter = chartFilter.getUserFilter();
+const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
 
 describe('DataChannel.js', () => {
 
@@ -56,7 +56,7 @@ describe('DataChannel.js', () => {
                 },
             },
         });
-        assert.deepEqual([...dataChannel._updated], [0, 60]);
+        assert.deepEqual([...dataChannel._updated], [0]);
 
 
         dataChannel.add(new Ban({ displayName: 'a', userID: 1, timestamp: 65000 }));
@@ -80,7 +80,38 @@ describe('DataChannel.js', () => {
                 },
             },
         });
-        assert.deepEqual([...dataChannel._updated], [0, 60]);
+        assert.deepEqual([...dataChannel._updated], [0]);
+
+        dataChannel.add(new Chat({ displayName: 'a', userID: 1, timestamp: 365000 }));
+        assert.deepEqual(dataChannel._data, {
+            0: {
+                ...testUtils.blankAggsBucketToCompare,
+                [constants.TYPE_CHAT]: {
+                    _sum: 2,
+                    _users: { 'a': 2 },
+                },
+            },
+            60: {
+                ...testUtils.blankAggsBucketToCompare,
+                [constants.TYPE_CHEER]: {
+                    _sum: 3,
+                    _users: { 'a': 3 },
+                },
+                [constants.TYPE_BAN]: {
+                    _sum: 1,
+                    _users: { 'a': 1 },
+                },
+            },
+
+            360: {
+                ...testUtils.blankAggsBucketToCompare,
+                [constants.TYPE_CHAT]: {
+                    _sum: 1,
+                    _users: { 'a': 1 },
+                },
+            },
+        });
+        assert.deepEqual([...dataChannel._updated], [0, 300]);
     });
 
     it('_getAt()', () => {
@@ -117,469 +148,60 @@ describe('DataChannel.js', () => {
         });
     });
 
-    it('_getAnInterval', () => {
-        const dataChannel = new DataChannel();
+    describe('_validateCache', () => {
+        it('with _cachedSearchString is not changed', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cachedSearchString = 'abc';
+            dataChannel._updated = new Set([0, 300]);
+            dataChannel._cache = {
+                300: 'something',
+                600: 'another'
+            }
 
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_MIN, undefined), testUtils.blankAggsBucketToCompare);
+            dataChannel._validateCache('abc')
 
-        dataChannel.add(new Chat({ displayName: 'a', userID: 1, timestamp: 10000 }));
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_MIN, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
-        assert.deepEqual(dataChannel._getAnInterval(60, constants.BUCKET_MIN, undefined), testUtils.blankAggsBucketToCompare);
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_FIVE, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
+            assert.deepEqual([...dataChannel._updated], []);
+            assert.deepEqual(dataChannel._cache, {
+                600: 'another'
+            });
         });
 
-        dataChannel.add(new Chat({ displayName: 'b', userID: 1, timestamp: 60000 }));
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_MIN, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
-        assert.deepEqual(dataChannel._getAnInterval(60, constants.BUCKET_MIN, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'b': 1 },
-            },
-        });
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_FIVE, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 2,
-                _users: { 'a': 1, 'b': 1 },
-            },
-        });
+        it('with _cachedSearchString changed', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cachedSearchString = '';
+            dataChannel._updated = new Set([0, 300]);
+            dataChannel._cache = {
+                300: 'something',
+                600: 'another'
+            }
 
-        dataChannel.add(new Ban({ displayName: 'a', userID: 1, timestamp: 360000 }));
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_MIN, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
-        assert.deepEqual(dataChannel._getAnInterval(60, constants.BUCKET_MIN, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'b': 1 },
-            },
-        });
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_FIVE, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 2,
-                _users: { 'a': 1, 'b': 1 },
-            },
-        });
-        assert.deepEqual(dataChannel._getAnInterval(300, constants.BUCKET_FIVE, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_BAN]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_HOUR, undefined), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 2,
-                _users: { 'a': 1, 'b': 1 },
-            },
-            [constants.TYPE_BAN]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
+            dataChannel._validateCache('abc')
 
-        // with searches now
-
-        filter.changeSearchString('a');
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
-        filter.changeSearchString('b');
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-        });
-        filter.changeSearchString('a');
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_FIVE, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
-        filter.changeSearchString('b');
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_FIVE, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'b': 1 },
-            },
-        });
-        filter.changeSearchString('a');
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_HOUR, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-            [constants.TYPE_BAN]: {
-                _sum: 1,
-                _users: { 'a': 1 },
-            },
-        });
-        filter.changeSearchString('b');
-        assert.deepEqual(dataChannel._getAnInterval(0, constants.BUCKET_HOUR, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'b': 1 },
-            },
+            assert.deepEqual([...dataChannel._updated], []);
+            assert.deepEqual(dataChannel._cache, {});
         });
     });
 
-    it('_validateCache()', () => {
+    it('_getRange', () => {
         const dataChannel = new DataChannel();
+        const _getAt = sinon.stub(dataChannel, '_getAt');
+        const _getAt1 = _getAt.withArgs(300, 'a-filter').returns(new DataNode(1, { a: 1 }));
+        const _getAt2 = _getAt.withArgs(360, 'a-filter').returns(new DataNode(2, { a: 2 }));
+        const _getAt3 = _getAt.withArgs(420, 'a-filter').returns(new DataNode(4, { a: 1, b: 3 }));
 
-        dataChannel._validateCache(constants.BUCKET_MIN, filter);
-        assert.equal(dataChannel._cachedInterval, constants.BUCKET_MIN);
-        assert.equal(dataChannel._cachedFilterString, filter._searchString);
-        assert.deepEqual([...dataChannel._updated], []);
-        assert.deepEqual(dataChannel._cache, {});
+        const res = dataChannel._getRange(300, 480, 'a-filter');
 
-        dataChannel._updated = new Set([120, 180]);
-        dataChannel._cache = {
-            60: 1,
-            120: 2,
-            180: 3,
-            240: 4,
-        }
-        dataChannel._validateCache(constants.BUCKET_MIN, filter);
-        assert.equal(dataChannel._cachedInterval, constants.BUCKET_MIN);
-        assert.equal(dataChannel._cachedFilterString, filter._searchString);
-        assert.deepEqual([...dataChannel._updated], []);
-        assert.deepEqual(dataChannel._cache, { 60: 1, 240: 4 });
+        sinon.assert.calledOnce(_getAt1);
+        sinon.assert.calledOnce(_getAt2);
+        sinon.assert.calledOnce(_getAt3);
 
-        dataChannel._updated = new Set([120, 180]);
-        dataChannel._cache = {
-            0: 0,
-            300: 1,
-            600: 2,
-        }
-        dataChannel._validateCache(constants.BUCKET_FIVE, filter);
-        assert.equal(dataChannel._cachedInterval, constants.BUCKET_FIVE);
-        assert.equal(dataChannel._cachedFilterString, filter._searchString);
-        assert.deepEqual([...dataChannel._updated], []);
-        assert.deepEqual(dataChannel._cache, {});
-
-        dataChannel._updated = new Set([120, 180]);
-        dataChannel._cache = {
-            0: 0,
-            300: 1,
-            600: 2,
-        }
-        dataChannel._validateCache(constants.BUCKET_FIVE, filter);
-        assert.equal(dataChannel._cachedInterval, constants.BUCKET_FIVE);
-        assert.equal(dataChannel._cachedFilterString, filter._searchString);
-        assert.deepEqual([...dataChannel._updated], []);
-        assert.deepEqual(dataChannel._cache, { 300: 1, 600: 2 });
-
-
-        dataChannel._updated = new Set([120, 180]);
-        dataChannel._cache = {
-            0: 0,
-            300: 1,
-            600: 2,
-        }
-        filter.changeSearchString('a');
-        dataChannel._validateCache(constants.BUCKET_FIVE, filter);
-        assert.equal(dataChannel._cachedInterval, constants.BUCKET_FIVE);
-        assert.equal(dataChannel._cachedFilterString, filter._searchString);
-        assert.deepEqual([...dataChannel._updated], []);
-        assert.deepEqual(dataChannel._cache, {});
-
-
-        dataChannel._cacheTotalByHour[3600] = 'abc'
-        dataChannel._validateCache(constants.BUCKET_FIVE, filter);
-        assert.deepEqual(dataChannel._cacheTotalByHour, {
-            3600: 'abc'
-        });
-
-        dataChannel._updated.add(3660)
-        dataChannel._validateCache(constants.BUCKET_FIVE, filter);
-        assert.deepEqual(dataChannel._cacheTotalByHour, {});
-
-        filter.changeSearchString();
-        dataChannel._cacheTotalByHour[3600] = 'abc';
-        dataChannel._validateCache(constants.BUCKET_FIVE, filter);
-        assert.deepEqual(dataChannel._cacheTotalByHour, {});
-    });
-
-    it('get()', () => {
-        const dataChannel = new DataChannel();
-
-        assert.deepEqual(dataChannel._getAt(0), testUtils.blankAggsBucketToCompare);
-
-        dataChannel.add(new Chat({ displayName: 'a', userID: 1, timestamp: 10000 }));
-        dataChannel.add(new Chat({ displayName: 'a', userID: 1, timestamp: 10000 }));
-        dataChannel.add(new Chat({ displayName: 'b', userID: 2, timestamp: 10000 }));
-        dataChannel.add(new Cheer({ displayName: 'a', userID: 1, bits: 300, timestamp: 60000 }));
-        dataChannel.add(new Ban({ displayName: 'a', userID: 1, timestamp: 65000 }));
-        dataChannel.add(new Cheer({ displayName: 'b', userID: 1, bits: 200, timestamp: 125000 }));
-
-        filter.changeSearchString();
-        assert.deepEqual(dataChannel.get(0, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 3,
-                _users: { a: 2, b: 1 }
+        assert.deepEqual(res, {
+            _sum: 7,
+            _users: {
+                a: 4,
+                b: 3,
             }
-        });
-        assert.deepEqual(dataChannel.get(60, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHEER]: {
-                _sum: 3,
-                _users: { a: 3 }
-            },
-            [constants.TYPE_BAN]: {
-                _sum: 1,
-                _users: { a: 1 }
-            },
-        });
-
-        dataChannel.add(new Chat({ displayName: 'b', userID: 2, timestamp: 63000 }));
-        assert.deepEqual(dataChannel.get(0, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 3,
-                _users: { a: 2, b: 1 }
-            }
-        });
-        assert.deepEqual(dataChannel.get(60, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { b: 1 }
-            },
-            [constants.TYPE_CHEER]: {
-                _sum: 3,
-                _users: { a: 3 }
-            },
-            [constants.TYPE_BAN]: {
-                _sum: 1,
-                _users: { a: 1 }
-            },
-        });
-        assert.deepEqual(dataChannel.get(120, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHEER]: {
-                _sum: 2,
-                _users: { b: 2 }
-            },
-        });
-        assert.deepEqual(dataChannel.get(180, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-        });
-
-        filter.changeSearchString('a');
-        assert.deepEqual(dataChannel.get(0, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 2,
-                _users: { a: 2 }
-            }
-        });
-        assert.deepEqual(dataChannel.get(60, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHEER]: {
-                _sum: 3,
-                _users: { a: 3 }
-            },
-            [constants.TYPE_BAN]: {
-                _sum: 1,
-                _users: { a: 1 }
-            },
-        });
-        assert.deepEqual(dataChannel.get(120, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-        });
-        assert.deepEqual(dataChannel.get(180, constants.BUCKET_MIN, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-        });
-
-        filter.changeSearchString();
-        assert.deepEqual(dataChannel.get(0, constants.BUCKET_FIVE, filter), {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 4,
-                _users: { a: 2, b: 2 }
-            },
-            [constants.TYPE_CHEER]: {
-                _sum: 5,
-                _users: { a: 3, b: 2 }
-            },
-            [constants.TYPE_BAN]: {
-                _sum: 1,
-                _users: { a: 1 }
-            },
-        });
-        assert.deepEqual(dataChannel.get(300, constants.BUCKET_FIVE, filter), {
-            ...testUtils.blankAggsBucketToCompare,
         });
     });
 
-    it('getTotal()', () => {
-        const dataChannel = new DataChannel();
-
-        filter.changeSearchString();
-        assert.deepEqual(dataChannel.getTotal(0, 60, constants.TYPE_CHAT, filter), testUtils.emptyDataNodeToCompare);
-
-        dataChannel.add(new Chat({ displayName: 'a', userID: 1, timestamp: 10000 }));
-        dataChannel.add(new Chat({ displayName: 'a', userID: 1, timestamp: 0 }));
-        dataChannel.add(new Chat({ displayName: 'b', userID: 2, timestamp: 3000 }));
-        dataChannel.add(new Chat({ displayName: 'a', userID: 1, timestamp: 70000 }));
-        dataChannel.add(new Cheer({ displayName: 'b', bits: 300, userID: 2, timestamp: 65000 }));
-
-        assert.deepEqual(dataChannel.getTotal(0, 0, constants.TYPE_CHAT, filter), {
-            _sum: 3,
-            _users: { 'a': 2, 'b': 1 },
-        });
-        assert.deepEqual(dataChannel.getTotal(0, 0, constants.TYPE_CHEER, filter), testUtils.emptyDataNodeToCompare);
-        assert.deepEqual(dataChannel.getTotal(0, 60, constants.TYPE_CHAT, filter), {
-            _sum: 4,
-            _users: { 'a': 3, 'b': 1 },
-        });
-        assert.deepEqual(dataChannel.getTotal(0, 60, constants.TYPE_CHEER, filter), {
-            _sum: 3,
-            _users: { 'b': 3 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour, {})
-
-
-        dataChannel._cachedInterval = constants.BUCKET_FIVE
-        assert.deepEqual(dataChannel.getTotal(0, 0, constants.TYPE_CHAT, filter), {
-            _sum: 3,
-            _users: { 'a': 2, 'b': 1 },
-        });
-        assert.deepEqual(dataChannel.getTotal(0, 0, constants.TYPE_CHEER, filter), testUtils.emptyDataNodeToCompare);
-        assert.deepEqual(dataChannel.getTotal(0, 60, constants.TYPE_CHAT, filter), {
-            _sum: 4,
-            _users: { 'a': 3, 'b': 1 },
-        });
-        assert.deepEqual(dataChannel.getTotal(0, 60, constants.TYPE_CHEER, filter), {
-            _sum: 3,
-            _users: { 'b': 3 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour, {})
-
-
-        assert.deepEqual(dataChannel.getTotal(0, 3600, constants.TYPE_CHAT, filter), {
-            _sum: 4,
-            _users: { 'a': 3, 'b': 1 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour[0], {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 4,
-                _users: { 'a': 3, 'b': 1 },
-            }
-        });
-        assert.deepEqual(dataChannel.getTotal(0, 3600, constants.TYPE_CHEER, filter), {
-            _sum: 3,
-            _users: { 'b': 3 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour[0], {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 4,
-                _users: { 'a': 3, 'b': 1 },
-            },
-            [constants.TYPE_CHEER]: {
-                _sum: 3,
-                _users: { 'b': 3 },
-            }
-        });
-
-
-        dataChannel.add(new Cheer({ displayName: 'b', bits: 100, userID: 2, timestamp: 65000 }));
-        assert.deepEqual(dataChannel.getTotal(0, 3600, constants.TYPE_CHAT, filter), {
-            _sum: 4,
-            _users: { 'a': 3, 'b': 1 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour[0], {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 4,
-                _users: { 'a': 3, 'b': 1 },
-            }
-        });
-        assert.deepEqual(dataChannel.getTotal(0, 3600, constants.TYPE_CHEER, filter), {
-            _sum: 4,
-            _users: { 'b': 4 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour[0], {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 4,
-                _users: { 'a': 3, 'b': 1 },
-            },
-            [constants.TYPE_CHEER]: {
-                _sum: 4,
-                _users: { 'b': 4 },
-            }
-        });
-
-
-        // manually manipulate cache
-        dataChannel._cacheTotalByHour[0] = {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 5,
-                _users: { 'a': 3, 'b': 1, 'c': 1 },
-            },
-        }
-        assert.deepEqual(dataChannel.getTotal(0, 7200, constants.TYPE_CHAT, filter), {
-            _sum: 5,
-            _users: { 'a': 3, 'b': 1, 'c': 1 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour[0], {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 5,
-                _users: { 'a': 3, 'b': 1, 'c': 1 },
-            }
-        });
-        assert.deepEqual(dataChannel.getTotal(0, 7200, constants.TYPE_CHEER, filter), {
-            _sum: 4,
-            _users: { 'b': 4 },
-        });
-        assert.deepEqual(dataChannel._cacheTotalByHour[0], {
-            ...testUtils.blankAggsBucketToCompare,
-            [constants.TYPE_CHAT]: {
-                _sum: 5,
-                _users: { 'a': 3, 'b': 1, 'c': 1 },
-            },
-            [constants.TYPE_CHEER]: {
-                _sum: 4,
-                _users: { 'b': 4 },
-            }
-        });
-    });
 });
