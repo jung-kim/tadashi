@@ -2,6 +2,7 @@ const constants = require("../../../helpers/constants");
 const utils = require('../../../helpers/utils');
 
 const DataBucket = require("./DataBucket");
+const DataNode = require("./DataNode");
 const blanks = require("./blanks");
 
 class DataChannel {
@@ -58,6 +59,27 @@ class DataChannel {
             toReturn.merge(this._getAt(value, filter));
         }
         return toReturn;
+    }
+
+    getAt(startBucket, endBucket, filter) {
+        this._validateCache(filter._searchString);
+
+        const result = new DataNode();
+        for (let start = startBucket; start < endBucket;) {
+            if ((start % constants.BUCKET_FIVE) === 0 && start + constants.BUCKET_FIVE <= endBucket) {
+                // 5 minute cacheable chunk is needed, check cache and store to cache if exists.
+                const end = start + constants.BUCKET_FIVE;
+                this._cache[start] = this._cache[start] || this._getRange(start, end, filter);
+                result.merge(this._cache[start]);
+                start += constants.BUCKET_FIVE;
+            } else {
+                // query at 1 minute level
+                result.merge(this._getAt(start, filter));
+                start += constants.BUCKET_MIN;
+            }
+        }
+
+        return result;
     }
 }
 

@@ -204,4 +204,175 @@ describe('DataChannel.js', () => {
         });
     });
 
+    describe('getAt', () => {
+        it('single minute no filter', () => {
+            const dataChannel = new DataChannel();
+            // below cache should not be utilized
+            dataChannel._cache = {
+                300: new DataNode(99, { a: 99 })
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
+            const _getAt = sinon.stub(dataChannel, '_getAt');
+            const _getAt1 = _getAt.withArgs(300).returns(new DataNode(1, { a: 1 }));
+
+            const res = dataChannel.getAt(300, 360, { _searchString: undefined });
+
+            sinon.assert.calledOnce(_getAt);
+            sinon.assert.calledOnce(_getAt1);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 1,
+                _users: { a: 1 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                300: { _sum: 99, _users: { a: 99 } }
+            });
+        });
+
+        it('three minute with filter', () => {
+            const dataChannel = new DataChannel();
+            // below cache should not be utilized
+            dataChannel._cache = {
+                300: new DataNode(99, { a: 99 })
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
+            const _getAt = sinon.stub(dataChannel, '_getAt');
+            const _getAt1 = _getAt.withArgs(300).returns(new DataNode(1, { a: 1 }));
+            const _getAt2 = _getAt.withArgs(360).returns(new DataNode(1, { a: 1 }));
+            const _getAt3 = _getAt.withArgs(420).returns(new DataNode(1, { a: 1 }));
+
+            const res = dataChannel.getAt(300, 480, { _searchString: 'abc' });
+
+            sinon.assert.calledThrice(_getAt);
+            sinon.assert.calledOnce(_getAt1);
+            sinon.assert.calledOnce(_getAt2);
+            sinon.assert.calledOnce(_getAt3);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 3,
+                _users: { a: 3 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                300: { _sum: 99, _users: { a: 99 } }
+            });
+        });
+
+        it('five minute without cache hit', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cache = {}
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
+            const _getAt = sinon.stub(dataChannel, '_getAt');
+            const _getAt1 = _getAt.withArgs(300).returns(new DataNode(1, { a: 1 }));
+            const _getAt2 = _getAt.withArgs(360).returns(new DataNode(1, { a: 1 }));
+            const _getAt3 = _getAt.withArgs(420).returns(new DataNode(1, { a: 1 }));
+            const _getAt4 = _getAt.withArgs(480).returns(new DataNode(1, { a: 1 }));
+            const _getAt5 = _getAt.withArgs(540).returns(new DataNode(1, { a: 1 }));
+
+            const res = dataChannel.getAt(300, 600, { _searchString: 'abc' });
+
+            sinon.assert.callCount(_getAt, 5);
+            sinon.assert.calledOnce(_getAt1);
+            sinon.assert.calledOnce(_getAt2);
+            sinon.assert.calledOnce(_getAt3);
+            sinon.assert.calledOnce(_getAt4);
+            sinon.assert.calledOnce(_getAt5);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 5,
+                _users: { a: 5 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                300: { _sum: 5, _users: { a: 5 } }
+            });
+        });
+
+        it('five minute with cache hit', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cache = {
+                300: new DataNode(99, { a: 99 })
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
+            const _getAt = sinon.stub(dataChannel, '_getAt');
+
+            const res = dataChannel.getAt(300, 600, { _searchString: 'abc' });
+
+            sinon.assert.notCalled(_getAt);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 99,
+                _users: { a: 99 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                300: { _sum: 99, _users: { a: 99 } }
+            });
+        });
+
+        it('eight minute with some chunk changes at the start and end', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cache = {
+                300: new DataNode(99, { a: 99 })
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
+            const _getAt = sinon.stub(dataChannel, '_getAt');
+            const _getAt1 = _getAt.withArgs(240).returns(new DataNode(1, { a: 1 }));
+            const _getAt2 = _getAt.withArgs(600).returns(new DataNode(1, { a: 1 }));
+            const _getAt3 = _getAt.withArgs(660).returns(new DataNode(1, { a: 1 }));
+
+            const res = dataChannel.getAt(240, 720, { _searchString: 'abc' });
+
+            sinon.assert.calledThrice(_getAt);
+            sinon.assert.calledOnce(_getAt1);
+            sinon.assert.calledOnce(_getAt2);
+            sinon.assert.calledOnce(_getAt3);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 102,
+                _users: { a: 102 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                300: { _sum: 99, _users: { a: 99 } }
+            });
+        });
+
+
+        it('18 minute with cache hit and misses', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cache = {
+                300: new DataNode(200, { a: 200 }),
+                900: new DataNode(10, { a: 10 }),
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
+            const _getAt = sinon.stub(dataChannel, '_getAt');
+            const _getAt1 = _getAt.withArgs(240).returns(new DataNode(1, { a: 1 }));
+            const _getAt2 = _getAt.withArgs(600).returns(new DataNode(1, { a: 1 }));
+            const _getAt3 = _getAt.withArgs(660).returns(new DataNode(1, { a: 1 }));
+            const _getAt4 = _getAt.withArgs(720).returns(new DataNode(1, { a: 1 }));
+            const _getAt5 = _getAt.withArgs(780).returns(new DataNode(1, { a: 1 }));
+            const _getAt6 = _getAt.withArgs(840).returns(new DataNode(1, { a: 1 }));
+            const _getAt7 = _getAt.withArgs(1200).returns(new DataNode(1, { a: 1 }));
+            const _getAt8 = _getAt.withArgs(1260).returns(new DataNode(1, { a: 1 }));
+
+            const res = dataChannel.getAt(240, 1320, { _searchString: 'abc' });
+
+            sinon.assert.callCount(_getAt, 8);
+            sinon.assert.calledOnce(_getAt1);
+            sinon.assert.calledOnce(_getAt2);
+            sinon.assert.calledOnce(_getAt3);
+            sinon.assert.calledOnce(_getAt4);
+            sinon.assert.calledOnce(_getAt5);
+            sinon.assert.calledOnce(_getAt6);
+            sinon.assert.calledOnce(_getAt7);
+            sinon.assert.calledOnce(_getAt8);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 218,
+                _users: { a: 218 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                300: { _sum: 200, _users: { a: 200 } },
+                600: { _sum: 5, _users: { a: 5 } },
+                900: { _sum: 10, _users: { a: 10 } }
+            });
+        });
+    });
 });
