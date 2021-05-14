@@ -430,5 +430,73 @@ describe('DataChannel.js', () => {
                 [constants.BUCKET_HOUR]: {},
             });
         });
+
+        it('60 mins with mixed in', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cache = {
+                [constants.BUCKET_FIVE]: {
+                    300: new DataNode(200, { a: 200 }),
+                    900: new DataNode(10, { a: 10 }),
+                },
+                [constants.BUCKET_HOUR]: {},
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
+            const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
+                return new DataNode(1, { a: 1 });
+            });
+
+            const res = dataChannel.getAt(0, 3600, { _searchString: 'abc' });
+
+            sinon.assert.callCount(_getAt, 50);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 260,
+                _users: { a: 260 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 200, _users: { a: 200 } },
+                    900: { _sum: 10, _users: { a: 10 } }
+                },
+                [constants.BUCKET_HOUR]: {
+                    0: { _sum: 260, _users: { a: 260 } }
+                },
+            });
+        });
+
+        it('60 mins with 1 hour cache', () => {
+            const dataChannel = new DataChannel();
+            dataChannel._cache = {
+                [constants.BUCKET_FIVE]: {
+                    300: new DataNode(200, { a: 200 }),
+                    900: new DataNode(10, { a: 10 }),
+                },
+                [constants.BUCKET_HOUR]: {
+                    0: { _sum: 65, _users: { a: 65 } }
+                },
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
+            const _getAt = sinon.stub(dataChannel, '_getAt').callsFake((ttt) => {
+                return new DataNode(1, { a: 1 });
+            });
+
+            const res = dataChannel.getAt(0, 3600, { _searchString: 'abc' });
+
+            sinon.assert.callCount(_getAt, 0);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                _sum: 65,
+                _users: { a: 65 }
+            });
+            assert.deepEqual(dataChannel._cache, {
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 200, _users: { a: 200 } },
+                    900: { _sum: 10, _users: { a: 10 } }
+                },
+                [constants.BUCKET_HOUR]: {
+                    0: { _sum: 65, _users: { a: 65 } }
+                },
+            });
+        });
     });
 });

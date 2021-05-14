@@ -59,10 +59,23 @@ class DataChannel {
         this._cachedSearchString = searchString
     }
 
+    _isCacheable(start, end, interval) {
+        return (start % interval) === 0 && start + interval <= end;
+    }
+
     _getRange(startBucket, endBucket, filter) {
         const toReturn = this._getAt(startBucket, filter);
-        for (let value = startBucket + constants.BUCKET_MIN; value < endBucket; value += constants.BUCKET_MIN) {
-            toReturn.merge(this._getAt(value, filter));
+        for (let value = startBucket + constants.BUCKET_MIN; value < endBucket;) {
+            if (this._isCacheable(value, endBucket, constants.BUCKET_HOUR) && this._cache[constants.BUCKET_HOUR][value]) {
+                toReturn.merge(this._cache[constants.BUCKET_HOUR][value]);
+                value += constants.BUCKET_HOUR;
+            } else if (this._isCacheable(value, endBucket, constants.BUCKET_FIVE) && this._cache[constants.BUCKET_FIVE][value]) {
+                toReturn.merge(this._cache[constants.BUCKET_FIVE][value]);
+                value += constants.BUCKET_FIVE;
+            } else {
+                toReturn.merge(this._getAt(value, filter));
+                value += constants.BUCKET_MIN;
+            }
         }
         return toReturn;
     }
@@ -72,14 +85,17 @@ class DataChannel {
 
         const result = new DataNode();
         for (let start = startBucket; start < endBucket;) {
-            if ((start % constants.BUCKET_FIVE) === 0 && start + constants.BUCKET_FIVE <= endBucket) {
-                // 5 minute cacheable chunk is needed, check cache and store to cache if exists.
+            if (this._isCacheable(start, endBucket, constants.BUCKET_HOUR)) {
+                const end = start + constants.BUCKET_HOUR;
+                this._cache[constants.BUCKET_HOUR][start] = this._cache[constants.BUCKET_HOUR][start] || this._getRange(start, end, filter);
+                result.merge(this._cache[constants.BUCKET_HOUR][start]);
+                start += constants.BUCKET_HOUR;
+            } else if (this._isCacheable(start, endBucket, constants.BUCKET_FIVE)) {
                 const end = start + constants.BUCKET_FIVE;
                 this._cache[constants.BUCKET_FIVE][start] = this._cache[constants.BUCKET_FIVE][start] || this._getRange(start, end, filter);
                 result.merge(this._cache[constants.BUCKET_FIVE][start]);
                 start += constants.BUCKET_FIVE;
             } else {
-                // query at 1 minute level
                 result.merge(this._getAt(start, filter));
                 start += constants.BUCKET_MIN;
             }
