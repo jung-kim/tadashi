@@ -152,17 +152,28 @@ describe('DataChannel.js', () => {
         it('with _cachedSearchString is not changed', () => {
             const dataChannel = new DataChannel();
             dataChannel._cachedSearchString = 'abc';
-            dataChannel._updated = new Set([0, 300]);
+            dataChannel._updated = new Set([0, 300, 7200]);
             dataChannel._cache = {
-                300: 'something',
-                600: 'another'
+                [constants.BUCKET_FIVE]: {
+                    300: 'something',
+                    600: 'another'
+                },
+                [constants.BUCKET_HOUR]: {
+                    3600: 'texas',
+                    7200: 'caboose'
+                }
             }
 
             dataChannel._validateCache('abc')
 
             assert.deepEqual([...dataChannel._updated], []);
             assert.deepEqual(dataChannel._cache, {
-                600: 'another'
+                [constants.BUCKET_FIVE]: {
+                    600: 'another'
+                },
+                [constants.BUCKET_HOUR]: {
+                    3600: 'texas',
+                }
             });
         });
 
@@ -171,14 +182,23 @@ describe('DataChannel.js', () => {
             dataChannel._cachedSearchString = '';
             dataChannel._updated = new Set([0, 300]);
             dataChannel._cache = {
-                300: 'something',
-                600: 'another'
+                [constants.BUCKET_FIVE]: {
+                    300: 'something',
+                    600: 'another'
+                },
+                [constants.BUCKET_HOUR]: {
+                    3600: 'texas',
+                    7200: 'caboose'
+                }
             }
 
             dataChannel._validateCache('abc')
 
             assert.deepEqual([...dataChannel._updated], []);
-            assert.deepEqual(dataChannel._cache, {});
+            assert.deepEqual(dataChannel._cache, {
+                [constants.BUCKET_FIVE]: {},
+                [constants.BUCKET_HOUR]: {}
+            });
         });
     });
 
@@ -209,7 +229,10 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             // below cache should not be utilized
             dataChannel._cache = {
-                300: new DataNode(99, { a: 99 })
+                [constants.BUCKET_FIVE]: {
+                    300: new DataNode(99, { a: 99 })
+                },
+                [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt');
@@ -225,7 +248,10 @@ describe('DataChannel.js', () => {
                 _users: { a: 1 }
             });
             assert.deepEqual(dataChannel._cache, {
-                300: { _sum: 99, _users: { a: 99 } }
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 99, _users: { a: 99 } }
+                },
+                [constants.BUCKET_HOUR]: {},
             });
         });
 
@@ -233,7 +259,10 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             // below cache should not be utilized
             dataChannel._cache = {
-                300: new DataNode(99, { a: 99 })
+                [constants.BUCKET_FIVE]: {
+                    300: new DataNode(99, { a: 99 })
+                },
+                [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
             const _getAt = sinon.stub(dataChannel, '_getAt');
@@ -253,13 +282,19 @@ describe('DataChannel.js', () => {
                 _users: { a: 3 }
             });
             assert.deepEqual(dataChannel._cache, {
-                300: { _sum: 99, _users: { a: 99 } }
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 99, _users: { a: 99 } }
+                },
+                [constants.BUCKET_HOUR]: {},
             });
         });
 
         it('five minute without cache hit', () => {
             const dataChannel = new DataChannel();
-            dataChannel._cache = {}
+            dataChannel._cache = {
+                [constants.BUCKET_FIVE]: {},
+                [constants.BUCKET_HOUR]: {},
+            }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
             const _getAt = sinon.stub(dataChannel, '_getAt');
             const _getAt1 = _getAt.withArgs(300).returns(new DataNode(1, { a: 1 }));
@@ -282,14 +317,20 @@ describe('DataChannel.js', () => {
                 _users: { a: 5 }
             });
             assert.deepEqual(dataChannel._cache, {
-                300: { _sum: 5, _users: { a: 5 } }
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 5, _users: { a: 5 } }
+                },
+                [constants.BUCKET_HOUR]: {},
             });
         });
 
         it('five minute with cache hit', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
-                300: new DataNode(99, { a: 99 })
+                [constants.BUCKET_FIVE]: {
+                    300: new DataNode(99, { a: 99 })
+                },
+                [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
             const _getAt = sinon.stub(dataChannel, '_getAt');
@@ -303,14 +344,20 @@ describe('DataChannel.js', () => {
                 _users: { a: 99 }
             });
             assert.deepEqual(dataChannel._cache, {
-                300: { _sum: 99, _users: { a: 99 } }
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 99, _users: { a: 99 } }
+                },
+                [constants.BUCKET_HOUR]: {},
             });
         });
 
         it('eight minute with some chunk changes at the start and end', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
-                300: new DataNode(99, { a: 99 })
+                [constants.BUCKET_FIVE]: {
+                    300: new DataNode(99, { a: 99 })
+                },
+                [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
             const _getAt = sinon.stub(dataChannel, '_getAt');
@@ -330,7 +377,10 @@ describe('DataChannel.js', () => {
                 _users: { a: 102 }
             });
             assert.deepEqual(dataChannel._cache, {
-                300: { _sum: 99, _users: { a: 99 } }
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 99, _users: { a: 99 } }
+                },
+                [constants.BUCKET_HOUR]: {},
             });
         });
 
@@ -338,8 +388,11 @@ describe('DataChannel.js', () => {
         it('18 minute with cache hit and misses', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
-                300: new DataNode(200, { a: 200 }),
-                900: new DataNode(10, { a: 10 }),
+                [constants.BUCKET_FIVE]: {
+                    300: new DataNode(200, { a: 200 }),
+                    900: new DataNode(10, { a: 10 }),
+                },
+                [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs('abc');
             const _getAt = sinon.stub(dataChannel, '_getAt');
@@ -369,9 +422,12 @@ describe('DataChannel.js', () => {
                 _users: { a: 218 }
             });
             assert.deepEqual(dataChannel._cache, {
-                300: { _sum: 200, _users: { a: 200 } },
-                600: { _sum: 5, _users: { a: 5 } },
-                900: { _sum: 10, _users: { a: 10 } }
+                [constants.BUCKET_FIVE]: {
+                    300: { _sum: 200, _users: { a: 200 } },
+                    600: { _sum: 5, _users: { a: 5 } },
+                    900: { _sum: 10, _users: { a: 10 } }
+                },
+                [constants.BUCKET_HOUR]: {},
             });
         });
     });

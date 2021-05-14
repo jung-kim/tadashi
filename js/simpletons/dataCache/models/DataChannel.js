@@ -8,7 +8,11 @@ const blanks = require("./blanks");
 class DataChannel {
     constructor() {
         this._cachedSearchString = '';
-        this._cache = {}; // derived from data, cached by time bucket / type / user
+        // cache derived from _data
+        this._cache = {
+            [constants.BUCKET_FIVE]: {},
+            [constants.BUCKET_HOUR]: {},
+        };
         this._data = {};  // time bucket to DataBucket
         this._updated = new Set(); // represents updated minutes, which will be used to invalidate cache
     }
@@ -42,14 +46,16 @@ class DataChannel {
     _validateCache(searchString) {
         if (this._cachedSearchString === searchString) {
             this._updated.forEach(updatedCacheBucket => {
-                delete this._cache[updatedCacheBucket];
+                delete this._cache[constants.BUCKET_FIVE][updatedCacheBucket];
+                delete this._cache[constants.BUCKET_HOUR][updatedCacheBucket];
             });
             this._updated.clear();
 
             return;
         }
         this._updated.clear();
-        this._cache = {};
+        this._cache[constants.BUCKET_FIVE] = {};
+        this._cache[constants.BUCKET_HOUR] = {};
         this._cachedSearchString = searchString
     }
 
@@ -69,8 +75,8 @@ class DataChannel {
             if ((start % constants.BUCKET_FIVE) === 0 && start + constants.BUCKET_FIVE <= endBucket) {
                 // 5 minute cacheable chunk is needed, check cache and store to cache if exists.
                 const end = start + constants.BUCKET_FIVE;
-                this._cache[start] = this._cache[start] || this._getRange(start, end, filter);
-                result.merge(this._cache[start]);
+                this._cache[constants.BUCKET_FIVE][start] = this._cache[constants.BUCKET_FIVE][start] || this._getRange(start, end, filter);
+                result.merge(this._cache[constants.BUCKET_FIVE][start]);
                 start += constants.BUCKET_FIVE;
             } else {
                 // query at 1 minute level
