@@ -10,9 +10,7 @@ class BlankDataNode {
     }
 
     merge(dataNode) {
-        const newThis = this.getCopy();
-        newThis.merge(dataNode);
-        return newThis;
+        return dataNode.getCopy();
     }
 
     getCopy() {
@@ -35,9 +33,7 @@ class BlankDataBucket {
     }
 
     merge(DataBucket) {
-        const newThis = this.getCopy();
-        newThis.merge(DataBucket);
-        return newThis;
+        return DataBucket.getCopy();
     }
 
     getCopy() {

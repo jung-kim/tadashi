@@ -40,7 +40,7 @@ class DataChannel {
      */
     _getAt(timeBucket, filter) {
         const minLevelData = this._data[timeBucket];
-        return minLevelData ? minLevelData.getCopy(filter) : blanks.blankDataBucket;
+        return Object.freeze(minLevelData ? minLevelData.getCopy(filter) : blanks.blankDataBucket);
     }
 
     _validateCache(searchString) {
@@ -80,24 +80,42 @@ class DataChannel {
         return toReturn;
     }
 
-    getAt(startBucket, endBucket, filter) {
+    _getFiveMinRange(startBucket, filter) {
+        if (!this._cache[constants.BUCKET_FIVE][startBucket]) {
+            const result = this._getAt(startBucket, filter)
+            for (let current = startBucket + constants.BUCKET_MIN; current < startBucket + constants.BUCKET_FIVE; current += constants.BUCKET_MIN) {
+                result.merge(this._getAt(current, filter));
+            }
+            this._cache[constants.BUCKET_FIVE][startBucket] = Object.freeze(result);
+        }
+        return this._cache[constants.BUCKET_FIVE][startBucket];
+    }
+
+    _getHourRange(startBucket, filter) {
+        if (!this._cache[constants.BUCKET_HOUR][startBucket]) {
+            const result = this._getFiveMinRange(startBucket, filter).getCopy();
+            for (let current = startBucket + constants.BUCKET_FIVE; current < startBucket + constants.BUCKET_HOUR; current += constants.BUCKET_FIVE) {
+                result.merge(this._getFiveMinRange(current, filter));
+            }
+            this._cache[constants.BUCKET_HOUR][startBucket] = Object.freeze(result);
+        }
+        return this._cache[constants.BUCKET_HOUR][startBucket];
+    }
+
+    get(startBucket, endBucket, filter) {
         this._validateCache(filter._searchString);
 
         const result = new DataNode();
-        for (let start = startBucket; start < endBucket;) {
-            if (this._isCacheable(start, endBucket, constants.BUCKET_HOUR)) {
-                const end = start + constants.BUCKET_HOUR;
-                this._cache[constants.BUCKET_HOUR][start] = this._cache[constants.BUCKET_HOUR][start] || this._getRange(start, end, filter);
-                result.merge(this._cache[constants.BUCKET_HOUR][start]);
-                start += constants.BUCKET_HOUR;
-            } else if (this._isCacheable(start, endBucket, constants.BUCKET_FIVE)) {
-                const end = start + constants.BUCKET_FIVE;
-                this._cache[constants.BUCKET_FIVE][start] = this._cache[constants.BUCKET_FIVE][start] || this._getRange(start, end, filter);
-                result.merge(this._cache[constants.BUCKET_FIVE][start]);
-                start += constants.BUCKET_FIVE;
+        for (let current = startBucket; current < endBucket;) {
+            if (this._isCacheable(current, endBucket, constants.BUCKET_HOUR)) {
+                result.merge(this._getHourRange(current, filter));
+                current += constants.BUCKET_HOUR;
+            } else if (this._isCacheable(current, endBucket, constants.BUCKET_FIVE)) {
+                result.merge(this._getFiveMinRange(current, filter));
+                current += constants.BUCKET_FIVE;
             } else {
-                result.merge(this._getAt(start, filter));
-                start += constants.BUCKET_MIN;
+                result.merge(this._getAt(current, filter));
+                current += constants.BUCKET_MIN;
             }
         }
 
