@@ -202,29 +202,7 @@ describe('DataChannel.js', () => {
         });
     });
 
-    it('_getRange', () => {
-        const dataChannel = new DataChannel();
-        const _getAt = sinon.stub(dataChannel, '_getAt');
-        const _getAt1 = _getAt.withArgs(300, 'a-filter').returns(new DataNode(1, { a: 1 }));
-        const _getAt2 = _getAt.withArgs(360, 'a-filter').returns(new DataNode(2, { a: 2 }));
-        const _getAt3 = _getAt.withArgs(420, 'a-filter').returns(new DataNode(4, { a: 1, b: 3 }));
-
-        const res = dataChannel._getRange(300, 480, 'a-filter');
-
-        sinon.assert.calledOnce(_getAt1);
-        sinon.assert.calledOnce(_getAt2);
-        sinon.assert.calledOnce(_getAt3);
-
-        assert.deepEqual(res, {
-            _sum: 7,
-            _users: {
-                a: 4,
-                b: 3,
-            }
-        });
-    });
-
-    describe('getAt', () => {
+    describe('get', () => {
         it('single minute no filter', () => {
             const dataChannel = new DataChannel();
             // below cache should not be utilized
