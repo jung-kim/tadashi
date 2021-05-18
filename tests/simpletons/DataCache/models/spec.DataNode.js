@@ -6,18 +6,30 @@ const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
 
 describe('DataNode.js', () => {
 
-    it('merge()', () => {
-        const node1 = new DataNode(5, { 'aa': 3, 'a': 2 });
-        assert(node1.merge(), node1);
+    describe('merge()', () => {
+        it('empty filter', () => {
+            const node1 = new DataNode(5, { 'aa': 3, 'a': 2 });
+            filter.changeSearchString();
+            assert(node1.merge(), node1);
 
-        assert.deepEqual(node1, { _sum: 5, _users: { 'aa': 3, 'a': 2 } });
-        const node2 = new DataNode(7, { 'aa': 4, 'bb': 3 });
-        assert.deepEqual(node2, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
+            assert.deepEqual(node1, { _sum: 5, _users: { 'aa': 3, 'a': 2 } });
+            const node2 = new DataNode(7, { 'aa': 4, 'bb': 3 });
+            assert.deepEqual(node2, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
 
+            assert.deepEqual(node1.merge(filter, node2), { _sum: 12, _users: { 'aa': 7, 'a': 2, 'bb': 3 } });
+            assert.deepEqual(node1, { _sum: 12, _users: { 'aa': 7, 'a': 2, 'bb': 3 } });
+            assert.deepEqual(node2, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
+        });
 
-        assert.deepEqual(node1.merge(node2), { _sum: 12, _users: { 'aa': 7, 'a': 2, 'bb': 3 } });
-        assert.deepEqual(node1, { _sum: 12, _users: { 'aa': 7, 'a': 2, 'bb': 3 } });
-        assert.deepEqual(node2, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
+        it('with filter', () => {
+            const node1 = new DataNode(5, { 'aa': 3, 'a': 2 });
+            const node2 = new DataNode(9, { 'aa': 4, 'bb': 3, 'a': 2 });
+            filter.changeSearchString('a');
+
+            assert.deepEqual(node1.merge(filter, node2), { _sum: 11, _users: { 'aa': 7, 'a': 4 } });
+            assert.deepEqual(node1, { _sum: 11, _users: { 'aa': 7, 'a': 4 } });
+            assert.deepEqual(node2, { _sum: 9, _users: { 'aa': 4, 'bb': 3, 'a': 2 } });
+        });
     });
 
     it('add() for cheers', () => {

@@ -33,9 +33,9 @@ class DataBucket {
         return new DataBucket(this, filter);
     }
 
-    merge(dataBucket) {
+    merge(filter, dataBucket) {
         Object.keys(dataBucket).forEach(key => {
-            this[key].merge(dataBucket[key]);
+            this[key].merge(filter, dataBucket[key]);
         });
         return this;
     }

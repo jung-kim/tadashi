@@ -8,6 +8,7 @@ const Cheer = require('../../../../js/models/events/Cheer');
 const Ban = require('../../../../js/models/events/Ban');
 const constants = require('../../../../js/helpers/constants');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
+const userFilter = chartFilter.getUserFilter();
 
 describe('DataBucket.js', () => {
 
@@ -144,109 +145,218 @@ describe('DataBucket.js', () => {
         });
     });
 
-    it('merge()', () => {
-        const node1 = new DataNode();
-        node1.add({ displayName: 'a' });
+    describe('merge', () => {
+        it('no filter', () => {
+            userFilter.changeSearchString();
+            const node1 = new DataNode();
+            node1.add({ displayName: 'a' });
 
-        const node2 = new DataNode();
-        node2.add({ displayName: 'a' });
-        node2.add({ displayName: 'aa' });
+            const node2 = new DataNode();
+            node2.add({ displayName: 'a' });
+            node2.add({ displayName: 'aa' });
 
 
-        const dataBucket1 = new DataBucket({
-            [constants.TYPE_CHAT]: node1,
-            [constants.TYPE_RESUB]: node1,
-            [constants.TYPE_CHEER]: node1,
-            [constants.TYPE_SUB]: node1,
-            [constants.TYPE_BAN]: node1,
-            [constants.TYPE_ANONGIFT]: node1,
-            [constants.TYPE_SUBGIFT]: node1,
-            [constants.TYPE_SUBMYSTERY]: node1,
+            const dataBucket1 = new DataBucket({
+                [constants.TYPE_CHAT]: node1,
+                [constants.TYPE_RESUB]: node1,
+                [constants.TYPE_CHEER]: node1,
+                [constants.TYPE_SUB]: node1,
+                [constants.TYPE_BAN]: node1,
+                [constants.TYPE_ANONGIFT]: node1,
+                [constants.TYPE_SUBGIFT]: node1,
+                [constants.TYPE_SUBMYSTERY]: node1,
+            });
+
+            const dataBucket2 = new DataBucket({
+                [constants.TYPE_CHAT]: node2,
+                [constants.TYPE_RESUB]: node2,
+                [constants.TYPE_CHEER]: node2,
+                [constants.TYPE_SUB]: node2,
+                [constants.TYPE_BAN]: node2,
+                [constants.TYPE_ANONGIFT]: node2,
+                [constants.TYPE_SUBGIFT]: node2,
+                [constants.TYPE_SUBMYSTERY]: node2,
+            });
+
+            dataBucket1.merge(userFilter, dataBucket2);
+
+            assert.deepEqual(dataBucket1, {
+                0: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
+                1: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
+                2: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
+                3: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
+                4: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
+                5: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
+                6: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
+                7: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                }
+            });
+
+
+            assert.deepEqual(dataBucket2, {
+                0: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                1: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                2: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                3: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                4: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                5: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                6: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                7: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                }
+            });
         });
 
-        const dataBucket2 = new DataBucket({
-            [constants.TYPE_CHAT]: node2,
-            [constants.TYPE_RESUB]: node2,
-            [constants.TYPE_CHEER]: node2,
-            [constants.TYPE_SUB]: node2,
-            [constants.TYPE_BAN]: node2,
-            [constants.TYPE_ANONGIFT]: node2,
-            [constants.TYPE_SUBGIFT]: node2,
-            [constants.TYPE_SUBMYSTERY]: node2,
+        it('with filter', () => {
+            userFilter.changeSearchString('aa');
+            const node1 = new DataNode();
+            node1.add({ displayName: 'a' });
+
+            const node2 = new DataNode();
+            node2.add({ displayName: 'a' });
+            node2.add({ displayName: 'aa' });
+
+
+            const dataBucket1 = new DataBucket({
+                [constants.TYPE_CHAT]: node1,
+                [constants.TYPE_RESUB]: node1,
+                [constants.TYPE_CHEER]: node1,
+                [constants.TYPE_SUB]: node1,
+                [constants.TYPE_BAN]: node1,
+                [constants.TYPE_ANONGIFT]: node1,
+                [constants.TYPE_SUBGIFT]: node1,
+                [constants.TYPE_SUBMYSTERY]: node1,
+            });
+
+            const dataBucket2 = new DataBucket({
+                [constants.TYPE_CHAT]: node2,
+                [constants.TYPE_RESUB]: node2,
+                [constants.TYPE_CHEER]: node2,
+                [constants.TYPE_SUB]: node2,
+                [constants.TYPE_BAN]: node2,
+                [constants.TYPE_ANONGIFT]: node2,
+                [constants.TYPE_SUBGIFT]: node2,
+                [constants.TYPE_SUBMYSTERY]: node2,
+            });
+
+            dataBucket1.merge(userFilter, dataBucket2);
+
+            assert.deepEqual(dataBucket1, {
+                0: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                1: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                2: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                3: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                4: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                5: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                6: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                7: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                }
+            });
+
+
+            assert.deepEqual(dataBucket2, {
+                0: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                1: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                2: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                3: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                4: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                5: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                6: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                7: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                }
+            });
+
         });
-
-        dataBucket1.merge(dataBucket2);
-
-        assert.deepEqual(dataBucket1, {
-            0: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            },
-            1: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            },
-            2: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            },
-            3: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            },
-            4: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            },
-            5: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            },
-            6: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            },
-            7: {
-                _sum: 3,
-                _users: { a: 2, aa: 1 }
-            }
-        });
-
-
-        assert.deepEqual(dataBucket2, {
-            0: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            },
-            1: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            },
-            2: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            },
-            3: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            },
-            4: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            },
-            5: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            },
-            6: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            },
-            7: {
-                _sum: 2,
-                _users: { a: 1, aa: 1 }
-            }
-        });
-
     });
 });

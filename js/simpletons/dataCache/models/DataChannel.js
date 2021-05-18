@@ -7,8 +7,6 @@ const blanks = require("./blanks");
 
 class DataChannel {
     constructor() {
-        this._cachedSearchString = '';
-
         // cache derived from _data.
         // Only cached at 5 minutes and 1 hour level.
         // each cache tiers are normalized.
@@ -57,25 +55,20 @@ class DataChannel {
     }
 
     /**
-     * Handles cache validation.
-     * If filter hasn't changed, then do partial invalidation per set.
-     * Else, drop entire cache.
+     * Handles cache validation.  If any of the minute has changed, it's cache interval buckets are dropped.
+     * 
      * @param {string} searchString 
      */
-    _validateCache(searchString) {
-        if (this._cachedSearchString === searchString) {
-            this._updated.forEach(updatedCacheBucket => {
-                delete this._cache[constants.BUCKET_FIVE][updatedCacheBucket];
-                delete this._cache[constants.BUCKET_HOUR][updatedCacheBucket];
-            });
-            this._updated.clear();
-
-            return;
-        }
+    _validateCache() {
+        Array.from(this._updated).forEach(current => {
+            const fiveMinTimeBucket = utils.getTimeBucket(current, constants.BUCKET_FIVE);
+            const hourTimeBucket = utils.getTimeBucket(current, constants.BUCKET_HOUR);
+            delete this._cache[constants.BUCKET_FIVE][fiveMinTimeBucket];
+            delete this._cache[constants.BUCKET_HOUR][hourTimeBucket];
+        });
         this._updated.clear();
-        this._cache[constants.BUCKET_FIVE] = {};
-        this._cache[constants.BUCKET_HOUR] = {};
-        this._cachedSearchString = searchString
+
+        return;
     }
 
     /**
@@ -83,14 +76,13 @@ class DataChannel {
      * If cache is missing, fill cache.
      * 
      * @param {number} startBucket number of seconds normalized to 5 minutes i.e 300, 600, 900 ...
-     * @param {UserFilter} filter object
      * @returns {DataBucket} raw aggregated cached data bucket between startBucket ~ (startBucket + 5 mins period)
      */
-    _getFiveMinRange(startBucket, filter) {
+    _getFiveMinRange(filter, startBucket) {
         if (!this._cache[constants.BUCKET_FIVE][startBucket]) {
-            const result = this._getAt(startBucket, filter)
+            const result = this._getAt(startBucket);
             for (let current = startBucket + constants.BUCKET_MIN; current < startBucket + constants.BUCKET_FIVE; current += constants.BUCKET_MIN) {
-                result.merge(this._getAt(current, filter));
+                result.merge(filter, this._getAt(current));
             }
             this._cache[constants.BUCKET_FIVE][startBucket] = Object.freeze(result);
         }
@@ -102,15 +94,14 @@ class DataChannel {
      * If cache is missing, fill cache.
      * 
      * @param {number} startBucket number of seconds normalized to 1 hour i.e 3600, 7200, 10800 ...
-     * @param {UserFilter} filter object
      * @returns {DataBucket} raw aggregated cached data bucket between startBucket ~ (startBucket + 1 hour)
      */
-    _getHourRange(startBucket, filter) {
+    _getHourRange(filter, startBucket) {
         if (!this._cache[constants.BUCKET_HOUR][startBucket]) {
             // since _getFiveMinRange returns raw dataBucket, we need to clone it to prevent mutation of cache
-            const result = this._getFiveMinRange(startBucket, filter).getCopy();
+            const result = this._getFiveMinRange(startBucket);
             for (let current = startBucket + constants.BUCKET_FIVE; current < startBucket + constants.BUCKET_HOUR; current += constants.BUCKET_FIVE) {
-                result.merge(this._getFiveMinRange(current, filter));
+                result.merge(filter, this._getFiveMinRange(current));
             }
             this._cache[constants.BUCKET_HOUR][startBucket] = Object.freeze(result);
         }
@@ -126,18 +117,18 @@ class DataChannel {
      * @returns {DataBucket} copied aggregated data bucket between startBucket ~ endBucket
      */
     get(startBucket, endBucket, filter) {
-        this._validateCache(filter._searchString);
+        this._validateCache();
 
         const result = new DataNode();
         for (let current = startBucket; current < endBucket;) {
             if ((current % constants.BUCKET_HOUR) === 0 && current + constants.BUCKET_HOUR <= endBucket) {
-                result.merge(this._getHourRange(current, filter));
+                result.merge(filter, this._getHourRange(filter, current));
                 current += constants.BUCKET_HOUR;
             } else if ((current % constants.BUCKET_FIVE) === 0 && current + constants.BUCKET_FIVE <= endBucket) {
-                result.merge(this._getFiveMinRange(current, filter));
+                result.merge(filter, this._getFiveMinRange(filter, current));
                 current += constants.BUCKET_FIVE;
             } else {
-                result.merge(this._getAt(current, filter));
+                result.merge(filter, this._getAt(current, filter));
                 current += constants.BUCKET_MIN;
             }
         }
