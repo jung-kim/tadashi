@@ -11,6 +11,9 @@ const chartFilter = require('../../../../js/events/shared/chartFilter');
 const userFilter = chartFilter.getUserFilter();
 
 describe('DataBucket.js', () => {
+    beforeEach(() => {
+        reset();
+    });
 
     it('add()', () => {
         const dataBucket = new DataBucket();
@@ -82,7 +85,7 @@ describe('DataBucket.js', () => {
         dataBucket.add(new Ban({ displayName: 'aa', userID: 1, timestamp: 1000 }));
         dataBucket.add(new Cheer({ displayName: 'b', bits: 200, userID: 1, timestamp: 1000 }));
 
-        let got = dataBucket.getCopy();
+        const got = dataBucket.getCopy();
         assert.deepEqual(got, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {
@@ -99,13 +102,15 @@ describe('DataBucket.js', () => {
             },
         });
 
-        chartFilter.getUserFilter().changeSearchString('a');
-        got = dataBucket.getCopy(chartFilter.getUserFilter());
-        assert.deepEqual(got, {
+        assert.deepEqual(dataBucket, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {
                 _sum: 3,
                 _users: { 'a': 2, 'aa': 1 },
+            },
+            [constants.TYPE_CHEER]: {
+                _sum: 2,
+                _users: { 'b': 2 }
             },
             [constants.TYPE_BAN]: {
                 _sum: 1,
@@ -113,13 +118,18 @@ describe('DataBucket.js', () => {
             },
         });
 
-        chartFilter.getUserFilter().changeSearchString('aa');
-        got = dataBucket.getCopy(chartFilter.getUserFilter());
+        dataBucket.add(new Chat({ displayName: 'a', userID: 1, timestamp: 1000 }));
+        got.add(new Chat({ displayName: 'aa', userID: 1, timestamp: 1000 }))
+
         assert.deepEqual(got, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {
-                _sum: 1,
-                _users: { 'aa': 1 },
+                _sum: 4,
+                _users: { 'a': 2, 'aa': 2 },
+            },
+            [constants.TYPE_CHEER]: {
+                _sum: 2,
+                _users: { 'b': 2 }
             },
             [constants.TYPE_BAN]: {
                 _sum: 1,
@@ -127,12 +137,11 @@ describe('DataBucket.js', () => {
             },
         });
 
-        got = dataBucket.getCopy();
-        assert.deepEqual(got, {
+        assert.deepEqual(dataBucket, {
             ...testUtils.blankAggsBucketToCompare,
             [constants.TYPE_CHAT]: {
-                _sum: 3,
-                _users: { 'a': 2, 'aa': 1 },
+                _sum: 4,
+                _users: { 'a': 3, 'aa': 1 },
             },
             [constants.TYPE_CHEER]: {
                 _sum: 2,

@@ -31,24 +31,10 @@ class DataNode {
     /**
      * get a copy of data node that returns a new object
      * 
-     * @param {object} filter object
      * @returns {DataNode} new object with same data as this
      */
-    getCopy(filter) {
-        // @todo search
-        if (!filter) {
-            return new DataNode(this._sum, { ...this._users });
-        }
-        let sum = 0;
-        const users = Object.keys(this._users).reduce((obj, key) => {
-            if (filter.isApplicable(key)) {
-                sum += this._users[key];
-                obj[key] = this._users[key];
-            }
-            return obj;
-        }, {});
-
-        return new DataNode(sum, users);
+    getCopy() {
+        return new DataNode(this._sum, { ...this._users });
     }
 
     /**

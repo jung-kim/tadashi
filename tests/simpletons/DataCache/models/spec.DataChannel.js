@@ -12,6 +12,9 @@ const chartFilter = require('../../../../js/events/shared/chartFilter');
 const userFilter = chartFilter.getUserFilter();
 
 describe('DataChannel.js', () => {
+    beforeEach(() => {
+        reset();
+    });
 
     it('add()', () => {
         const dataChannel = new DataChannel();

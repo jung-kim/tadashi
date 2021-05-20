@@ -7,7 +7,7 @@ const proceedsByUsersVC = require('../../../../js/events/stream/charts/proceedsB
 
 describe('proceedsByUsersVC.js', () => {
     afterEach(() => {
-        sinon.verifyAndRestore();
+        reset();
     });
 
     it('_update()', async () => {

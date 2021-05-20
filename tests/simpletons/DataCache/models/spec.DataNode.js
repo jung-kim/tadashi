@@ -57,7 +57,17 @@ describe('DataNode.js', () => {
         node.add({ displayName: 'aa', bits: 300 });
         node.add({ displayName: 'b', bits: 100 });
 
-        assert.deepEqual(node.getCopy(), {
+        const copy = node.getCopy();
+
+        assert.deepEqual(node, {
+            _sum: 7,
+            _users: {
+                'a': 3,
+                'aa': 3,
+                'b': 1,
+            }
+        });
+        assert.deepEqual(copy, {
             _sum: 7,
             _users: {
                 'a': 3,
@@ -66,35 +76,23 @@ describe('DataNode.js', () => {
             }
         });
 
-        filter.changeSearchString('a');
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 6,
+        copy.add({ displayName: 'a', bits: 400 });
+
+        assert.deepEqual(node, {
+            _sum: 7,
             _users: {
                 'a': 3,
                 'aa': 3,
-            }
-        });
-
-        filter.changeSearchString('aa');
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 3,
-            _users: {
-                'aa': 3,
-            }
-        });
-
-        filter.changeSearchString('b');
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 1,
-            _users: {
                 'b': 1,
             }
         });
-
-        filter.changeSearchString('aaa');
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 0,
-            _users: {}
+        assert.deepEqual(copy, {
+            _sum: 11,
+            _users: {
+                'a': 7,
+                'aa': 3,
+                'b': 1,
+            }
         });
     });
 
@@ -123,7 +121,17 @@ describe('DataNode.js', () => {
         node.add({ displayName: 'aa' });
         node.add({ displayName: 'b' });
 
-        assert.deepEqual(node.getCopy(), {
+        const copy = node.getCopy();
+
+        assert.deepEqual(node, {
+            _sum: 4,
+            _users: {
+                'a': 2,
+                'aa': 1,
+                'b': 1
+            }
+        });
+        assert.deepEqual(copy, {
             _sum: 4,
             _users: {
                 'a': 2,
@@ -132,35 +140,24 @@ describe('DataNode.js', () => {
             }
         });
 
-        filter.changeSearchString('a');
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 3,
+        copy.add({ displayName: 'bb' });
+
+        assert.deepEqual(node, {
+            _sum: 4,
             _users: {
                 'a': 2,
                 'aa': 1,
+                'b': 1
             }
         });
-
-        filter.changeSearchString('aa')
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 1,
+        assert.deepEqual(copy, {
+            _sum: 5,
             _users: {
+                'a': 2,
                 'aa': 1,
-            }
-        });
-
-        filter.changeSearchString('b');
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 1,
-            _users: {
                 'b': 1,
+                'bb': 1
             }
-        });
-
-        filter.changeSearchString('aaa');
-        assert.deepEqual(node.getCopy(filter), {
-            _sum: 0,
-            _users: {}
         });
     });
 });

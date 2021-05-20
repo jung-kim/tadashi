@@ -46,12 +46,11 @@ class DataChannel {
      * get data at the time from _data without using _cache.
      * 
      * @param {*} timeBucket: time to get
-     * @param {*} filter: search value
      * @returns {AggBucket}: Minute level agg bucket
      */
-    _getAt(timeBucket, filter) {
+    _getAt(timeBucket) {
         const minLevelData = this._data[timeBucket];
-        return Object.freeze(minLevelData ? minLevelData.getCopy(filter) : blanks.blankDataBucket);
+        return Object.freeze(minLevelData ? minLevelData : blanks.blankDataBucket);
     }
 
     /**
@@ -128,7 +127,7 @@ class DataChannel {
                 result.merge(filter, this._getFiveMinRange(filter, current));
                 current += constants.BUCKET_FIVE;
             } else {
-                result.merge(filter, this._getAt(current, filter));
+                result.merge(filter, this._getAt(current));
                 current += constants.BUCKET_MIN;
             }
         }
