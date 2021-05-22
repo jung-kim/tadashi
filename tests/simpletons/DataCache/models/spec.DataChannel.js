@@ -184,8 +184,12 @@ describe('DataChannel.js', () => {
     });
 
     describe('get', () => {
+        const userName = (count) => {
+            count
+        }
         const getTestDataBucket = (count) => {
             count = count || 1;
+
             return new DataBucket({
                 [constants.TYPE_CHAT]: new DataNode(count, { a: count }),
                 [constants.TYPE_RESUB]: new DataNode(count, { b: count }),
@@ -217,41 +221,6 @@ describe('DataChannel.js', () => {
             sinon.assert.calledOnce(_getAt1);
             sinon.assert.calledOnce(_validateCache);
             assert.deepEqual(res, getTestDataBucket(1));
-            assert.deepEqual(dataChannel._cache, {
-                [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
-                },
-                [constants.BUCKET_HOUR]: {},
-            });
-        });
-
-        it('three minute with filter', () => {
-            const dataChannel = new DataChannel();
-            // below cache should not be utilized
-            dataChannel._cache = {
-                [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
-                },
-                [constants.BUCKET_HOUR]: {},
-            }
-            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
-            const _getAt = sinon.stub(dataChannel, '_getAt');
-            const _getAt1 = _getAt.withArgs(300).returns(getTestDataBucket(1));
-            const _getAt2 = _getAt.withArgs(360).returns(getTestDataBucket(1));
-            const _getAt3 = _getAt.withArgs(420).returns(getTestDataBucket(1));
-
-            userFilter.changeSearchString('a');
-            const res = dataChannel.get(300, 480, userFilter);
-
-            sinon.assert.calledThrice(_getAt);
-            sinon.assert.calledOnce(_getAt1);
-            sinon.assert.calledOnce(_getAt2);
-            sinon.assert.calledOnce(_getAt3);
-            sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, {
-                ...testUtils.blankAggsBucketToCompare,
-                [constants.TYPE_CHAT]: new DataNode(3, { a: 3 }),
-            });
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
                     300: getTestDataBucket(99)
@@ -515,6 +484,144 @@ describe('DataChannel.js', () => {
                 [constants.BUCKET_HOUR]: {
                     0: getTestDataBucket(65),
                     3600: getTestDataBucket(66),
+                },
+            });
+        });
+
+        it('three minute with filter', () => {
+            const dataChannel = new DataChannel();
+            // below cache should not be utilized
+            dataChannel._cache = {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99)
+                },
+                [constants.BUCKET_HOUR]: {},
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
+            const _getAt = sinon.stub(dataChannel, '_getAt');
+            const _getAt1 = _getAt.withArgs(300).returns(getTestDataBucket(1));
+            const _getAt2 = _getAt.withArgs(360).returns(getTestDataBucket(1));
+            const _getAt3 = _getAt.withArgs(420).returns(getTestDataBucket(1));
+
+            userFilter.changeSearchString('a');
+            const res = dataChannel.get(300, 480, userFilter);
+
+            sinon.assert.calledThrice(_getAt);
+            sinon.assert.calledOnce(_getAt1);
+            sinon.assert.calledOnce(_getAt2);
+            sinon.assert.calledOnce(_getAt3);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                ...testUtils.blankAggsBucketToCompare,
+                [constants.TYPE_CHAT]: new DataNode(3, { a: 3 }),
+            });
+            assert.deepEqual(dataChannel._cache, {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99)
+                },
+                [constants.BUCKET_HOUR]: {},
+            });
+        });
+
+        it('eight minute with filter', () => {
+            const dataChannel = new DataChannel();
+            // below cache should not be utilized
+            dataChannel._cache = {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99)
+                },
+                [constants.BUCKET_HOUR]: {},
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
+            const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
+                return getTestDataBucket();
+            });
+
+            userFilter.changeSearchString('a');
+            const res = dataChannel.get(240, 720, userFilter);
+
+            sinon.assert.calledThrice(_getAt);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                ...testUtils.blankAggsBucketToCompare,
+                [constants.TYPE_CHAT]: new DataNode(102, { a: 102 }),
+            });
+            assert.deepEqual(dataChannel._cache, {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99)
+                },
+                [constants.BUCKET_HOUR]: {},
+            });
+        });
+
+        it('62 minute with filter', () => {
+            const dataChannel = new DataChannel();
+            // below cache should not be utilized
+            dataChannel._cache = {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99)
+                },
+                [constants.BUCKET_HOUR]: {
+                    0: getTestDataBucket(10)
+                },
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
+            const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
+                return getTestDataBucket();
+            });
+
+            userFilter.changeSearchString('a');
+            const res = dataChannel.get(0, 3720, userFilter);
+
+            sinon.assert.calledTwice(_getAt);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                ...testUtils.blankAggsBucketToCompare,
+                [constants.TYPE_CHAT]: new DataNode(12, { a: 12 }),
+            });
+            assert.deepEqual(dataChannel._cache, {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99)
+                },
+                [constants.BUCKET_HOUR]: {
+                    0: getTestDataBucket(10)
+                },
+            });
+        });
+
+        it('66 minute with filter', () => {
+            const dataChannel = new DataChannel();
+            // below cache should not be utilized
+            dataChannel._cache = {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99),
+                    3600: getTestDataBucket(5)
+                },
+                [constants.BUCKET_HOUR]: {
+                    0: getTestDataBucket(10)
+                },
+            }
+            const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
+            const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
+                return getTestDataBucket();
+            });
+
+            userFilter.changeSearchString('c');
+            const res = dataChannel.get(0, 3960, userFilter);
+
+            sinon.assert.calledOnce(_getAt);
+            sinon.assert.calledOnce(_validateCache);
+            assert.deepEqual(res, {
+                ...testUtils.blankAggsBucketToCompare,
+                [constants.TYPE_CHEER]: new DataNode(16, { c: 16 }),
+            });
+            assert.deepEqual(dataChannel._cache, {
+                [constants.BUCKET_FIVE]: {
+                    300: getTestDataBucket(99),
+                    3600: getTestDataBucket(5)
+                },
+                [constants.BUCKET_HOUR]: {
+                    0: getTestDataBucket(10)
                 },
             });
         });
