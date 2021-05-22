@@ -2,6 +2,12 @@ const constants = require('../../../helpers/constants');
 const DataNode = require('./DataNode');
 const utils = require('../../../helpers/utils');
 
+/**
+ * Holda aggregate of event data over a time period.
+ * 
+ * Difference between DataBucket and DataNode is that DataNode is type agnostic,
+ * where as DataBucket has DataType per each event types.
+ */
 class DataBucket {
     constructor(map) {
         if (map) {
@@ -25,14 +31,30 @@ class DataBucket {
         }
     }
 
+    /**
+     * Add raw event object to the bucket cache
+     * 
+     * @param {object} raw event object to add to the bucket
+     */
     add(raw) {
         this[utils.getMessageType(raw)].add(raw);
     }
 
+    /**
+     * Clone this object
+     * 
+     * @returns {DataBucket} cloned copy of this object
+     */
     getCopy() {
         return new DataBucket(this);
     }
 
+    /**
+     * 
+     * @param {UserFilter} filter object to filter events with
+     * @param {DataBucket} dataBucket to merge with
+     * @returns {DataBucet} merge target data bucket data to current data
+     */
     merge(filter, dataBucket) {
         Object.keys(dataBucket).forEach(key => {
             this[key].merge(filter, dataBucket[key]);

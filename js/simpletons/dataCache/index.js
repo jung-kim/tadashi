@@ -13,7 +13,6 @@ const eventSignals = require('../../helpers/signals').eventSignals;
  *  - immutability is bit tricky but returned object should not be altered.
  * - all data are cached
  * 
- * 
  */
 class DataCache {
     constructor() {
@@ -80,10 +79,10 @@ class DataCache {
      * Get a DataNode that represents aggregate data over {atBucket} ~ {atBucket + inerval} period.
      * 
      * @param {string} channel name
-     * @param {number} atBucket start timestamp in milliseconds (must be in )
+     * @param {number} atBucket start timestamp in seconds
      * @param {number} interval data aggregate interval in sec
      * @param {object} filter object
-     * @returns DataNode
+     * @returns {DataNode} result
      */
     get(channel, atBucket, interval, filter) {
         this._ensureChannelExists(channel);
@@ -93,12 +92,12 @@ class DataCache {
     /**
      * Get a DataNode that represents aggregate data over {startBucket} ~ {endBucket} period.
      * 
-     * @param {*} channel name
-     * @param {*} startBucket start timestamp in milliseconds (must be in )
-     * @param {*} endBucket 
-     * @param {*} type 
-     * @param {*} filter 
-     * @returns DataNode
+     * @param {string} channel name
+     * @param {number} startBucket start timestamp in seconds
+     * @param {number} endBucket end timestamp in seconds
+     * @param {string} type of event data to get
+     * @param {UserFilter} filter object to filter with
+     * @returns {DataNode} result
      */
     getTotal(channel, startBucket, endBucket, type, filter) {
         this._ensureChannelExists(channel);

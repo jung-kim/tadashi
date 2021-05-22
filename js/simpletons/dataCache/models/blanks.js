@@ -2,6 +2,11 @@ const constants = require('../../../helpers/constants');
 const DataNode = require('./DataNode');
 const DataBucket = require('./DataBucket');
 
+/**
+ * Represents collections of empty DataNode or DataBucket to be served as default value.
+ * Strictly speaking, this object is not necessary, but this object will help prevent 
+ * creation of new object and thus reduce gc pressure.
+ */
 class BlankDataNode {
     constructor() {
         this._sum = 0;

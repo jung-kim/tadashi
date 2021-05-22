@@ -2,9 +2,11 @@ const constants = require("../../../helpers/constants");
 const utils = require('../../../helpers/utils');
 
 const DataBucket = require("./DataBucket");
-const DataNode = require("./DataNode");
 const blanks = require("./blanks");
 
+/**
+ * DataChannel is an object that manages data caches for each channels or streamers.
+ */
 class DataChannel {
     constructor() {
         // cache derived from _data.
@@ -55,8 +57,6 @@ class DataChannel {
 
     /**
      * Handles cache validation.  If any of the minute has changed, it's cache interval buckets are dropped.
-     * 
-     * @param {string} searchString 
      */
     _validateCache() {
         Array.from(this._updated).forEach(current => {

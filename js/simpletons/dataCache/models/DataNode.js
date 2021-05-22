@@ -40,6 +40,7 @@ class DataNode {
     /**
      * merge targetDataNode's values into this
      * 
+     * @param {UserFilter} filter object to filter with
      * @param {DataNode} targetDataNode to be added into this
      * @returns {DataNode} this
      */

@@ -12,6 +12,22 @@ const chartFilter = require('../../../../js/events/shared/chartFilter');
 const DataBucket = require('../../../../js/simpletons/dataCache/models/DataBucket');
 const userFilter = chartFilter.getUserFilter();
 
+
+const getTestDataBucket = (count) => {
+    count = count || 1;
+
+    return new DataBucket({
+        [constants.TYPE_CHAT]: new DataNode(count, { a: count }),
+        [constants.TYPE_RESUB]: new DataNode(count, { b: count }),
+        [constants.TYPE_CHEER]: new DataNode(count, { c: count }),
+        [constants.TYPE_SUB]: new DataNode(count, { d: count }),
+        [constants.TYPE_BAN]: new DataNode(count, { e: count }),
+        [constants.TYPE_ANONGIFT]: new DataNode(count, { f: count }),
+        [constants.TYPE_SUBGIFT]: new DataNode(count, { g: count }),
+        [constants.TYPE_SUBMYSTERY]: new DataNode(count, { h: count }),
+    });
+}
+
 describe('DataChannel.js', () => {
     beforeEach(() => {
         reset();
@@ -183,24 +199,35 @@ describe('DataChannel.js', () => {
         });
     });
 
-    describe('get', () => {
-        const userName = (count) => {
-            count
-        }
-        const getTestDataBucket = (count) => {
-            count = count || 1;
+    it('_getFiveMinRange', () => {
+        const dataChannel = new DataChannel();
+        const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
+            return getTestDataBucket();
+        })
+        dataChannel._cache[constants.BUCKET_FIVE][300] = getTestDataBucket(10);
 
-            return new DataBucket({
-                [constants.TYPE_CHAT]: new DataNode(count, { a: count }),
-                [constants.TYPE_RESUB]: new DataNode(count, { b: count }),
-                [constants.TYPE_CHEER]: new DataNode(count, { c: count }),
-                [constants.TYPE_SUB]: new DataNode(count, { d: count }),
-                [constants.TYPE_BAN]: new DataNode(count, { e: count }),
-                [constants.TYPE_ANONGIFT]: new DataNode(count, { f: count }),
-                [constants.TYPE_SUBGIFT]: new DataNode(count, { g: count }),
-                [constants.TYPE_SUBMYSTERY]: new DataNode(count, { h: count }),
-            });
-        }
+        const res = dataChannel.get(300, 660);
+
+        sinon.assert.calledOnce(_getAt);
+        assert.deepEqual(res, getTestDataBucket(11));
+    });
+
+    it('_getHourRange', () => {
+        const dataChannel = new DataChannel();
+        const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
+            return getTestDataBucket();
+        })
+        dataChannel._cache[constants.BUCKET_FIVE][300] = getTestDataBucket(10);
+        dataChannel._cache[constants.BUCKET_FIVE][3600] = getTestDataBucket(10);
+        dataChannel._cache[constants.BUCKET_HOUR][0] = getTestDataBucket(10);
+
+        const res = dataChannel.get(0, 3960);
+
+        sinon.assert.calledOnce(_getAt);
+        assert.deepEqual(res, getTestDataBucket(21));
+    });
+
+    describe('get', () => {
 
         it('single minute no filter', () => {
             const dataChannel = new DataChannel();
