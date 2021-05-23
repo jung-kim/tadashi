@@ -22,8 +22,8 @@ class ChatsByUsersVC extends ChartRoot {
         const datasets = this._getDataset();
         const data = datasets[0].data;
 
-        const total = dataCache.getTotal(channel, startBucket, endBucket, constants.TYPE_CHAT, filter);
-        const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
+        const chatTotal = dataCache.get(channel, startBucket, endBucket, filter)[constants.TYPE_CHAT];
+        const sorted = Object.entries(chatTotal._users).sort(([, a], [, b]) => b - a);
         const length = Math.min(sorted.length, DISPLAY_LIMIT);
 
         for (let i = 0; i < length; i++) {

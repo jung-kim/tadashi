@@ -76,32 +76,17 @@ class DataCache {
     }
 
     /**
-     * Get a DataNode that represents aggregate data over {atBucket} ~ {atBucket + inerval} period.
-     * 
-     * @param {string} channel name
-     * @param {number} atBucket start timestamp in seconds
-     * @param {number} interval data aggregate interval in sec
-     * @param {object} filter object
-     * @returns {DataNode} result
-     */
-    get(channel, atBucket, interval, filter) {
-        this._ensureChannelExists(channel);
-        return this._data[channel].get(atBucket, interval, filter);
-    }
-
-    /**
      * Get a DataNode that represents aggregate data over {startBucket} ~ {endBucket} period.
      * 
      * @param {string} channel name
      * @param {number} startBucket start timestamp in seconds
      * @param {number} endBucket end timestamp in seconds
-     * @param {string} type of event data to get
-     * @param {UserFilter} filter object to filter with
-     * @returns {DataNode} result
+     * @param {object} filter object
+     * @returns {DataBucket} result
      */
-    getTotal(channel, startBucket, endBucket, type, filter) {
+    get(channel, startBucket, endBucket, filter) {
         this._ensureChannelExists(channel);
-        return this._data[channel].getTotal(startBucket, endBucket, type, filter);
+        return this._data[channel].get(startBucket, endBucket, filter);
     }
 
     getNewDataNode() {

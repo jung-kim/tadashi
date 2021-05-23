@@ -105,6 +105,9 @@ window = {
 }
 
 const auth = require('../js/simpletons/auth');
+const DataBucket = require('../js/simpletons/dataCache/models/DataBucket');
+const constants = require('../js/helpers/constants');
+const DataNode = require('../js/simpletons/dataCache/models/DataNode');
 const filter = require('../js/events/shared/chartFilter').getUserFilter();
 
 Handlebars.registerHelper('userFollowsCSS', () => {
@@ -129,5 +132,20 @@ reset = () => {
 Twitch = {
     Embed: sinon.stub(),
 };
+
+getTestDataBucket = (count, name) => {
+    count = count || 1;
+
+    return new DataBucket({
+        [constants.TYPE_CHAT]: new DataNode(count, { [name || 'a']: count }),
+        [constants.TYPE_RESUB]: new DataNode(count, { [name || 'b']: count }),
+        [constants.TYPE_CHEER]: new DataNode(count, { [name || 'c']: count }),
+        [constants.TYPE_SUB]: new DataNode(count, { [name || 'd']: count }),
+        [constants.TYPE_BAN]: new DataNode(count, { [name || 'e']: count }),
+        [constants.TYPE_ANONGIFT]: new DataNode(count, { [name || 'f']: count }),
+        [constants.TYPE_SUBGIFT]: new DataNode(count, { [name || 'g']: count }),
+        [constants.TYPE_SUBMYSTERY]: new DataNode(count, { [name || 'h']: count }),
+    });
+}
 
 /*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

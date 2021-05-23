@@ -12,22 +12,6 @@ const chartFilter = require('../../../../js/events/shared/chartFilter');
 const DataBucket = require('../../../../js/simpletons/dataCache/models/DataBucket');
 const userFilter = chartFilter.getUserFilter();
 
-
-const getTestDataBucket = (count) => {
-    count = count || 1;
-
-    return new DataBucket({
-        [constants.TYPE_CHAT]: new DataNode(count, { a: count }),
-        [constants.TYPE_RESUB]: new DataNode(count, { b: count }),
-        [constants.TYPE_CHEER]: new DataNode(count, { c: count }),
-        [constants.TYPE_SUB]: new DataNode(count, { d: count }),
-        [constants.TYPE_BAN]: new DataNode(count, { e: count }),
-        [constants.TYPE_ANONGIFT]: new DataNode(count, { f: count }),
-        [constants.TYPE_SUBGIFT]: new DataNode(count, { g: count }),
-        [constants.TYPE_SUBMYSTERY]: new DataNode(count, { h: count }),
-    });
-}
-
 describe('DataChannel.js', () => {
     beforeEach(() => {
         reset();
