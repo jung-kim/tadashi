@@ -38,12 +38,12 @@ class ProceedsByUsersVC extends ChartRoot {
     async _update() {
         const { channel, filter, startBucket, endBucket } = await this._getParameters();
         const cache = {};
+        const dataBucket = dataCache.get(channel, startBucket, endBucket, filter);
 
         const total = this._proceedsTypesToProcess.reduce((prev, type) => {
-            const value = dataCache.getTotal(channel, startBucket, endBucket, type, filter);
-            cache[type] = value;
-            return prev.merge(value);
-        }, dataCache.getNewDataNode());
+            cache[type] = dataBucket[type];
+            return prev ? prev.merge(undefined, cache[type]) : dataBucket[type].getCopy();
+        }, null);
 
         const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
         const length = Math.min(sorted.length, this._displayLimit);

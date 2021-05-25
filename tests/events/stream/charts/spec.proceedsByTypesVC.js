@@ -19,22 +19,14 @@ describe('proceedsByTypesVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal').
-            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHEER, undefined).
-            returns({ _sum: 5 }).
-            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUB, undefined).
-            returns({ _sum: 6 }).
-            withArgs('abc', 1577901600, 1577902020, constants.TYPE_RESUB, undefined).
-            returns({ _sum: 7 }).
-            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBGIFT, undefined).
-            returns({ _sum: 8 }).
-            withArgs('abc', 1577901600, 1577902020, constants.TYPE_SUBMYSTERY, undefined).
-            returns({ _sum: 9 });
+        sinon.stub(dataCache, 'get').
+            withArgs('abc', 1577901600, 1577902020, undefined).
+            returns(getTestDataBucket(10))
         document.getElementById.withArgs(proceedsByTypesVC._chartDomSelector).returns({});
         proceedsByTypesVC.reset();
         await proceedsByTypesVC._update();
         assert.deepEqual(proceedsByTypesVC._getRootLabels(), ["100 Cheer", "Subs", "Resubs", "Sub Gifts", "Sub Mystery"]);
-        assert.deepEqual(proceedsByTypesVC._getDataset()[0].data, [5, 6, 7, 8, 9]);
+        assert.deepEqual(proceedsByTypesVC._getDataset()[0].data, [10, 10, 10, 10, 10]);
     });
 
     it('_backgroundColor', () => {

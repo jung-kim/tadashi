@@ -88,10 +88,6 @@ class DataCache {
         this._ensureChannelExists(channel);
         return this._data[channel].get(startBucket, endBucket, filter);
     }
-
-    getNewDataNode() {
-        return new DataNode();
-    }
 }
 
 const dataCache = new DataCache();

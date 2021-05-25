@@ -23,7 +23,7 @@ class TimeseriesVC extends ChartRoot {
             const at = startBucket + (i * interval);
             labels[i] = moment.unix(at);
 
-            const dataAt = dataCache.get(channel, at, interval, filter);
+            const dataAt = dataCache.get(channel, at, at + interval, filter);
 
             // cache is at time -> type -> data
             // timeseries charts expects type -> time -> data
