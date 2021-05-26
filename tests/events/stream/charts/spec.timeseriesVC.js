@@ -7,19 +7,6 @@ const dataCache = require('../../../../js/simpletons/dataCache');
 const timeseriesVC = require('../../../../js/events/stream/charts/timeseriesVC');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 
-const getDummyData = ((sum, users) => {
-    return {
-        [constants.TYPE_CHAT]: { _sum: sum, _users: users },
-        [constants.TYPE_RESUB]: { _sum: sum, _users: users },
-        [constants.TYPE_CHEER]: { _sum: sum, _users: users },
-        [constants.TYPE_SUB]: { _sum: sum, _users: users },
-        [constants.TYPE_BAN]: { _sum: sum, _users: users },
-        [constants.TYPE_ANONGIFT]: { _sum: sum, _users: users },
-        [constants.TYPE_SUBGIFT]: { _sum: sum, _users: users },
-        [constants.TYPE_SUBMYSTERY]: { _sum: sum, _users: users },
-    }
-});
-
 describe('timeseriesVC.js', () => {
     beforeEach(() => {
         document.getElementById.withArgs(timeseriesVC._chartDomSelector).returns({});
@@ -35,26 +22,26 @@ describe('timeseriesVC.js', () => {
             endBucket: 1577902020,
             interval: constants.BUCKET_MIN,
             length: 8,
-            searchValue: undefined,
             startBucket: 1577901600,
+            filter: chartFilter
         });
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(1, { 'a': 1 })).
-            withArgs('abc', 1577901660, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(2, { 'b': 2 })).
-            withArgs('abc', 1577901720, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(3, { 'c': 3 })).
-            withArgs('abc', 1577901780, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(4, { 'e': 4 })).
-            withArgs('abc', 1577901840, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(5, { 'e': 5 })).
-            withArgs('abc', 1577901900, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(6, { 'c': 6 })).
-            withArgs('abc', 1577901960, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(7, { 'c': 7 })).
-            withArgs('abc', 1577902020, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(16, { 'a': 8, 'd': 8 }));
+            withArgs('abc', 1577901600, 1577901660, chartFilter).
+            returns(getTestDataBucket(1, 'a')).
+            withArgs('abc', 1577901660, 1577901720, chartFilter).
+            returns(getTestDataBucket(2, 'b')).
+            withArgs('abc', 1577901720, 1577901780, chartFilter).
+            returns(getTestDataBucket(3, 'c')).
+            withArgs('abc', 1577901780, 1577901840, chartFilter).
+            returns(getTestDataBucket(4, 'e')).
+            withArgs('abc', 1577901840, 1577901900, chartFilter).
+            returns(getTestDataBucket(5, 'e')).
+            withArgs('abc', 1577901900, 1577901960, chartFilter).
+            returns(getTestDataBucket(6, 'c')).
+            withArgs('abc', 1577901960, 1577902020, chartFilter).
+            returns(getTestDataBucket(7, 'c')).
+            withArgs('abc', 1577902020, 1577902080, chartFilter).
+            returns(getTestDataBucket(16, 'b'));
 
         await timeseriesVC._update();
 
@@ -68,7 +55,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             },
             {
                 label: 're-subscription',
@@ -79,7 +66,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             },
             {
                 label: 'cheer',
@@ -90,7 +77,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             },
             {
                 label: 'subscription',
@@ -101,7 +88,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             },
             {
                 label: 'ban',
@@ -112,7 +99,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             },
             {
                 label: 'anonymous gift',
@@ -123,7 +110,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             },
             {
                 label: 'subscription gift',
@@ -134,7 +121,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             },
             {
                 label: 'subscription mystery',
@@ -145,7 +132,7 @@ describe('timeseriesVC.js', () => {
                     1, 2, 3, 4,
                     5, 6, 7, 16
                 ],
-                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { a: 8, d: 8 }]
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             }
         ]);
         assert.deepEqual(timeseriesVC._getRootLabels().map(t => t.unix()),
@@ -159,18 +146,18 @@ describe('timeseriesVC.js', () => {
             endBucket: 1577901780,
             interval: constants.BUCKET_MIN,
             length: 4,
-            searchValue: undefined,
+            filter: chartFilter,
             startBucket: 1577901600,
         });
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(1, { 'a': 1 })).
-            withArgs('abc', 1577901660, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(2, { 'b': 2 })).
-            withArgs('abc', 1577901720, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(3, { 'c': 3 })).
-            withArgs('abc', 1577901780, constants.BUCKET_MIN, undefined).
-            returns(getDummyData(4, { 'e': 4 }))
+            withArgs('abc', 1577901600, 1577901660, chartFilter).
+            returns(getTestDataBucket(1, 'a')).
+            withArgs('abc', 1577901660, 1577901720, chartFilter).
+            returns(getTestDataBucket(2, 'b')).
+            withArgs('abc', 1577901720, 1577901780, chartFilter).
+            returns(getTestDataBucket(3, 'c')).
+            withArgs('abc', 1577901780, 1577901840, chartFilter).
+            returns(getTestDataBucket(4, 'e'));
 
         await timeseriesVC._update();
 
