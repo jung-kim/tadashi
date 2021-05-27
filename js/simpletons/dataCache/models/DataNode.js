@@ -21,6 +21,7 @@ class DataNode {
      * as Cheers is likely to overshadow other events in comparison charts.
      * 
      * @param {Object} raw event data
+     * @returns {undefined}
      */
     add(raw) {
         const value = raw.bits ? raw.bits / 100 : 1;

@@ -21,9 +21,9 @@ describe('chatsByUsersVC.js', () => {
             startBucket: 1577901600,
         });
 
-        const datBucket = getTestDataBucket(2, 'a')
-            .merge(undefined, getTestDataBucket(2, 'c'))
-            .merge(undefined, getTestDataBucket(1, 'b'))
+        const datBucket = getTestDataBucket(2, 'a').
+            merge(undefined, getTestDataBucket(2, 'c')).
+            merge(undefined, getTestDataBucket(1, 'b'))
 
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020, undefined).
@@ -45,18 +45,18 @@ describe('chatsByUsersVC.js', () => {
             startBucket: 1577901600,
         });
 
-        datBucket.merge(undefined, getTestDataBucket(1, 'c'))
-            .merge(undefined, getTestDataBucket(5, 'd'))
-            .merge(undefined, getTestDataBucket(9, 'e'))
-            .merge(undefined, getTestDataBucket(1, 'f'))
-            .merge(undefined, getTestDataBucket(10, 'g'))
-            .merge(undefined, getTestDataBucket(7, 'h'))
-            .merge(undefined, getTestDataBucket(4, 'i'))
-            .merge(undefined, getTestDataBucket(4, 'j'))
-            .merge(undefined, getTestDataBucket(8, 'k'))
-            .merge(undefined, getTestDataBucket(2, 'l'))
-            .merge(undefined, getTestDataBucket(7, 'm'))
-            .merge(undefined, getTestDataBucket(7, 'o'));
+        datBucket.merge(undefined, getTestDataBucket(1, 'c')).
+            merge(undefined, getTestDataBucket(5, 'd')).
+            merge(undefined, getTestDataBucket(9, 'e')).
+            merge(undefined, getTestDataBucket(1, 'f')).
+            merge(undefined, getTestDataBucket(10, 'g')).
+            merge(undefined, getTestDataBucket(7, 'h')).
+            merge(undefined, getTestDataBucket(4, 'i')).
+            merge(undefined, getTestDataBucket(4, 'j')).
+            merge(undefined, getTestDataBucket(8, 'k')).
+            merge(undefined, getTestDataBucket(2, 'l')).
+            merge(undefined, getTestDataBucket(7, 'm')).
+            merge(undefined, getTestDataBucket(7, 'o'));
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020, undefined).
             returns(datBucket);

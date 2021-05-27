@@ -134,17 +134,17 @@ Twitch = {
 };
 
 getTestDataBucket = (count, name) => {
-    count = count || 1;
+    const adjustedCount = count || 1;
 
     return new DataBucket({
-        [constants.TYPE_CHAT]: new DataNode(count, { [name || 'a']: count }),
-        [constants.TYPE_RESUB]: new DataNode(count, { [name || 'b']: count }),
-        [constants.TYPE_CHEER]: new DataNode(count, { [name || 'c']: count }),
-        [constants.TYPE_SUB]: new DataNode(count, { [name || 'd']: count }),
-        [constants.TYPE_BAN]: new DataNode(count, { [name || 'e']: count }),
-        [constants.TYPE_ANONGIFT]: new DataNode(count, { [name || 'f']: count }),
-        [constants.TYPE_SUBGIFT]: new DataNode(count, { [name || 'g']: count }),
-        [constants.TYPE_SUBMYSTERY]: new DataNode(count, { [name || 'h']: count }),
+        [constants.TYPE_CHAT]: new DataNode(adjustedCount, { [name || 'a']: adjustedCount }),
+        [constants.TYPE_RESUB]: new DataNode(adjustedCount, { [name || 'b']: adjustedCount }),
+        [constants.TYPE_CHEER]: new DataNode(adjustedCount, { [name || 'c']: adjustedCount }),
+        [constants.TYPE_SUB]: new DataNode(adjustedCount, { [name || 'd']: adjustedCount }),
+        [constants.TYPE_BAN]: new DataNode(adjustedCount, { [name || 'e']: adjustedCount }),
+        [constants.TYPE_ANONGIFT]: new DataNode(adjustedCount, { [name || 'f']: adjustedCount }),
+        [constants.TYPE_SUBGIFT]: new DataNode(adjustedCount, { [name || 'g']: adjustedCount }),
+        [constants.TYPE_SUBMYSTERY]: new DataNode(adjustedCount, { [name || 'h']: adjustedCount }),
     });
 }
 

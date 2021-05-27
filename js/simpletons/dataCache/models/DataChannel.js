@@ -29,6 +29,7 @@ class DataChannel {
      * Add a raw events data into the cache to be served by services.
      * 
      * @param {Object} raw events data such as Chat.js or Cheer.js
+     * @returns {undefined}
      */
     add(raw) {
         const second = Math.floor(raw.timestamp / 1000);
@@ -57,6 +58,7 @@ class DataChannel {
 
     /**
      * Handles cache validation.  If any of the minute has changed, it's cache interval buckets are dropped.
+     * @returns {undefined}
      */
     _validateCache() {
         Array.from(this._updated).forEach(current => {

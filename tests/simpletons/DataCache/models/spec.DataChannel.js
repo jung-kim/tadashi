@@ -9,7 +9,6 @@ const Cheer = require('../../../../js/models/events/Cheer');
 const DataChannel = require('../../../../js/simpletons/dataCache/models/DataChannel');
 const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
-const DataBucket = require('../../../../js/simpletons/dataCache/models/DataBucket');
 const userFilter = chartFilter.getUserFilter();
 
 describe('DataChannel.js', () => {

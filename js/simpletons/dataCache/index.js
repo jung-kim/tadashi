@@ -1,5 +1,4 @@
 const DataChannel = require('./models/DataChannel');
-const DataNode = require('./models/DataNode');
 const eventSignals = require('../../helpers/signals').eventSignals;
 
 /**
@@ -21,6 +20,7 @@ class DataCache {
 
     /**
      * drops cache and starts fresh
+     * @returns {undefined}
      */
     reset() {
         this._data = {};
@@ -30,7 +30,7 @@ class DataCache {
      * validates if a raw data received is valid or not
      * 
      * @param {object} raw event data object such as Ban or Chat
-     * @returns if valid or not
+     * @returns {boolean} if valid or not
      */
     _isValidRaw(raw) {
         if (!raw.displayName) {
@@ -50,6 +50,7 @@ class DataCache {
      * ensure channel bucket exists within cache
      * 
      * @param {string} channel name
+     * @returns {undefined}
      */
     _ensureChannelExists(channel) {
         if (!this._data[channel]) {
@@ -62,7 +63,7 @@ class DataCache {
      * 
      * @param {string} channel name
      * @param {object} raw event data object such as Ban or Chat
-     * @returns nothing
+     * @returns {undefined}
      */
     add(channel, raw) {
         if (!this._isValidRaw(raw)) {

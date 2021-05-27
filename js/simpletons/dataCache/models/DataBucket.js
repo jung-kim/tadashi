@@ -35,6 +35,7 @@ class DataBucket {
      * Add raw event object to the bucket cache
      * 
      * @param {object} raw event object to add to the bucket
+     * @returns {undefined}
      */
     add(raw) {
         this[utils.getMessageType(raw)].add(raw);
