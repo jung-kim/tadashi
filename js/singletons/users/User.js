@@ -1,4 +1,5 @@
 
+// Represents a user object
 class User {
     constructor(id, name, following, followedBy) {
         this._id = id;

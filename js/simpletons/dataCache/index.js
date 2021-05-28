@@ -29,7 +29,7 @@ class DataCache {
     /**
      * validates if a raw data received is valid or not
      * 
-     * @param {object} raw event data object such as Ban or Chat
+     * @param {Event} raw event data object such as Ban or Chat
      * @returns {boolean} if valid or not
      */
     _isValidRaw(raw) {
@@ -82,7 +82,7 @@ class DataCache {
      * @param {string} channel name
      * @param {number} startBucket start timestamp in seconds
      * @param {number} endBucket end timestamp in seconds
-     * @param {object} filter object
+     * @param {UserFilter} filter object
      * @returns {DataBucket} result
      */
     get(channel, startBucket, endBucket, filter) {

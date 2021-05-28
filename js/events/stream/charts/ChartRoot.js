@@ -131,7 +131,6 @@ class ChartRoot {
      */
     _defaultChartOptions() {
         return {
-            k: 111,
             type: this._type,
             data: {
                 labels: [],

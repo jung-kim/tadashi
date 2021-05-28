@@ -48,8 +48,8 @@ class DataChannel {
     /**
      * get data at the time from _data without using _cache.
      * 
-     * @param {*} timeBucket: time to get
-     * @returns {AggBucket}: Minute level agg bucket
+     * @param {number} timeBucket timebucket to get in seconds
+     * @returns {DataBucket} Minute level agg bucket
      */
     _getAt(timeBucket) {
         const minLevelData = this._data[timeBucket];

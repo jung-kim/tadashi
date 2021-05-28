@@ -125,7 +125,6 @@ class TimeseriesVC extends ChartRoot {
         }
 
         return {
-            k: 99,
             type: 'bar',
             data: {
                 labels: [],

@@ -48,12 +48,12 @@ class TwitchClient {
     }
 
     async initializeClient() {
-        if (twitchClient._initPromise) {
-            await twitchClient._initPromise;
-        }
         if (this._client) {
             // already initialized
             return;
+        }
+        if (twitchClient._initPromise) {
+            await twitchClient._initPromise;
         }
 
         if (!this.getChannel()) {
@@ -143,11 +143,7 @@ class TwitchClient {
         this.ping();
         const raw = new clazz(arg1, arg2, arg3, arg4);
 
-        if (channel.charAt(0) === '#') {
-            dataCache.add(channel.substring(1), raw);
-        } else {
-            dataCache.add(channel, raw);
-        }
+        dataCache.add(channel.charAt(0) === '#' ? channel.substring(1) : channel, raw);
     }
 
     _disable() {
@@ -188,7 +184,7 @@ class TwitchClient {
 
     /**
      * Set channel id 
-     * @param {int} id if set, cache id. if id is not set and channel exists, then id is from fetch. else nothing.
+     * @param {number} id if set, cache id. if id is not set and channel exists, then id is from fetch. else nothing.
      * @returns {undefined}
      */
     async _setChannelID(id) {
@@ -197,8 +193,6 @@ class TwitchClient {
         } else if (this.getChannel()) {
             const resp = await api.queryTwitchApi(`kraken/users?login=${this.getChannel()}`);
             this._channelID = parseInt(resp.users[0]._id);
-        } else {
-            return;
         }
     }
 
