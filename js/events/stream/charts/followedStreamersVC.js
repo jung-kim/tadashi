@@ -3,11 +3,11 @@ const ChartRoot = require('./ChartRoot');
 const users = require('../../../singletons/users');
 const twitchClient = require('../../../singletons/twitchClient');
 
-const chartFollowedStreamersHelperContent = `<p>Top 19 followed streamers from viewers<br>
-Includes data from both current viewers and the viewers who have left as well.
+const chartFollowedStreamersHelperContent = `<p>Top 10 followed streamers by viewers</br>
+Includes data from both current viewers and the viewers who have left as well during the data capture period.</br> 
 </br></br>
-- followed by admirers: number of another stream is followed from current stream viewers who are not following current streamer.</br>
-- Followed by followers: number of another stream is followed from current stream viewers who are following current streamer.</br>
+- followed by admirers: number of viewers following the target streamer but not current streamer.</br>
+- followed by followers: number of viewers following the target streamd and current streamer.</br>
 - unknown: data hasn't beent fetched yet and is unkonwn.
 </p>`
 

@@ -49,12 +49,25 @@ class User {
         }
     }
 
+    addSubscribedTo(userID) {
+        if (userID) {
+            if (!this._subscribedBy) {
+                this._subscribedBy = new Set();
+            }
+            this._subscribedBy.add(userID);
+        }
+    }
+
     getFollowingCounts() {
         return this._following ? this._following.size : undefined;
     }
 
     getFollowedByCounts() {
         return this._followedBy ? this._followedBy.size : undefined;
+    }
+
+    getSubscribedToCount() {
+        return this._subscribedBy ? this._subscribedBy.size : undefined;
     }
 
     /**
@@ -75,6 +88,10 @@ class User {
      */
     isFollowedBy(targetUserID) {
         return this._followedBy ? this._followedBy.has(targetUserID) : undefined;
+    }
+
+    isSubscribedTo(targetUserID) {
+        return this._subscribedBy ? this._subscribedBy.has(targetUserID) : undefined;
     }
 }
 

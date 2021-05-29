@@ -32,6 +32,7 @@ class Users {
                 userIDFetcher.reset();
                 userFollowsFetcher.reset();
                 // channelFollowsFetcher.fetch(payload.data.id);
+                this._ensureUserExists(payload.data.id, payload.data.channel)
                 break;
             case 'fetch.channel.follows.resp':
                 this.processUserFollowsResp(payload.data);
