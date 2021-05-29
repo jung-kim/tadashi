@@ -32,7 +32,7 @@ describe('proceedsByUsersVC.js', () => {
             merge(undefined, getTestDataBucket(3, 'k')).
             merge(undefined, getTestDataBucket(5, 'l'))
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577902020, undefined).
+            withArgs('abc', 1577901600, 1577902020 + 60, undefined).
             returns(dataBucket);
 
         document.getElementById.withArgs(proceedsByUsersVC._chartDomSelector).returns({});

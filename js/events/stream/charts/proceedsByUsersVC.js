@@ -37,12 +37,11 @@ class ProceedsByUsersVC extends ChartRoot {
 
     async _update() {
         const { channel, filter, startBucket, endBucket } = await this._getParameters();
-        const cache = {};
-        const dataBucket = dataCache.get(channel, startBucket, endBucket, filter);
+        // endBucket + 60 since endbucket is exclusive
+        const dataBucket = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN, filter);
 
         const total = this._proceedsTypesToProcess.reduce((prev, type) => {
-            cache[type] = dataBucket[type];
-            return prev ? prev.merge(undefined, cache[type]) : dataBucket[type].getCopy();
+            return prev ? prev.merge(undefined, dataBucket[type]) : dataBucket[type].getCopy();
         }, null);
 
         const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
@@ -56,7 +55,7 @@ class ProceedsByUsersVC extends ChartRoot {
             labels[i] = userName;
             data[i] = sorted[i][1];
             this._sumByType[i] = this._proceedsTypesToProcess.reduce((prev, type) => {
-                const value = cache[type]._users[userName];
+                const value = dataBucket[type]._users[userName];
                 if (value) {
                     prev[type] = value;
                 }

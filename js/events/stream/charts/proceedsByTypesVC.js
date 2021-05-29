@@ -40,7 +40,8 @@ class ProceedsByTypesVC extends ChartRoot {
         const { channel, filter, startBucket, endBucket } = await this._getParameters();
         const datasets = this._getDataset();
         const data = datasets[0].data;
-        const total = dataCache.get(channel, startBucket, endBucket, filter);
+        // endBucket + 60 since endbucket is exclusive
+        const total = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN, filter);
 
         data[0] = total[constants.TYPE_CHEER]._sum;
         data[1] = total[constants.TYPE_SUB]._sum;

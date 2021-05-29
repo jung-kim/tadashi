@@ -20,7 +20,7 @@ describe('proceedsByTypesVC.js', () => {
             startBucket: 1577901600,
         });
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577902020, undefined).
+            withArgs('abc', 1577901600, 1577902020 + 60, undefined).
             returns(getTestDataBucket(10))
         document.getElementById.withArgs(proceedsByTypesVC._chartDomSelector).returns({});
         proceedsByTypesVC.reset();

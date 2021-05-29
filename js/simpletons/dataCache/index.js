@@ -79,6 +79,8 @@ class DataCache {
     /**
      * Get a DataNode that represents aggregate data over {startBucket} ~ {endBucket} period.
      * 
+     * startBucket is inclusive, endBucket is exclusive
+     * 
      * @param {string} channel name
      * @param {number} startBucket start timestamp in seconds
      * @param {number} endBucket end timestamp in seconds

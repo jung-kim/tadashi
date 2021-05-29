@@ -26,7 +26,7 @@ describe('chatsByUsersVC.js', () => {
             merge(undefined, getTestDataBucket(1, 'b'))
 
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577902020, undefined).
+            withArgs('abc', 1577901600, 1577902020 + 60, undefined).
             returns(datBucket);
         document.getElementById.withArgs(chatsByUsersVC._chartDomSelector).returns({});
         chatsByUsersVC.reset();
@@ -58,7 +58,7 @@ describe('chatsByUsersVC.js', () => {
             merge(undefined, getTestDataBucket(7, 'm')).
             merge(undefined, getTestDataBucket(7, 'o'));
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577902020, undefined).
+            withArgs('abc', 1577901600, 1577902020 + 60, undefined).
             returns(datBucket);
         await chatsByUsersVC._update();
         assert.deepEqual(chatsByUsersVC._getDataset()[0].data, [10, 9, 8, 7, 7, 7, 5, 4, 4, 3]);
