@@ -3,13 +3,13 @@ const User = require('../../../js/singletons/users/User');
 
 describe('User.js', () => {
     it('new()', () => {
-        const u1 = new User(123, 'abc');
+        const u1 = getUserObject(123, 'abc');
         assert.equal(u1._id, 123);
         assert.equal(u1._userName, 'abc');
         assert.isUndefined(u1._following);
         assert.isUndefined(u1._followedBy);
 
-        const u2 = new User(undefined, 'abc', [1], [2]);
+        const u2 = getUserObject(undefined, 'abc', [1], [2]);
         assert.isUndefined(u2._id);
         assert.equal(u2._userName, 'abc');
         assert.deepEqual(u2._following, new Set([1]));
@@ -18,7 +18,7 @@ describe('User.js', () => {
 
     describe('addFollowing()', () => {
         it('default', () => {
-            const u1 = new User(123, 'abc');
+            const u1 = getUserObject(123, 'abc');
             assert.isUndefined(u1._following);
 
             u1.addFollowing(1);
@@ -36,7 +36,7 @@ describe('User.js', () => {
         });
 
         it('undefined', () => {
-            const u1 = new User(123, 'abc');
+            const u1 = getUserObject(123, 'abc');
 
             u1.addFollowing();
 
@@ -46,7 +46,7 @@ describe('User.js', () => {
 
     describe('addFollowedBy()', () => {
         it('default', () => {
-            const u1 = new User(123, 'abc');
+            const u1 = getUserObject(123, 'abc');
             assert.isUndefined(u1._followedBy);
 
             u1.addFollowedBy(1);
@@ -64,7 +64,7 @@ describe('User.js', () => {
         });
 
         it('undefined', () => {
-            const u1 = new User(123, 'abc');
+            const u1 = getUserObject(123, 'abc');
 
             u1.addFollowedBy();
 
@@ -73,7 +73,7 @@ describe('User.js', () => {
     });
 
     it('isFollowing()', () => {
-        const u1 = new User(123, 'abc');
+        const u1 = getUserObject(123, 'abc');
 
         assert.isUndefined(u1.isFollowing(1));
 
@@ -83,7 +83,7 @@ describe('User.js', () => {
     });
 
     it('isFollowedBy()', () => {
-        const u1 = new User(123, 'abc');
+        const u1 = getUserObject(123, 'abc');
 
         assert.isUndefined(u1.isFollowedBy(1));
 
@@ -93,7 +93,7 @@ describe('User.js', () => {
     });
 
     it('getFollowingCounts', () => {
-        const u1 = new User(123, 'abc');
+        const u1 = getUserObject(123, 'abc');
 
         assert.isUndefined(u1.getFollowingCounts());
 
@@ -106,7 +106,7 @@ describe('User.js', () => {
     });
 
     it('getFollowedByCounts', () => {
-        const u1 = new User(123, 'abc');
+        const u1 = getUserObject(123, 'abc');
 
         assert.isUndefined(u1.getFollowedByCounts());
 
@@ -119,7 +119,7 @@ describe('User.js', () => {
     });
 
     it('getUserName', () => {
-        const u1 = new User(123, 'abc');
+        const u1 = getUserObject(123, 'abc');
         assert.equal(u1.getUserName(), 'abc');
     });
 });

@@ -16,9 +16,9 @@ describe('Chatters.js', () => {
         testUtils.setChattersStubs();
         filter.changeSearchString();
         const c = new Chatters('viewers', [
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
-            new User(11, 'bb'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
+            getUserObject(11, 'bb'),
         ]);
         delete c.toNextPage;
         delete c.toPreviousPage;
@@ -27,9 +27,9 @@ describe('Chatters.js', () => {
             _key: 'viewers',
             _pageNumber: 0,
             allChatters: [
-                new User(undefined, 'aa'),
-                new User(undefined, 'ab'),
-                new User(11, 'bb'),
+                getUserObject(undefined, 'aa'),
+                getUserObject(undefined, 'ab'),
+                getUserObject(11, 'bb'),
             ]
         });
         sinon.assert.callCount(document.getElementById, 5);
@@ -37,20 +37,20 @@ describe('Chatters.js', () => {
         testUtils.setChattersStubs();
         c._pageNumber = 16
         c.update([
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
-            new User(11, 'bb'),
-            new User(undefined, 'abc'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
+            getUserObject(11, 'bb'),
+            getUserObject(undefined, 'abc'),
         ]);
         assert.deepOwnInclude(c, {
             _chatterContainerDom: 'insertAdjacentHTMLCall',
             _key: 'viewers',
             _pageNumber: 0,
             allChatters: [
-                new User(undefined, 'aa'),
-                new User(undefined, 'ab'),
-                new User(11, 'bb'),
-                new User(undefined, 'abc'),
+                getUserObject(undefined, 'aa'),
+                getUserObject(undefined, 'ab'),
+                getUserObject(11, 'bb'),
+                getUserObject(undefined, 'abc'),
             ],
         });
         sinon.assert.callCount(document.getElementById, 3);

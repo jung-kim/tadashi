@@ -32,17 +32,17 @@ describe('userFilter.js', () => {
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a'));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a'));
         sinon.stub(twitchClient, 'getChannelID').returns(22);
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(22);
         assert.isTrue(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [], [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [], [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(44);
         assert.isFalse(filter.isApplicable('a'));
     });
@@ -53,17 +53,17 @@ describe('userFilter.js', () => {
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a'));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a'));
         sinon.stub(twitchClient, 'getChannelID').returns(22);
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(22);
         assert.isFalse(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(new User(1, 'a', [], [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [], [22, 33]));
         sinon.stub(twitchClient, 'getChannelID').returns(44);
         assert.isTrue(filter.isApplicable('a'));
     });
@@ -103,39 +103,39 @@ describe('userFilter.js', () => {
     it('filterUsers', () => {
         filter.changeSearchString();
         assert.deepEqual(filter.filterUsers([
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
-            new User(11, 'bb'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
+            getUserObject(11, 'bb'),
         ]), [
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
-            new User(11, 'bb'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
+            getUserObject(11, 'bb'),
         ]);
 
         filter.changeSearchString('a');
         assert.deepEqual(filter.filterUsers([
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
-            new User(11, 'bb'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
+            getUserObject(11, 'bb'),
         ]), [
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
         ]);
 
         filter.changeSearchString('bb');
         assert.deepEqual(filter.filterUsers([
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
-            new User(11, 'bb'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
+            getUserObject(11, 'bb'),
         ]), [
-            new User(11, 'bb'),
+            getUserObject(11, 'bb'),
         ]);
 
         filter.changeSearchString('bbb');
         assert.deepEqual(filter.filterUsers([
-            new User(undefined, 'aa'),
-            new User(undefined, 'ab'),
-            new User(11, 'bb'),
+            getUserObject(undefined, 'aa'),
+            getUserObject(undefined, 'ab'),
+            getUserObject(11, 'bb'),
         ]), []);
     });
 });

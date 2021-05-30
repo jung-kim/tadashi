@@ -1,16 +1,9 @@
 
 // Represents a user object
 class User {
-    constructor(id, name, following, followedBy) {
+    constructor(id, name) {
         this._id = id;
         this._userName = name;
-
-        if (following) {
-            this._following = new Set(following);    // ids of users this user is following
-        }
-        if (followedBy) {
-            this._followedBy = new Set(followedBy);  // ids of users this user is followed by
-        }
     }
 
     getID() {
@@ -49,12 +42,32 @@ class User {
         }
     }
 
-    addSubscribedTo(userID) {
-        if (userID) {
-            if (!this._subscribedBy) {
-                this._subscribedBy = new Set();
+    /**
+     * 
+     * @param {object} subObject Inthe format of:
+     * https://dev.twitch.tv/docs/api/reference#Get-Broadcaster-Subscriptions
+     * 
+     * {
+        "broadcaster_id": "141981764",
+        "broadcaster_login": "twitchdev",
+        "broadcaster_name": "TwitchDev",
+        "gifter_id": "12826",
+        "gifter_login": "twitch",
+        "gifter_name": "Twitch",
+        "is_gift": true,
+        "tier": "1000",
+        "plan_name": "Channel Subscription (twitchdev)",
+        "user_id": "527115020",
+        "user_name": "twitchgaming",
+        "user_login": "twitchgaming"
+       }
+     */
+    addSubscribedTo(subObject) {
+        if (subObject) {
+            if (!this._subscribedTo) {
+                this._subscribedTo = {};
             }
-            this._subscribedBy.add(userID);
+            this._subscribedTo[subObject.broadcaster_id] = subObject;
         }
     }
 
@@ -67,7 +80,7 @@ class User {
     }
 
     getSubscribedToCount() {
-        return this._subscribedBy ? this._subscribedBy.size : undefined;
+        return this._subscribedTo ? this._subscribedTo.size : undefined;
     }
 
     /**
@@ -91,7 +104,7 @@ class User {
     }
 
     isSubscribedTo(targetUserID) {
-        return this._subscribedBy ? this._subscribedBy.has(targetUserID) : undefined;
+        return this._subscribedTo ? this._subscribedTo.has(targetUserID) : undefined;
     }
 }
 

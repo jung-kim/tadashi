@@ -108,6 +108,7 @@ const auth = require('../js/simpletons/auth');
 const DataBucket = require('../js/simpletons/dataCache/models/DataBucket');
 const constants = require('../js/helpers/constants');
 const DataNode = require('../js/simpletons/dataCache/models/DataNode');
+const User = require('../js/singletons/users/User');
 const filter = require('../js/events/shared/chartFilter').getUserFilter();
 
 Handlebars.registerHelper('userFollowsCSS', () => {
@@ -146,6 +147,19 @@ getTestDataBucket = (count, name) => {
         [constants.TYPE_SUBGIFT]: new DataNode(adjustedCount, { [name || 'g']: adjustedCount }),
         [constants.TYPE_SUBMYSTERY]: new DataNode(adjustedCount, { [name || 'h']: adjustedCount }),
     });
+}
+
+getUserObject = (userID, name, following, followedBy) => {
+    const user = new User(userID, name);
+
+    if (following) {
+        user._following = new Set(following)
+    }
+    if (followedBy) {
+        user._followedBy = new Set(followedBy)
+    }
+
+    return user;
 }
 
 /*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

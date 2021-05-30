@@ -17,10 +17,10 @@ describe('followedStreamersVC.js', () => {
 
     it('_update', () => {
         users._idToUser = {
-            1: new User(1, 'a'),
-            2: new User(1, 'b'),
-            3: new User(1, 'c'),
-            4: new User(1, 'd'),
+            1: getUserObject(1, 'a'),
+            2: getUserObject(1, 'b'),
+            3: getUserObject(1, 'c'),
+            4: getUserObject(1, 'd'),
         }
 
         sinon.stub(twitchClient, 'getChannelID').returns(123);

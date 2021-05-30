@@ -3,7 +3,6 @@ const sinon = require('sinon');
 const constants = require('../../../js/helpers/constants');
 
 const users = require("../../../js/singletons/users");
-const User = require('../../../js/singletons/users/User');
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
 const chartFilter = require('../../../js/events/shared/chartFilter');
@@ -12,7 +11,7 @@ const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 describe('users.js', () => {
     beforeEach(() => {
-        users.reset();
+        reset();
     });
 
     afterEach(() => {
@@ -22,26 +21,26 @@ describe('users.js', () => {
     });
 
     it('processUserIDsResp()', () => {
-        const aUser = new User(0, 'a');
-        const bUser = new User(undefined, 'b');
-        const cUser = new User(3, 'c');
+        const aUser = getUserObject(0, 'a');
+        const bUser = getUserObject(undefined, 'b');
+        const cUser = getUserObject(3, 'c');
         const stub = sinon.stub(userFollowsFetcher, 'add');
 
         users._idToUser = { 0: aUser, 3: cUser };
         users._nameToUser = { 'a': aUser, 'b': bUser, 'c': cUser };
         users.processUserIDsResp({ data: [{ login: 'A', id: 1 }, { login: 'B', id: 2 }, { login: 'D', id: 4 }] });
         assert.deepEqual(users._nameToUser, {
-            'a': new User(1, 'a'),
-            'b': new User(2, 'b'),
-            'c': new User(3, 'c'),
-            'd': new User(4, 'D'),
+            'a': getUserObject(1, 'a'),
+            'b': getUserObject(2, 'b'),
+            'c': getUserObject(3, 'c'),
+            'd': getUserObject(4, 'D'),
         });
         assert.deepEqual(users._idToUser, {
-            0: new User(1, 'a'), // this demonstrates an odd case where id changes
-            1: new User(1, 'a'),
-            2: new User(2, 'b'),
-            3: new User(3, 'c'),
-            4: new User(4, 'D'),
+            0: getUserObject(1, 'a'), // this demonstrates an odd case where id changes
+            1: getUserObject(1, 'a'),
+            2: getUserObject(2, 'b'),
+            3: getUserObject(3, 'c'),
+            4: getUserObject(4, 'D'),
         });
 
         sinon.assert.calledOnce(stub.withArgs(1));
@@ -49,9 +48,9 @@ describe('users.js', () => {
     });
 
     it('processUserFollowsResp()', () => {
-        const aUser = new User(1, 'a');
-        const bUser = new User(2, 'b');
-        const cUser = new User(3, 'c');
+        const aUser = getUserObject(1, 'a');
+        const bUser = getUserObject(2, 'b');
+        const cUser = getUserObject(3, 'c');
 
         users._idToUser = { 1: aUser, 2: bUser, 3: cUser };
         users._nameToUser = { 'a': aUser, 'b': bUser, 'c': cUser };
@@ -65,18 +64,18 @@ describe('users.js', () => {
         });
 
         assert.deepEqual(users._idToUser, {
-            1: new User(1, 'a', [11, 22]),
-            2: new User(2, 'b'),
-            3: new User(3, 'c'),
-            11: new User(11, 'aa', undefined, [1]),
-            22: new User(22, 'bb', undefined, [1]),
+            1: getUserObject(1, 'a', [11, 22]),
+            2: getUserObject(2, 'b'),
+            3: getUserObject(3, 'c'),
+            11: getUserObject(11, 'aa', undefined, [1]),
+            22: getUserObject(22, 'bb', undefined, [1]),
         });
         assert.deepEqual(users._nameToUser, {
-            a: new User(1, 'a', [11, 22]),
-            b: new User(2, 'b'),
-            c: new User(3, 'c'),
-            aa: new User(11, 'aa', undefined, [1]),
-            bb: new User(22, 'bb', undefined, [1]),
+            a: getUserObject(1, 'a', [11, 22]),
+            b: getUserObject(2, 'b'),
+            c: getUserObject(3, 'c'),
+            aa: getUserObject(11, 'aa', undefined, [1]),
+            bb: getUserObject(22, 'bb', undefined, [1]),
         });
         sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: `chatters.data.update.partial` }));
 
@@ -90,29 +89,31 @@ describe('users.js', () => {
 
 
         assert.deepEqual(users._idToUser, {
-            1: new User(1, 'a', [11, 22, 33]),
-            2: new User(2, 'b', [44]),
-            3: new User(3, 'c'),
-            11: new User(11, 'aa', undefined, [1]),
-            22: new User(22, 'bb', undefined, [1]),
-            33: new User(33, 'cc', undefined, [1]),
-            44: new User(44, 'dd', undefined, [2]),
+            1: getUserObject(1, 'a', [11, 22, 33]),
+            2: getUserObject(2, 'b', [44]),
+            3: getUserObject(3, 'c'),
+            11: getUserObject(11, 'aa', undefined, [1]),
+            22: getUserObject(22, 'bb', undefined, [1]),
+            33: getUserObject(33, 'cc', undefined, [1]),
+            44: getUserObject(44, 'dd', undefined, [2]),
         });
         assert.deepEqual(users._nameToUser, {
-            a: new User(1, 'a', [11, 22, 33]),
-            b: new User(2, 'b', [44]),
-            c: new User(3, 'c'),
-            aa: new User(11, 'aa', undefined, [1]),
-            bb: new User(22, 'bb', undefined, [1]),
-            cc: new User(33, 'cc', undefined, [1]),
-            dd: new User(44, 'dd', undefined, [2]),
+            a: getUserObject(1, 'a', [11, 22, 33]),
+            b: getUserObject(2, 'b', [44]),
+            c: getUserObject(3, 'c'),
+            aa: getUserObject(11, 'aa', undefined, [1]),
+            bb: getUserObject(22, 'bb', undefined, [1]),
+            cc: getUserObject(33, 'cc', undefined, [1]),
+            dd: getUserObject(44, 'dd', undefined, [2]),
         });
         sinon.assert.calledTwice(eventSignals.dispatch.withArgs({ event: `chatters.data.update.partial` }));
     });
 
     describe('processChattersData()', () => {
         it('default cases', async () => {
-            users._nameToUser = { 'a': new User(1, 'a') };
+            users._nameToUser = {
+                'a': getUserObject(1, 'a')
+            };
             users._idToUser = { 1: users._nameToUser['a'] };
             const idFetcherAddStub = sinon.stub(userIDFetcher, 'add').
                 withArgs('b').
@@ -125,28 +126,28 @@ describe('users.js', () => {
             }, 111);
 
             assert.deepEqual(users._nameToUser, {
-                a: new User(1, 'a'),
-                b: new User(undefined, 'b'),
-                c: new User(undefined, 'c'),
-                d: new User(undefined, 'd'),
+                a: getUserObject(1, 'a'),
+                b: getUserObject(undefined, 'b'),
+                c: getUserObject(undefined, 'c'),
+                d: getUserObject(undefined, 'd'),
             });
             assert.deepEqual(users._idToUser, {
-                1: new User(1, 'a'),
+                1: getUserObject(1, 'a'),
             });
 
             assert.deepEqual(users._viewers, {
-                broadcaster: [new User(1, 'a')],
+                broadcaster: [getUserObject(1, 'a')],
                 viewers: [
-                    new User(undefined, 'b'),
-                    new User(undefined, 'c'),
-                    new User(undefined, 'd'),
+                    getUserObject(undefined, 'b'),
+                    getUserObject(undefined, 'c'),
+                    getUserObject(undefined, 'd'),
                 ]
             });
             sinon.assert.calledOnce(idFetcherAddStub);
         });
 
         it('high viewers throttling', async () => {
-            users._nameToUser = { 'a': new User(1, 'a') };
+            users._nameToUser = { 'a': getUserObject(1, 'a') };
             users._idToUser = { 1: users._nameToUser['a'] };
 
             const idFetcherAddStub = sinon.stub(userIDFetcher, 'add');
@@ -203,9 +204,11 @@ describe('users.js', () => {
         it('channel.input.update', () => {
             const userIDFetch = sinon.stub(userIDFetcher, 'reset').withArgs();
             const userFollowsFetch = sinon.stub(userFollowsFetcher, 'reset').withArgs();
-            users._eventSignalFunc({ event: 'channel.input.update', data: { id: 1111 } });
+            const userEnsureStub = sinon.stub(users, '_ensureUserExists').withArgs(1111, 'aBcD')
+            users._eventSignalFunc({ event: 'channel.input.update', data: { id: 1111, channel: 'aBcD' } });
             sinon.assert.calledOnce(userIDFetch);
             sinon.assert.calledOnce(userFollowsFetch);
+            sinon.assert.calledOnce(userEnsureStub);
         });
 
         it('fetch.channel.follows.resp', () => {
@@ -216,9 +219,9 @@ describe('users.js', () => {
     });
 
     describe('getUsers', () => {
-        const userA = new User(111, 'a');
-        const userB = new User(222, 'a');
-        const userC = new User(333, 'a');
+        const userA = getUserObject(111, 'a');
+        const userB = getUserObject(222, 'a');
+        const userC = getUserObject(333, 'a');
 
         beforeEach(() => {
             users._idToUser = {
@@ -259,7 +262,7 @@ describe('users.js', () => {
 
             assert.deepEqual(users._idToUser, {});
             assert.deepEqual(users._nameToUser, {
-                aaa: new User(undefined, 'AAA'),
+                aaa: getUserObject(undefined, 'AAA'),
             });
         });
 
@@ -267,10 +270,10 @@ describe('users.js', () => {
             users._ensureUserExists(111, 'AAA');
 
             assert.deepEqual(users._idToUser, {
-                111: new User(111, 'AAA'),
+                111: getUserObject(111, 'AAA'),
             });
             assert.deepEqual(users._nameToUser, {
-                aaa: new User(111, 'AAA'),
+                aaa: getUserObject(111, 'AAA'),
             });
         });
 
@@ -299,14 +302,14 @@ describe('users.js', () => {
     it('getTopFollowedBySummary', () => {
         const userFilter = chartFilter.getUserFilter();
         users._idToUser = {
-            1: new User(1, 'a', [777], [11, 22, 33]),
-            11: new User(11, 'aa', [123], [1]),
-            22: new User(22, 'bb', undefined, [1]),
-            33: new User(33, 'cc', [123], [1]),
-            123: new User(123, 'abc', [], [11, 33]),
-            777: new User(777, 'ggg', [1]),
-            888: new User(888, 'hhh'),
-            999: new User(999)
+            1: getUserObject(1, 'a', [777], [11, 22, 33]),
+            11: getUserObject(11, 'aa', [123], [1]),
+            22: getUserObject(22, 'bb', undefined, [1]),
+            33: getUserObject(33, 'cc', [123], [1]),
+            123: getUserObject(123, 'abc', [], [11, 33]),
+            777: getUserObject(777, 'ggg', [1]),
+            888: getUserObject(888, 'hhh'),
+            999: getUserObject(999)
         }
 
         assert.deepEqual(users.getTopFollowedBySummary(123, userFilter), [
@@ -334,13 +337,13 @@ describe('users.js', () => {
 
     it('_getFollowedBySummary', () => {
         users._idToUser = {
-            1: new User(1, 'a', [777], [11, 22, 33]),
-            11: new User(11, 'aa', [123], [1]),
-            22: new User(22, 'bb', undefined, [1]),
-            33: new User(33, 'cc', [123], [1]),
-            123: new User(123, 'abc', [], [11, 33]),
-            777: new User(777, 'ggg', [1]),
-            888: new User(888, 'hhh'),
+            1: getUserObject(1, 'a', [777], [11, 22, 33]),
+            11: getUserObject(11, 'aa', [123], [1]),
+            22: getUserObject(22, 'bb', undefined, [1]),
+            33: getUserObject(33, 'cc', [123], [1]),
+            123: getUserObject(123, 'abc', [], [11, 33]),
+            777: getUserObject(777, 'ggg', [1]),
+            888: getUserObject(888, 'hhh'),
         }
 
         assert.deepEqual(users._getFollowedBySummary(123, 1), {

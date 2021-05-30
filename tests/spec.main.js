@@ -289,7 +289,7 @@ describe('main.js', () => {
         });
 
         it('user exists and not following is not fetched', () => {
-            const user = new User(1, 'abc');
+            const user = getUserObject(1, 'abc');
             sinon.stub(twitchClient, 'getChannelID').returns(111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
@@ -297,7 +297,8 @@ describe('main.js', () => {
         });
 
         it('user exists and follows', () => {
-            const user = new User(1, 'abc', [111]);
+            const user = getUserObject(1, 'abc', [111]);
+            user.addFollowing(111);
             sinon.stub(twitchClient, 'getChannelID').returns(111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
@@ -305,7 +306,8 @@ describe('main.js', () => {
         });
 
         it('user exists and not following', () => {
-            const user = new User(1, 'abc', [222]);
+            const user = getUserObject(1, 'abc', [222]);
+            user.addFollowing(222);
             sinon.stub(twitchClient, 'getChannelID').returns(111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
