@@ -283,7 +283,6 @@ describe('users.js', () => {
                 111: {
                     _id: 111,
                     _userName: 'AAA',
-                    userNameCSSClass: 'text-muted',
                     _test: 'test',
                 }
             });
@@ -291,7 +290,6 @@ describe('users.js', () => {
                 'aaa': {
                     _id: 111,
                     _userName: 'AAA',
-                    userNameCSSClass: 'text-muted',
                     _test: 'test',
                 }
             });

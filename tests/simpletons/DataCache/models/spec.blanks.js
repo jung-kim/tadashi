@@ -27,17 +27,6 @@ describe('blanks.js', () => {
             assert.deepEqual(blank, { _sum: 0, _users: {} });
             assert.deepEqual(merged, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
         });
-
-        it('split()', () => {
-            const blank = blanks.blankDataNode;
-            assert.deepEqual(blank, { _sum: 0, _users: {} });
-            const splited = blank.split();
-            assert.deepEqual(splited, { _sum: 0, _users: {} });
-
-            splited._sum = 3;
-            assert.deepEqual(blank, { _sum: 0, _users: {} });
-            assert.deepEqual(splited, { _sum: 3, _users: {} });
-        });
     });
 
     describe('blankDataBucket', () => {
@@ -80,21 +69,6 @@ describe('blanks.js', () => {
             assert.deepEqual(merged, {
                 ...testUtils.blankAggsBucketToCompare,
                 [constants.TYPE_CHAT]: new DataNode(1, { 'a': 1 }),
-            });
-        });
-
-        it('split()', () => {
-            const blank = blanks.blankDataBucket;
-            assert.deepEqual(blank, testUtils.blankAggsBucketToCompare);
-            const splitted = blank.split();
-            assert.deepEqual(splitted, testUtils.blankAggsBucketToCompare);
-
-            const dataNode = new DataNode(7, { 'aa': 4, 'bb': 3 });
-            splitted[constants.TYPE_CHAT] = dataNode;
-            assert.deepEqual(blank, testUtils.blankAggsBucketToCompare);
-            assert.deepEqual(splitted, {
-                ...testUtils.blankAggsBucketToCompare,
-                [constants.TYPE_CHAT]: dataNode,
             });
         });
     });

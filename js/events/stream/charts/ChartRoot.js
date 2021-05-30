@@ -15,8 +15,8 @@ class ChartRoot {
         this._helpContent = obj.helpContent;
         this._type = obj.type || 'doughnut';
 
-        this.update = _.throttle(() => {
-            this._update();
+        this.update = _.throttle(async () => {
+            await this._update();
             this._chartObject.update();
         }, obj.updateThrottleTime || 500);
 
@@ -131,7 +131,6 @@ class ChartRoot {
      */
     _defaultChartOptions() {
         return {
-            k: 111,
             type: this._type,
             data: {
                 labels: [],

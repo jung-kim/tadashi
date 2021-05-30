@@ -147,13 +147,13 @@ describe('ChartRoot.js', () => {
         });
     });
 
-    it('update', () => {
+    it('update', async () => {
         const chartRoot = new ChartRoot({ chartDomSelector: 'something' });
 
         const update = sinon.stub(chartRoot, '_update');
         chartRoot._chartObject = { update: sinon.stub() };
 
-        chartRoot.update();
+        await chartRoot.update();
 
         sinon.assert.calledOnce(chartRoot._chartObject.update);
         sinon.assert.calledOnce(update);

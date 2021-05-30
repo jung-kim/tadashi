@@ -4,6 +4,7 @@ const json = JSON.parse(require('fs').readFileSync(path.join(__dirname, '..', '/
 
 json.env.mocha = true;
 json.globals.reset = true;
+json.globals.getTestDataBucket = true;
 json.rules['max-lines'] = 'off';
 json.rules['no-sync'] = 'off';
 

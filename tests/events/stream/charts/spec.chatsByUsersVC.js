@@ -20,16 +20,14 @@ describe('chatsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal').
-            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHAT, undefined).
-            returns({
-                _sum: 5,
-                _users: {
-                    'a': 2,
-                    'b': 1,
-                    'c': 2,
-                }
-            });
+
+        const datBucket = getTestDataBucket(2, 'a').
+            merge(undefined, getTestDataBucket(2, 'c')).
+            merge(undefined, getTestDataBucket(1, 'b'))
+
+        sinon.stub(dataCache, 'get').
+            withArgs('abc', 1577901600, 1577902020 + 60, undefined).
+            returns(datBucket);
         document.getElementById.withArgs(chatsByUsersVC._chartDomSelector).returns({});
         chatsByUsersVC.reset();
 
@@ -46,30 +44,25 @@ describe('chatsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        sinon.stub(dataCache, 'getTotal').
-            withArgs('abc', 1577901600, 1577902020, constants.TYPE_CHAT, undefined).
-            returns({
-                _sum: 5,
-                _users: {
-                    'a': 2,
-                    'b': 1,
-                    'c': 2,
-                    'd': 5,
-                    'e': 9,
-                    'f': 1,
-                    'g': 10,
-                    'h': 7,
-                    'i': 4,
-                    'j': 4,
-                    'k': 8,
-                    'l': 2,
-                    'm': 7,
-                    'o': 7,
-                }
-            });
+
+        datBucket.merge(undefined, getTestDataBucket(1, 'c')).
+            merge(undefined, getTestDataBucket(5, 'd')).
+            merge(undefined, getTestDataBucket(9, 'e')).
+            merge(undefined, getTestDataBucket(1, 'f')).
+            merge(undefined, getTestDataBucket(10, 'g')).
+            merge(undefined, getTestDataBucket(7, 'h')).
+            merge(undefined, getTestDataBucket(4, 'i')).
+            merge(undefined, getTestDataBucket(4, 'j')).
+            merge(undefined, getTestDataBucket(8, 'k')).
+            merge(undefined, getTestDataBucket(2, 'l')).
+            merge(undefined, getTestDataBucket(7, 'm')).
+            merge(undefined, getTestDataBucket(7, 'o'));
+        sinon.stub(dataCache, 'get').
+            withArgs('abc', 1577901600, 1577902020 + 60, undefined).
+            returns(datBucket);
         await chatsByUsersVC._update();
-        assert.deepEqual(chatsByUsersVC._getDataset()[0].data, [10, 9, 8, 7, 7, 7, 5, 4, 4, 2]);
-        assert.deepEqual(chatsByUsersVC._getRootLabels(), ['g', 'e', 'k', 'h', 'm', 'o', 'd', 'i', 'j', 'a']);
+        assert.deepEqual(chatsByUsersVC._getDataset()[0].data, [10, 9, 8, 7, 7, 7, 5, 4, 4, 3]);
+        assert.deepEqual(chatsByUsersVC._getRootLabels(), ['g', 'e', 'k', 'h', 'm', 'o', 'd', 'i', 'j', 'c']);
     });
 
 });

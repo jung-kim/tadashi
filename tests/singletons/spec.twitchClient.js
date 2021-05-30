@@ -37,7 +37,7 @@ describe('twitchClient.js', () => {
             twitchClient._initPromise = new Promise((resolve) => {
                 setTimeout(resolve, 500);
             });
-
+            twitchClient._client = undefined;
             const start = Date.now();
             await twitchClient.initializeClient();
             const diff = Date.now() - start;

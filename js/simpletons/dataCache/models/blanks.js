@@ -2,6 +2,11 @@ const constants = require('../../../helpers/constants');
 const DataNode = require('./DataNode');
 const DataBucket = require('./DataBucket');
 
+/**
+ * Represents collections of empty DataNode or DataBucket to be served as default value.
+ * Strictly speaking, this object is not necessary, but this object will help prevent 
+ * creation of new object and thus reduce gc pressure.
+ */
 class BlankDataNode {
     constructor() {
         this._sum = 0;
@@ -10,18 +15,11 @@ class BlankDataNode {
     }
 
     merge(dataNode) {
-        const newThis = this.getCopy();
-        newThis.merge(dataNode);
-        return newThis;
+        return dataNode.getCopy();
     }
 
     getCopy() {
         return new DataNode(0, {});
-    }
-
-    split() {
-        // this shouldn't happen....
-        return this.getCopy();
     }
 }
 const blankDataNode = new BlankDataNode();
@@ -40,9 +38,7 @@ class BlankDataBucket {
     }
 
     merge(DataBucket) {
-        const newThis = this.getCopy();
-        newThis.merge(DataBucket);
-        return newThis;
+        return DataBucket.getCopy();
     }
 
     getCopy() {
@@ -56,11 +52,6 @@ class BlankDataBucket {
         toReturn[constants.TYPE_SUBGIFT] = new DataNode();
         toReturn[constants.TYPE_SUBMYSTERY] = new DataNode();
         return toReturn;
-    }
-
-    split() {
-        // this shouldn't happen....
-        return this.getCopy();
     }
 }
 const blankDataBucket = new BlankDataBucket();

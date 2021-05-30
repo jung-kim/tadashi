@@ -1,10 +1,10 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
 
-const constants = require('../../../js/helpers/constants');
 const Chat = require('../../../js/models/events/Chat');
 const dataCache = require("../../../js/simpletons/dataCache");
-const { blankDataBucket, blankDataNode } = require('../../../js/simpletons/dataCache/models/blanks');
+const { blankDataBucket } = require('../../../js/simpletons/dataCache/models/blanks');
+const DataChannel = require('../../../js/simpletons/dataCache/models/DataChannel');
 const filter = require('../../../js/events/shared/chartFilter').getUserFilter();
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
@@ -38,20 +38,13 @@ describe('dataCache/index.js', () => {
     });
 
     it('get', () => {
-        assert.deepEqual(dataCache.get('aaa', 1, 60, filter), blankDataBucket);
+        assert.deepEqual(dataCache.get('aaa', 0, 60, filter), blankDataBucket);
 
-        dataCache._data['aaa'] = { get: () => ({}) };
-        sinon.stub(dataCache._data['aaa'], 'get').withArgs(1, 60, filter).returns('test');
-        assert.equal(dataCache.get('aaa', 1, 60, filter), 'test');
-    });
+        dataCache._data['aaa'] = new DataChannel();
+        const get = sinon.stub(dataCache._data['aaa'], 'get').withArgs(0, 60, filter).returns('something');
 
-    it('getTotal', () => {
-        assert.deepEqual(dataCache.getTotal('aaa', 1, 60, constants.TYPE_CHAT, filter), blankDataNode);
-
-        dataCache._data['aaa'] = { getTotal: () => ({}) };
-        sinon.stub(dataCache._data['aaa'], 'getTotal').withArgs(1, 60, constants.TYPE_CHAT, filter).returns('test');
-        assert.equal(dataCache.getTotal('aaa', 1, 60, constants.TYPE_CHAT, filter), 'test');
-
+        assert.equal(dataCache.get('aaa', 0, 60, filter), 'something');
+        sinon.assert.calledOnce(get);
     });
 });
 

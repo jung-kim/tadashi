@@ -1,6 +1,7 @@
 const eventSignals = require('../../helpers/signals').eventSignals;
 const twitchClient = require('../../singletons/twitchClient');
-const twitchAPI = require('../../singletons/twitchAPI');
+const auth = require('../../simpletons/auth');
+const api = require('../../simpletons/api');
 const constants = require('../../helpers/constants');
 const chartFilter = require('../shared/chartFilter');
 
@@ -75,7 +76,7 @@ class NavOptionVC {
     }
 
     async _fetchList() {
-        const searchResult = await twitchAPI.getChannelSearch(this.lastSearchedChannel);
+        const searchResult = await api.getChannelSearch(this.lastSearchedChannel, auth.getAuthObj());
         this.channelInputAutoComplete.list = (searchResult.data || []).map(stream => stream.display_name);
     }
 
@@ -101,7 +102,7 @@ class NavOptionVC {
         document.getElementById('embeded-twitch-channel').innerText = channel;
 
         try {
-            this.streamInfo = await twitchAPI.getChannelInfo(channel);
+            this.streamInfo = await api.getChannelInfo(channel, auth.getAuthObj());
             if (this.streamInfo && this.streamInfo.data && this.streamInfo.data.length > 0) {
                 document.getElementById('embeded-twitch-desc').innerHTML = `${this.streamInfo.data[0].title}`;
             } else {
