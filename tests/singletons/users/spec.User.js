@@ -122,4 +122,84 @@ describe('User.js', () => {
         const u1 = getUserObject(123, 'abc');
         assert.equal(u1.getUserName(), 'abc');
     });
+
+
+    describe('addSubscribedTo', () => {
+        it('null case', () => {
+            const user = new User(123, 'abc')
+            user.addSubscribedTo();
+            assert.isUndefined(user._subscribedTo);
+        });
+
+        it('add valid object', () => {
+            const user = new User(123, 'abc')
+            user.addSubscribedTo({
+                broadcaster_id: 111,
+                plan_name: "Channel Subscription (twitchdev)",
+            });
+            assert.deepEqual(user._subscribedTo, {
+                111: {
+                    broadcaster_id: 111,
+                    plan_name: "Channel Subscription (twitchdev)",
+                }
+            });
+
+            user.addSubscribedTo({
+                broadcaster_id: 222,
+                plan_name: "Channel Subscription (twitchdev)",
+            });
+            assert.deepEqual(user._subscribedTo, {
+                111: {
+                    broadcaster_id: 111,
+                    plan_name: "Channel Subscription (twitchdev)",
+                },
+                222: {
+                    broadcaster_id: 222,
+                    plan_name: "Channel Subscription (twitchdev)",
+                }
+            });
+        });
+    });
+
+    it('getSubscribedToCount', () => {
+        const user = new User(123, 'abc')
+
+        assert.equal(user.getSubscribedToCount(), undefined);
+
+        user.addSubscribedTo({
+            broadcaster_id: 111,
+            plan_name: "Channel Subscription (twitchdev)",
+        });
+
+        assert.equal(user.getSubscribedToCount(), 1);
+
+        user.addSubscribedTo({
+            broadcaster_id: 222,
+            plan_name: "Channel Subscription (twitchdev)",
+        });
+
+        assert.equal(user.getSubscribedToCount(), 2);
+    });
+
+    describe('getSubscribedTo', () => {
+        it('undefined cases', () => {
+            const user = new User(123, 'abc');
+
+            assert.isUndefined(user.getSubscribedTo(9999));
+        });
+
+        it('match case', () => {
+            const user = new User(123, 'abc');
+
+            user.addSubscribedTo({
+                broadcaster_id: 111,
+                plan_name: "Channel Subscription (twitchdev)",
+            });
+
+            assert.deepEqual(user.getSubscribedTo(111), {
+                broadcaster_id: 111,
+                plan_name: "Channel Subscription (twitchdev)",
+            });
+        });
+    });
 });

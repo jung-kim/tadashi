@@ -80,7 +80,7 @@ class User {
     }
 
     getSubscribedToCount() {
-        return this._subscribedTo ? this._subscribedTo.size : undefined;
+        return this._subscribedTo ? Object.keys(this._subscribedTo).length : undefined;
     }
 
     /**
@@ -103,8 +103,8 @@ class User {
         return this._followedBy ? this._followedBy.has(targetUserID) : undefined;
     }
 
-    isSubscribedTo(targetUserID) {
-        return this._subscribedTo ? this._subscribedTo.has(targetUserID) : undefined;
+    getSubscribedTo(targetUserID) {
+        return this._subscribedTo ? this._subscribedTo[targetUserID] : undefined;
     }
 }
 
