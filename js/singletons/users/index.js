@@ -16,7 +16,7 @@ class Users {
         switch (payload.event) {
             case 'chatters.data.update':
                 this.processChattersData(payload.data, payload.channelID);
-                this.channelSubscribedFetcher(payload.channelID);
+                channelSubscribedFetcher.fetch(payload.channelID);
                 eventSignals.dispatch({ event: 'chatters.data.update.data' });
                 break;
             case 'fetch.user.ids.resp':

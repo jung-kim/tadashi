@@ -1,4 +1,5 @@
 const { assert } = require('chai');
+const User = require('../../../js/singletons/users/User');
 
 describe('User.js', () => {
     it('new()', () => {

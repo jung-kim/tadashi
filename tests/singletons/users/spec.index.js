@@ -6,6 +6,7 @@ const users = require("../../../js/singletons/users");
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
 const chartFilter = require('../../../js/events/shared/chartFilter');
+const channelSubscribedFetcher = require('../../../js/singletons/users/channelSubscribedFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 
@@ -176,8 +177,10 @@ describe('users.js', () => {
         it('chatters.data.update', () => {
             const processChattersData = sinon.stub(users, 'processChattersData').withArgs(["abc"], 123);
             const dispatch = eventSignals.dispatch.withArgs({ event: 'chatters.data.update.data' });
+            const fetch = sinon.stub(channelSubscribedFetcher, 'fetch').withArgs(123);
             users._eventSignalFunc({ event: 'chatters.data.update', data: ["abc"], channelID: 123 });
             sinon.assert.calledOnce(processChattersData);
+            sinon.assert.calledOnce(fetch);
             sinon.assert.calledOnce(dispatch);
         });
 
