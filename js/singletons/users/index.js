@@ -3,7 +3,7 @@ const eventSignals = require('../../helpers/signals').eventSignals;
 const User = require('./User');
 const userIDFetcher = require('./userIDFetcher');
 const userFollowsFetcher = require('./userFollowsFetcher');
-// const channelFollowsFetcher = require('./channelFollowsFetcher');
+const channelSubscribedFetcher = require('./channelSubscribedFetcher');
 const constants = require('../../helpers/constants');
 
 class Users {
@@ -16,6 +16,7 @@ class Users {
         switch (payload.event) {
             case 'chatters.data.update':
                 this.processChattersData(payload.data, payload.channelID);
+                this.channelSubscribedFetcher(payload.channelID);
                 eventSignals.dispatch({ event: 'chatters.data.update.data' });
                 break;
             case 'fetch.user.ids.resp':
@@ -24,9 +25,13 @@ class Users {
             case 'fetch.user.follows.resp':
                 this.processUserFollowsResp(payload.data);
                 break;
+            case 'fetch.channel.subscribed.resp':
+                this.processChannelSubscribedResp(payload.data);
+                break;
             case 'api.unthrottled':
                 userIDFetcher.fetch();
                 userFollowsFetcher.fetch();
+                channelSubscribedFetcher.fetch();
                 break;
             case 'channel.input.update':
                 userIDFetcher.reset();
@@ -188,6 +193,42 @@ class Users {
 
         // set follows for a user object
         eventSignals.dispatch({ event: `chatters.data.update.partial` });
+    }
+
+    /**
+     * for each user subscribed response, ensure users exists and set subcribed
+     * 
+     * @param {Object} resp result of https://dev.twitch.tv/docs/api/reference#get-users-follows
+     * {
+        "data": [
+            {
+            "broadcaster_id": "141981764",
+            "broadcaster_login": "twitchdev",
+            "broadcaster_name": "TwitchDev",
+            "gifter_id": "12826",
+            "gifter_login": "twitch",
+            "gifter_name": "Twitch",
+            "is_gift": true,
+            "tier": "1000",
+            "plan_name": "Channel Subscription (twitchdev)",
+            "user_id": "527115020",
+            "user_name": "twitchgaming",
+            "user_login": "twitchgaming"
+            },
+            ...
+        ],
+        "pagination": {
+            "cursor": "xxxx"
+        }
+     * }
+     * @returns {undefined}
+     * 
+     */
+    processChannelSubscribedResp(resp) {
+        resp.data.forEach(subscribed => {
+            this._ensureUserExists(subscribed.user_id, subscribed.user_name)
+                .addSubscribedTo(subscribed);
+        });
     }
 
     /**
