@@ -29,7 +29,6 @@ class ChannelSubscribedFetcher {
                 const path = `helix/subscriptions?first=100&broadcaster_id=${currentChannelID}`;
                 const resp = await api.queryTwitchApi(
                     this._paginations[currentChannelID] ? `${path}&after=${this._paginations[currentChannelID]}` : path, authObj);
-                console.log(23422, resp)
                 eventSignals.dispatch({ event: 'fetch.channel.subscribed.resp', data: resp, channelID: currentChannelID });
 
                 if (!resp.pagination || !resp.pagination.cursor) {

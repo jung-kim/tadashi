@@ -219,6 +219,13 @@ describe('users.js', () => {
             users._eventSignalFunc({ event: 'fetch.channel.follows.resp', data: ["abc"], channelID: 123 });
             sinon.assert.calledOnce(processChannelFollows);
         });
+
+        it('fetch.channel.subscribed.resp', () => {
+            const processChannelSubscribedResp = sinon.stub(users, 'processChannelSubscribedResp').withArgs({ a: 123 });
+            users._eventSignalFunc({ event: 'fetch.channel.subscribed.resp', data: { a: 123 } });
+            sinon.assert.calledOnce(processChannelSubscribedResp);
+
+        });
     });
 
     describe('getUsers', () => {
@@ -378,5 +385,85 @@ describe('users.js', () => {
         });
 
         assert.isUndefined(users._getFollowedBySummary(123, 17263));
+    });
+
+    it('processChannelSubscribedResp', () => {
+        console.log(28824)
+
+        users.processChannelSubscribedResp({
+            "data": [
+                {
+                    "broadcaster_id": "141981764",
+                    "broadcaster_login": "twitchdev",
+                    "broadcaster_name": "TwitchDev",
+                    "gifter_id": "12826",
+                    "gifter_login": "twitch",
+                    "gifter_name": "Twitch",
+                    "is_gift": true,
+                    "tier": "1000",
+                    "plan_name": "Channel Subscription (twitchdev)",
+                    "user_id": "527115020",
+                    "user_name": "twitchgaming",
+                    "user_login": "twitchgaming"
+                }, {
+                    "broadcaster_id": "141981764",
+                    "broadcaster_login": "twitchdev",
+                    "broadcaster_name": "TwitchDev",
+                    "gifter_id": "12826",
+                    "gifter_login": "twitch",
+                    "gifter_name": "Twitch",
+                    "is_gift": true,
+                    "tier": "1000",
+                    "plan_name": "Channel Subscription (twitchdev)",
+                    "user_id": "4444",
+                    "user_name": "oliver",
+                    "user_login": "0l1v3rD@Gr3@t3st"
+                },
+            ],
+        });
+
+        assert.deepEqual(users._idToUser, {
+            "4444": {
+                "_id": "4444",
+                "_subscribedTo": {
+                    "141981764": {
+                        "broadcaster_id": "141981764",
+                        "broadcaster_login": "twitchdev",
+                        "broadcaster_name": "TwitchDev",
+                        "gifter_id": "12826",
+                        "gifter_login": "twitch",
+                        "gifter_name": "Twitch",
+                        "is_gift": true,
+                        "plan_name": "Channel Subscription (twitchdev)",
+                        "tier": "1000",
+                        "user_id": "4444",
+                        "user_login": "0l1v3rD@Gr3@t3st",
+                        "user_name": "oliver"
+                    }
+                },
+                "_userName": "oliver"
+            },
+            "527115020": {
+                "_id": "527115020",
+                "_subscribedTo": {
+                    "141981764": {
+                        "broadcaster_id": "141981764",
+                        "broadcaster_login": "twitchdev",
+                        "broadcaster_name": "TwitchDev",
+                        "gifter_id": "12826",
+                        "gifter_login": "twitch",
+                        "gifter_name": "Twitch",
+                        "is_gift": true,
+                        "plan_name": "Channel Subscription (twitchdev)",
+                        "tier": "1000",
+                        "user_id": "527115020",
+                        "user_login": "twitchgaming",
+                        "user_name": "twitchgaming"
+                    }
+                },
+                "_userName": "twitchgaming"
+            }
+        })
+
     });
 });

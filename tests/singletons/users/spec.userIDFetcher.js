@@ -1,4 +1,3 @@
-const fetchMock = require('fetch-mock');
 const { assert } = require('chai');
 const sinon = require('sinon');
 
@@ -9,7 +8,6 @@ const { eventSignals } = require('../../../js/helpers/signals');
 
 describe('userIDFetcher.js', () => {
     beforeEach(() => {
-        fetchMock.reset();
         reset();
     });
 
@@ -30,19 +28,50 @@ describe('userIDFetcher.js', () => {
         assert.deepEqual(userIDFetcher._names, new Set(['a', 'b']));
     });
 
-    it('_fetch', async () => {
-        sinon.stub(auth, 'getAuthObj').returns({});
-        userIDFetcher.fetch = () => ({});
+    describe('_fetch', () => {
+        it('already running', async () => {
+            userIDFetcher._isRunning = true;
+            const getAuthStub = sinon.stub(auth, 'getAuthObj')
 
-        userIDFetcher.add('a');
-        userIDFetcher.add('b');
-        userIDFetcher.add('c');
+            userIDFetcher._fetch();
 
-        const fetchUserIDsForNames = sinon.stub(userIDFetcher, '_fetchUserIDsForNames');
+            sinon.assert.notCalled(getAuthStub);
+            assert.isTrue(userIDFetcher._isRunning);
+        });
 
-        await userIDFetcher._fetch();
+        it('success', async () => {
+            sinon.stub(auth, 'getAuthObj').returns({});
+            userIDFetcher.fetch = () => ({});
 
-        sinon.assert.calledOnce(fetchUserIDsForNames.withArgs({}, ['a', 'b', 'c']));
+            userIDFetcher.add('a');
+            userIDFetcher.add('b');
+            userIDFetcher.add('c');
+
+            const fetchUserIDsForNames = sinon.stub(userIDFetcher, '_fetchUserIDsForNames');
+
+            await userIDFetcher._fetch();
+
+            sinon.assert.calledOnce(fetchUserIDsForNames.withArgs({}, ['a', 'b', 'c']));
+            assert.isFalse(userIDFetcher._isRunning);
+        });
+
+
+        it('error', async () => {
+            sinon.stub(auth, 'getAuthObj').returns({});
+            userIDFetcher.fetch = () => ({});
+
+            userIDFetcher.add('a');
+            userIDFetcher.add('b');
+            userIDFetcher.add('c');
+
+            const fetchUserIDsForNames = sinon.stub(userIDFetcher, '_fetchUserIDsForNames')
+                .throws("something");
+
+            await userIDFetcher._fetch();
+
+            sinon.assert.calledOnce(fetchUserIDsForNames.withArgs({}, ['a', 'b', 'c']));
+            assert.isFalse(userIDFetcher._isRunning);
+        });
     });
 
     it('_fetchUserIDsForNames', async () => {

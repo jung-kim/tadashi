@@ -110,6 +110,8 @@ const constants = require('../js/helpers/constants');
 const DataNode = require('../js/simpletons/dataCache/models/DataNode');
 const User = require('../js/singletons/users/User');
 const filter = require('../js/events/shared/chartFilter').getUserFilter();
+const userIDFetcher = require('../js/singletons/users/userIDFetcher');
+const users = require('../js/singletons/users');
 
 Handlebars.registerHelper('userFollowsCSS', () => {
     // do nothing
@@ -128,6 +130,8 @@ reset = () => {
     flatpickr.reset();
     eventSignals.dispatch.reset();
     domSignals.dispatch.reset();
+    userIDFetcher._isRunning = undefined;
+    users.reset();
 }
 
 Twitch = {
