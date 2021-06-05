@@ -229,6 +229,7 @@ class Users {
             this._ensureUserExists(subscribed.user_id, subscribed.user_name)
                 .addSubscribedTo(subscribed);
         });
+        eventSignals.dispatch({ event: `fetch.channel.subscribed.refresh` });
     }
 
     /**
@@ -280,6 +281,30 @@ class Users {
                 }
             }).slice(0, 10).
             map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
+    }
+
+    getSubscriptionsByTiers(currentStreamerID, filter) {
+        return filter.filterUsers(Object.values(this._idToUser)).
+            filter(user => user.getSubscribedTo(currentStreamerID)).
+            reduce((res, curr) => {
+                const subscribedTo = curr.getSubscribedTo(currentStreamerID);
+                console.log(curr._id, subscribedTo)
+                if (subscribedTo) {
+                    if (!res[subscribedTo.tier]) {
+                        res[subscribedTo.tier] = {
+                            gifted: 0,
+                            notGifted: 0,
+                        }
+                    }
+
+                    if (subscribedTo.is_gift) {
+                        res[subscribedTo.tier].gifted++;
+                    } else {
+                        res[subscribedTo.tier].notGifted++;
+                    }
+                }
+                return res;
+            }, {});
     }
 
     /**
