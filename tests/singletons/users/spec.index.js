@@ -8,6 +8,7 @@ const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
 const chartFilter = require('../../../js/events/shared/chartFilter');
 const channelSubscribedFetcher = require('../../../js/singletons/users/channelSubscribedFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
+const User = require('../../../js/singletons/users/User');
 
 
 describe('users.js', () => {
@@ -388,8 +389,6 @@ describe('users.js', () => {
     });
 
     it('processChannelSubscribedResp', () => {
-        console.log(28824)
-
         users.processChannelSubscribedResp({
             "data": [
                 {
@@ -463,6 +462,69 @@ describe('users.js', () => {
                 },
                 "_userName": "twitchgaming"
             }
+        })
+
+    });
+
+    describe('getSubscriptionsByTiers', () => {
+        beforeEach(() => {
+            users._idToUser = {
+                1: new User(1, 'aaa'), // no subs
+                2: new User(2, 'bbb'), // subs to another
+                3: new User(3, 'ccc'), // tier 3000 gift subed
+                4: new User(4, 'ddd'), // tier 3000 subed
+                5: new User(5, 'eee'), // tier 1000 subed
+                6: new User(6, 'fff'), // tier 3000 subed
+            }
+
+            users._idToUser[2].addSubscribedTo({
+                broadcaster_id: 222,
+                tier: 3000,
+                is_gift: false,
+            });
+            users._idToUser[3].addSubscribedTo({
+                broadcaster_id: 111,
+                tier: 3000,
+                is_gift: true,
+            });
+            users._idToUser[4].addSubscribedTo({
+                broadcaster_id: 111,
+                tier: 3000,
+                is_gift: false,
+            });
+            users._idToUser[5].addSubscribedTo({
+                broadcaster_id: 111,
+                tier: 1000,
+                is_gift: false,
+            });
+            users._idToUser[6].addSubscribedTo({
+                broadcaster_id: 111,
+                tier: 3000,
+                is_gift: false,
+            });
+
+        })
+
+        it('empty', () => {
+            const res = users.getSubscriptionsByTiers(0, chartFilter.getUserFilter());
+
+            assert.deepEqual(res, {});
+        });
+
+        it('with a match', () => {
+            const res = users.getSubscriptionsByTiers(111, chartFilter.getUserFilter());
+            console.log(2342, res)
+
+            assert.deepEqual(res, {
+                1000: {
+                    gifted: 0,
+                    notGifted: 1
+                },
+                3000: {
+                    gifted: 1,
+                    notGifted: 2
+                }
+            });
         })
 
     });
