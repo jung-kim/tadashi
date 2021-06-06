@@ -1,16 +1,12 @@
 const ChartRoot = require('./ChartRoot');
-const constants = require('../../../helpers/constants');
-const dataCache = require('../../../simpletons/dataCache');
-const utils = require('../../../helpers/utils');
 
 const chartSubsByTiersHelperContent = `<p>Subscription counts grouped by tiers and gifts.</p>`
-
-const DISPLAY_LIMIT = 10;
 
 class SubsByTiersVC extends ChartRoot {
     constructor() {
         super({
-            chartDomSelector: 'pie-subs-by-tiers',
+            type: 'bar',
+            chartDomSelector: 'chart-subs-by-tiers',
             title: 'Subscription counts by tiers and gifts.',
             helpContent: chartSubsByTiersHelperContent,
         });

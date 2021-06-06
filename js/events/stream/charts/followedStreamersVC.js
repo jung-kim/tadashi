@@ -16,7 +16,7 @@ class FollowedStreamersVC extends ChartRoot {
         super({
             type: 'bar',
             title: 'Top followed streamers by viewers',
-            chartDomSelector: 'pie-followed-streamers',
+            chartDomSelector: 'chart-followed-streamers',
             helpContent: chartFollowedStreamersHelperContent,
             updateThrottleTime: 5000,
         });
