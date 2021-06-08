@@ -1,6 +1,9 @@
 const ChartRoot = require('./ChartRoot');
 
 const chartSubsByTiersHelperContent = `<p>Subscription counts grouped by tiers and gifts.</p>`
+const twitchClient = require('../../../singletons/twitchClient');
+const chartFilter = require('../../shared/chartFilter');
+const users = require('../../../singletons/users');
 
 class SubsByTiersVC extends ChartRoot {
     constructor() {
@@ -33,6 +36,29 @@ class SubsByTiersVC extends ChartRoot {
         }
     }
 
+    _defaultChartOptions() {
+        const defaultValue = super._defaultChartOptions();
+
+        defaultValue.data.datasets = [
+            {
+                data: [],
+                backgroundColor: '#F9E74B',
+                borderColor: '##FBF08B',
+                borderWidth: 1,
+                label: 'gifted by others',
+            },
+            {
+                data: [],
+                backgroundColor: '#4B5DF9',
+                borderColor: '#8B96FB',
+                borderWidth: 1,
+                label: 'own subscription',
+            },
+        ]
+
+        return defaultValue;
+    }
+
 
     async _update() {
         const currentStreamerID = twitchClient.getChannelID();
@@ -42,12 +68,12 @@ class SubsByTiersVC extends ChartRoot {
         const labels = this._getRootLabels();
         const datasets = this._getDataset();
 
-        Object.keys(followedBySummary).
+        Object.keys(subscribeByTiers).
             sort((a, b) => a - b).
             forEach((key, index) => {
                 labels[index] = key;
-                datasets[0] = subscribeByTiers[key].gifted;
-                datasets[1] = subscribeByTiers[key].notGifted;
+                datasets[0].data[index] = subscribeByTiers[key].gifted;
+                datasets[1].data[index] = subscribeByTiers[key].notGifted;
             });
     }
 }

@@ -513,7 +513,6 @@ describe('users.js', () => {
 
         it('with a match', () => {
             const res = users.getSubscriptionsByTiers(111, chartFilter.getUserFilter());
-            console.log(2342, res)
 
             assert.deepEqual(res, {
                 1000: {

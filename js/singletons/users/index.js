@@ -288,7 +288,6 @@ class Users {
             filter(user => user.getSubscribedTo(currentStreamerID)).
             reduce((res, curr) => {
                 const subscribedTo = curr.getSubscribedTo(currentStreamerID);
-                console.log(curr._id, subscribedTo)
                 if (subscribedTo) {
                     if (!res[subscribedTo.tier]) {
                         res[subscribedTo.tier] = {
