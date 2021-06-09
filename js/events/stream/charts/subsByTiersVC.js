@@ -56,6 +56,15 @@ class SubsByTiersVC extends ChartRoot {
             },
         ]
 
+        defaultValue.options.scales = {
+            x: {
+                stacked: true,
+            },
+            y: {
+                stacked: true
+            }
+        }
+
         return defaultValue;
     }
 
