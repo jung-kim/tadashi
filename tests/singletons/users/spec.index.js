@@ -422,8 +422,8 @@ describe('users.js', () => {
         });
 
         assert.deepEqual(users._idToUser, {
-            "4444": {
-                "_id": "4444",
+            4444: {
+                "_id": 4444,
                 "_subscribedTo": {
                     "141981764": {
                         "broadcaster_id": "141981764",
@@ -442,8 +442,8 @@ describe('users.js', () => {
                 },
                 "_userName": "oliver"
             },
-            "527115020": {
-                "_id": "527115020",
+            527115020: {
+                "_id": 527115020,
                 "_subscribedTo": {
                     "141981764": {
                         "broadcaster_id": "141981764",

@@ -2,7 +2,7 @@
 // Represents a user object
 class User {
     constructor(id, name) {
-        this._id = parseInt(id);
+        this._id = id ? parseInt(id) : undefined;
         this._userName = name;
     }
 
