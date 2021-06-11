@@ -285,6 +285,13 @@ class Users {
             map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
     }
 
+    /**
+     * return subscription by tiers separated out by gifted or non gifted.
+     * 
+     * @param {numbr} currentStreamerID streamer id
+     * @param {userFilter} filter to filter out users
+     * @returns {Object} count of gifted and non gifted subs grouped by tiers
+     */
     getSubscriptionsByTiers(currentStreamerID, filter) {
         return filter.filterUsers(Object.values(this._idToUser)).
             filter(user => user.getSubscribedTo(currentStreamerID)).

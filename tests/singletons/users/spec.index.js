@@ -503,7 +503,7 @@ describe('users.js', () => {
                 is_gift: false,
             });
 
-        })
+        });
 
         it('empty', () => {
             const res = users.getSubscriptionsByTiers(0, chartFilter.getUserFilter());

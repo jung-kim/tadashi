@@ -5,7 +5,6 @@ const followedStreamersVC = require('../../../../js/events/stream/charts/followe
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const twitchClient = require('../../../../js/singletons/twitchClient');
 const users = require('../../../../js/singletons/users');
-const User = require('../../../../js/singletons/users/User');
 
 
 describe('followedStreamersVC.js', () => {
