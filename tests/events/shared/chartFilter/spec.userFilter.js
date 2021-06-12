@@ -3,7 +3,6 @@ const { assert } = require("chai");
 const filter = require("../../../../js/events/shared/chartFilter").getUserFilter();
 const users = require("../../../../js/singletons/users");
 const sinon = require('sinon');
-const User = require("../../../../js/singletons/users/User");
 const twitchClient = require("../../../../js/singletons/twitchClient");
 
 describe('userFilter.js', () => {

@@ -81,11 +81,11 @@ describe('channelSubscribedFetcher.js', () => {
 
         it('main', async () => {
             sinon.stub(auth, 'getAuthObj').returns('an-auth');
-            sinon.stub(api, 'queryTwitchApi')
-                .withArgs(`helix/subscriptions?first=100&broadcaster_id=111`, 'an-auth')
-                .returns(firstResponse)
-                .withArgs(`helix/subscriptions?first=100&broadcaster_id=111&after=xxxx`, 'an-auth')
-                .returns(secondResponse);
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs(`helix/subscriptions?first=100&broadcaster_id=111`, 'an-auth').
+                returns(firstResponse).
+                withArgs(`helix/subscriptions?first=100&broadcaster_id=111&after=xxxx`, 'an-auth').
+                returns(secondResponse);
 
             await channelSubscribedFetcher._fetch(111);
 

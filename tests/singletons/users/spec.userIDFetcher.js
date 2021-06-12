@@ -64,8 +64,8 @@ describe('userIDFetcher.js', () => {
             userIDFetcher.add('b');
             userIDFetcher.add('c');
 
-            const fetchUserIDsForNames = sinon.stub(userIDFetcher, '_fetchUserIDsForNames')
-                .throws("something");
+            const fetchUserIDsForNames = sinon.stub(userIDFetcher, '_fetchUserIDsForNames').
+                throws("something");
 
             await userIDFetcher._fetch();
 

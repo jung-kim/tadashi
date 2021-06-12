@@ -61,6 +61,7 @@ class User {
         "user_name": "twitchgaming",
         "user_login": "twitchgaming"
        }
+     * @returns {undefined}
      */
     addSubscribedTo(subObject) {
         if (subObject) {

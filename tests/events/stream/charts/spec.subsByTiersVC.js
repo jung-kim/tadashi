@@ -104,8 +104,8 @@ describe('subsByTiers.js', () => {
 
     it('_update', async () => {
         sinon.stub(twitchClient, 'getChannelID').returns(111);
-        sinon.stub(users, 'getSubscriptionsByTiers').withArgs(111, chartFilter.getUserFilter())
-            .returns({
+        sinon.stub(users, 'getSubscriptionsByTiers').withArgs(111, chartFilter.getUserFilter()).
+            returns({
                 1000: {
                     gifted: 0,
                     notGifted: 1

@@ -40,7 +40,6 @@ class UserIDFetcher {
             }
         } catch (err) {
             console.warn(`failed to query for ids`, err);
-            this._isRunning
         }
         this._isRunning = false;
     }

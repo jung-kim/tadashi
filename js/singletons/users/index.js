@@ -1,3 +1,4 @@
+/*eslint max-lines: ["error", {"max": 300, "skipComments": true, "skipBlankLines": true}]*/
 const eventSignals = require('../../helpers/signals').eventSignals;
 
 const User = require('./User');
@@ -228,8 +229,8 @@ class Users {
      */
     processChannelSubscribedResp(resp) {
         resp.data.forEach(subscribed => {
-            this._ensureUserExists(subscribed.user_id, subscribed.user_name)
-                .addSubscribedTo(subscribed);
+            this._ensureUserExists(subscribed.user_id, subscribed.user_name).
+                addSubscribedTo(subscribed);
         });
         eventSignals.dispatch({ event: `fetch.channel.subscribed.refresh` });
     }
