@@ -153,7 +153,7 @@ getTestDataBucket = (count, name) => {
     });
 }
 
-getUserObject = (userID, name, following, followedBy) => {
+getUserObject = (userID, name, following, followedBy, subscribedTo) => {
     const user = new User(userID, name);
 
     if (following) {
@@ -161,6 +161,9 @@ getUserObject = (userID, name, following, followedBy) => {
     }
     if (followedBy) {
         user._followedBy = new Set(followedBy)
+    }
+    if (subscribedTo) {
+        user._subscribedTo = subscribedTo;
     }
 
     return user;

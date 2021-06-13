@@ -111,6 +111,27 @@ class Main {
         }
     }
 
+    getUserSubscriptionForCurrent(userName) {
+        const user = users.getUserByName(userName);
+        const subscription = user ? user.getSubscribedTo(twitchClient.getChannelID()) : undefined;
+        return subscription;
+    }
+
+    isUserSubGifted(userName) {
+        const subscription = getUserSubscriptionForCurrent(userName);
+        return subscription ? subscription.is_gift : undefined;
+    }
+
+    getUserSubPlan(userName) {
+        const subscription = getUserSubscriptionForCurrent(userName);
+        return subscription ? subscription.plan_name : undefined;
+    }
+
+    getUserSubTier(userName) {
+        const subscription = getUserSubscriptionForCurrent(userName);
+        return subscription ? subscription.tier : undefined;
+    }
+
     activityStatusPopover() {
         let content, title;
         switch (this.getConnectivityLevel()) {

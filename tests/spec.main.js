@@ -415,5 +415,36 @@ describe('main.js', () => {
             assert.equal(headerDom.innerHTML, 'Connected with no Auth');
             assert.isTrue(bodyDom.innerHTML.startsWith('Data collection is limited'));
         });
-    })
+    });
+
+    describe('getUserSubscriptionForCurrent', () => {
+
+        it('invalid user', () => {
+            const name = 'abc';
+            sinon.stub(users, 'getUserByName').returns(undefined);
+
+            assert.isUndefined(main.getUserSubscriptionForCurrent(name));
+        });
+
+        it('not following current', () => {
+            const name = 'abc';
+            const id = 123;
+            const userObj = getUserObject(id, name)
+            sinon.stub(users, 'getUserByName').returns(userObj);
+            sinon.stub(twitchClient, 'getChannelID').returns(123);
+
+            assert.isUndefined(main.getUserSubscriptionForCurrent(name));
+        });
+
+        it('valid case', () => {
+            const name = 'abc';
+            const id = 123;
+            const userObj = getUserObject(id, name, undefined, undefined, { 123: 'an-object' })
+            sinon.stub(users, 'getUserByName').returns(userObj);
+            sinon.stub(twitchClient, 'getChannelID').returns(123);
+
+            assert.equal(main.getUserSubscriptionForCurrent(name), 'an-object');
+        });
+
+    });
 });
