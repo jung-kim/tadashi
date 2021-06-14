@@ -107,6 +107,22 @@ class User {
     getSubscribedTo(targetUserID) {
         return this._subscribedTo ? this._subscribedTo[targetUserID] : undefined;
     }
+
+    getInfo(targetUserID) {
+        let info = `following: ${this.isFollowing(targetUserID)}`;
+        const subscribedObj = this.getSubscribedTo(targetUserID);
+        if (!subscribedObj) {
+            return `${info}\nis_subscribed: false`;
+        } else {
+            info += `\nis_subscribed: true`;
+            info += `\ntier: ${subscribedObj.tier}`;
+            info += `\nplan_name: ${subscribedObj.plan_name}`;
+            if (subscribedObj.is_gift) {
+                info += `\gifter: ${subscribedObj.gifter_name}`;
+            }
+        }
+
+    }
 }
 
 module.exports = User;

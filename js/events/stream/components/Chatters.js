@@ -54,6 +54,8 @@ class Chatters {
     _updateChattersList() {
         document.getElementById(`${this._key}-list-chatters`).
             innerHTML = chattersGroupListHBS(this._getPage());
+        Array.from(document.getElementsByClassName('user-info'))
+            .forEach(target => new BSN.Popover(target));
     }
 
     update(newChatters) {

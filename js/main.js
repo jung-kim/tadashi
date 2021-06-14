@@ -117,19 +117,19 @@ class Main {
         return subscription;
     }
 
-    isUserSubGifted(userName) {
-        const subscription = getUserSubscriptionForCurrent(userName);
-        return subscription ? subscription.is_gift : undefined;
+    userSubsCSS(userName) {
+        const sub = this.getUserSubscriptionForCurrent(userName);
+        return sub ? 'user-subscription' : 'hide';
     }
 
-    getUserSubPlan(userName) {
-        const subscription = getUserSubscriptionForCurrent(userName);
-        return subscription ? subscription.plan_name : undefined;
-    }
+    userSubsContent(userName) {
+        const user = users.getUserByName(userName);
 
-    getUserSubTier(userName) {
-        const subscription = getUserSubscriptionForCurrent(userName);
-        return subscription ? subscription.tier : undefined;
+        if (user) {
+            return user.getInfo(twitchClient.getChannelID());
+        } else {
+            return 'unavilable';
+        }
     }
 
     activityStatusPopover() {
@@ -215,5 +215,7 @@ window.domEvent = (event, id) => {
 const main = new Main();
 
 Handlebars.registerHelper('userFollowsCSS', main.userFollowsCSS);
+Handlebars.registerHelper('getUserSubscriptionForCurrent', main.getUserSubscriptionForCurrent);
+Handlebars.registerHelper('userSubsContent', main.userSubsContent);
 
 module.exports = main;
