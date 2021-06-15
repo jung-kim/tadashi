@@ -217,5 +217,5 @@ const main = new Main();
 Handlebars.registerHelper('userFollowsCSS', main.userFollowsCSS);
 Handlebars.registerHelper('getUserSubscriptionForCurrent', main.getUserSubscriptionForCurrent);
 Handlebars.registerHelper('userSubsContent', main.userSubsContent);
-
+Handlebars.registerHelper('userSubsCSS', main.userSubsCSS);
 module.exports = main;

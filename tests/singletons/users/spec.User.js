@@ -202,4 +202,21 @@ describe('User.js', () => {
             });
         });
     });
+
+    describe('getInfo', () => {
+        it('without sub', () => {
+            const user = getUserObject(111, 'abc');
+            assert.equal(user.getInfo(123), "following: undefined\nis_subscribed: false");
+        });
+
+        it('with none gifted sub', () => {
+            const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: false } });
+            assert.equal(user.getInfo(123), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan");
+        });
+
+        it('with gifted sub', () => {
+            const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: true, gifter_name: 'a-gifter' } });
+            assert.equal(user.getInfo(123), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan\ngifter_name: a-gifter");
+        });
+    });
 });
