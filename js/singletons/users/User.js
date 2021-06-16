@@ -111,18 +111,24 @@ class User {
     getInfo(targetUserID) {
         let info = `following: ${this.isFollowing(targetUserID)}`;
         const subscribedObj = this.getSubscribedTo(targetUserID);
-        if (!subscribedObj) {
-            info += `\nis_subscribed: false`;
-        } else {
+        if (subscribedObj) {
             info += `\nis_subscribed: true`;
             info += `\ntier: ${subscribedObj.tier}`;
             info += `\nplan_name: ${subscribedObj.plan_name}`;
             if (subscribedObj.is_gift) {
                 info += `\ngifter_name: ${subscribedObj.gifter_name}`;
             }
+
+        } else {
+            info += `\nis_subscribed: false`;
         }
 
         return info;
+    }
+
+    getInfoCss() {
+        const subObj = this.getSubscribedTo(env.CHANNEL_ID);
+        return subObj ? 'subscribed' : 'not-subscribed';
     }
 }
 

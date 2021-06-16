@@ -117,11 +117,6 @@ class Main {
         return subscription;
     }
 
-    userSubsCSS(userName) {
-        const sub = this.getUserSubscriptionForCurrent(userName);
-        return sub ? 'user-subscription' : 'hide';
-    }
-
     userSubsContent(userName) {
         const user = users.getUserByName(userName);
 
@@ -217,5 +212,4 @@ const main = new Main();
 Handlebars.registerHelper('userFollowsCSS', main.userFollowsCSS);
 Handlebars.registerHelper('getUserSubscriptionForCurrent', main.getUserSubscriptionForCurrent);
 Handlebars.registerHelper('userSubsContent', main.userSubsContent);
-Handlebars.registerHelper('userSubsCSS', main.userSubsCSS);
 module.exports = main;

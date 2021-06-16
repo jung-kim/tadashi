@@ -190,6 +190,7 @@ class TwitchClient {
     async _setChannelID(id) {
         if (id) {
             this._channelID = parseInt(id);
+            env.CHANNEL_ID = this._channelID;
         } else if (this.getChannel()) {
             const resp = await api.queryTwitchApi(`kraken/users?login=${this.getChannel()}`);
             this._channelID = parseInt(resp.users[0]._id);
