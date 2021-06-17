@@ -1,4 +1,5 @@
 const { assert } = require('chai');
+const env = require('../../../js/env');
 const User = require('../../../js/singletons/users/User');
 
 describe('User.js', () => {
@@ -206,17 +207,35 @@ describe('User.js', () => {
     describe('getInfo', () => {
         it('without sub', () => {
             const user = getUserObject(111, 'abc');
-            assert.equal(user.getInfo(123), "following: undefined\nis_subscribed: false");
+            env.channelId = 123;
+            assert.equal(user.getInfo(), "following: undefined\nis_subscribed: false");
         });
 
         it('with none gifted sub', () => {
             const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: false } });
-            assert.equal(user.getInfo(123), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan");
+            env.channelId = 123;
+            assert.equal(user.getInfo(), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan");
         });
 
         it('with gifted sub', () => {
             const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: true, gifter_name: 'a-gifter' } });
-            assert.equal(user.getInfo(123), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan\ngifter_name: a-gifter");
+            env.channelId = 123;
+            assert.equal(user.getInfo(), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan\ngifter_name: a-gifter");
+        });
+    });
+
+    describe('getInfoCss', () => {
+        it('not subscribed', () => {
+            const user = getUserObject(111, 'abc');
+            env.channelId = 123;
+            assert.equal(user.getInfoCss(), 'not-subscribed');
+        });
+
+        it('subscribed', () => {
+            const user = getUserObject(111, 'abc');
+            user.addSubscribedTo({ broadcaster_id: 123 })
+            env.channelId = 123;
+            assert.equal(user.getInfoCss(), 'subscribed');
         });
     });
 });

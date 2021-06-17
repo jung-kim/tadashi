@@ -1,3 +1,4 @@
+const env = require("../../env");
 
 // Represents a user object
 class User {
@@ -87,30 +88,43 @@ class User {
     /**
      * Check if this user is following the target user
      * 
-     * @param {number} targetUserID of a user to check if this user is following by that user
+     * @param {number} targetUserID of a user to check if this user is following by that user, defaults to currnet channel id
      * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowing(targetUserID) {
+        targetUserID = targetUserID || env.channelId
         return this._following ? this._following.has(targetUserID) : undefined;
     }
 
     /**
      * Check if this user is followed by the target user
      * 
-     * @param {number} targetUserID of a user to check if this user is followed by that user
+     * @param {number} targetUserID of a user to check if this user is followed by that user, defaults to currnet channel id
      * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowedBy(targetUserID) {
+        targetUserID = targetUserID || env.channelId
         return this._followedBy ? this._followedBy.has(targetUserID) : undefined;
     }
 
+    /**
+     * Returns subscription info for current channel
+     * 
+     * @returns {Object} subscribed info
+     */
     getSubscribedTo(targetUserID) {
+        targetUserID = targetUserID || env.channelId
         return this._subscribedTo ? this._subscribedTo[targetUserID] : undefined;
     }
 
-    getInfo(targetUserID) {
-        let info = `following: ${this.isFollowing(targetUserID)}`;
-        const subscribedObj = this.getSubscribedTo(targetUserID);
+    /**
+     * Returns general info about this user to display
+     * 
+     * @returns {String}
+     */
+    getInfo() {
+        let info = `following: ${this.isFollowing()}`;
+        const subscribedObj = this.getSubscribedTo();
         if (subscribedObj) {
             info += `\nis_subscribed: true`;
             info += `\ntier: ${subscribedObj.tier}`;
@@ -126,8 +140,13 @@ class User {
         return info;
     }
 
+    /**
+     * Returns css string to display for the info icon
+     * 
+     * @returns {string}
+     */
     getInfoCss() {
-        const subObj = this.getSubscribedTo(env.CHANNEL_ID);
+        const subObj = this.getSubscribedTo(env.channelId);
         return subObj ? 'subscribed' : 'not-subscribed';
     }
 }

@@ -3,6 +3,7 @@ const _ = require('lodash');
 const events = require('../models/events');
 const eventSignals = require('../helpers/signals').eventSignals;
 const constants = require('../helpers/constants');
+const env = require('../env');
 
 const auth = require('../simpletons/auth');
 const api = require('../simpletons/api');
@@ -190,11 +191,11 @@ class TwitchClient {
     async _setChannelID(id) {
         if (id) {
             this._channelID = parseInt(id);
-            env.CHANNEL_ID = this._channelID;
         } else if (this.getChannel()) {
             const resp = await api.queryTwitchApi(`kraken/users?login=${this.getChannel()}`);
             this._channelID = parseInt(resp.users[0]._id);
         }
+        env.channelId = this._channelID;
     }
 
     async changeToRandomFeaturedStream() {
