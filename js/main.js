@@ -100,7 +100,7 @@ class Main {
             return constants.CSS_UNKNOWN;
         }
 
-        const following = user.isFollowing(twitchClient.getChannelID());
+        const following = user.isFollowingCurrent();
 
         if (following === false) {
             return constants.CSS_NOT_FOLLOWING;
@@ -113,7 +113,7 @@ class Main {
 
     getUserSubscriptionForCurrent(userName) {
         const user = users.getUserByName(userName);
-        const subscription = user ? user.getSubscribedTo(twitchClient.getChannelID()) : undefined;
+        const subscription = user ? user.getSubscribedToCurrent() : undefined;
         return subscription;
     }
 

@@ -12,6 +12,7 @@ const utils = require('../js/helpers/utils');
 const { domSignals, eventSignals } = require('../js/helpers/signals');
 const users = require('../js/singletons/users');
 const constants = require('../js/helpers/constants');
+const env = require('../js/env');
 
 describe('main.js', () => {
     afterEach(() => {
@@ -289,7 +290,7 @@ describe('main.js', () => {
 
         it('user exists and not following is not fetched', () => {
             const user = getUserObject(1, 'abc');
-            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            env.channelID = 111;
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_UNKNOWN);
@@ -298,7 +299,7 @@ describe('main.js', () => {
         it('user exists and follows', () => {
             const user = getUserObject(1, 'abc', [111]);
             user.addFollowing(111);
-            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            env.channelID = 111;
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_FOLLOWING);
@@ -307,7 +308,7 @@ describe('main.js', () => {
         it('user exists and not following', () => {
             const user = getUserObject(1, 'abc', [222]);
             user.addFollowing(222);
-            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            env.channelID = 111;
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_NOT_FOLLOWING);
@@ -431,7 +432,7 @@ describe('main.js', () => {
             const id = 123;
             const userObj = getUserObject(id, name)
             sinon.stub(users, 'getUserByName').returns(userObj);
-            sinon.stub(twitchClient, 'getChannelID').returns(123);
+            env.channelID = 123;
 
             assert.isUndefined(main.getUserSubscriptionForCurrent(name));
         });
@@ -441,7 +442,7 @@ describe('main.js', () => {
             const id = 123;
             const userObj = getUserObject(id, name, undefined, undefined, { 123: 'an-object' })
             sinon.stub(users, 'getUserByName').returns(userObj);
-            sinon.stub(twitchClient, 'getChannelID').returns(123);
+            env.channelID = 123;
 
             assert.equal(main.getUserSubscriptionForCurrent(name), 'an-object');
         });

@@ -9,6 +9,7 @@ const chartFilter = require('../../../js/events/shared/chartFilter');
 const channelSubscribedFetcher = require('../../../js/singletons/users/channelSubscribedFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const User = require('../../../js/singletons/users/User');
+const env = require('../../../js/env');
 
 
 describe('users.js', () => {
@@ -323,7 +324,8 @@ describe('users.js', () => {
             999: getUserObject(999)
         }
 
-        assert.deepEqual(users.getTopFollowedBySummary(123, userFilter), [
+        env.channelID = 123;
+        assert.deepEqual(users.getTopFollowedBySummary(userFilter), [
             { userID: 1, unknown: 1, following: 2, admiring: 0 },
             { userID: 123, unknown: 0, following: 2, admiring: 0 },
             { userID: 33, unknown: 0, following: 0, admiring: 1 },
@@ -334,7 +336,8 @@ describe('users.js', () => {
             { userID: 777, unknown: 0, following: 0, admiring: 0 },
         ]);
 
-        assert.deepEqual(users.getTopFollowedBySummary(777, userFilter), [
+        env.channelID = 777;
+        assert.deepEqual(users.getTopFollowedBySummary(userFilter), [
             { userID: 1, unknown: 1, following: 0, admiring: 2 },
             { userID: 123, unknown: 0, following: 0, admiring: 2 },
             { userID: 33, unknown: 0, following: 1, admiring: 0 },
@@ -357,35 +360,38 @@ describe('users.js', () => {
             888: getUserObject(888, 'hhh'),
         }
 
-        assert.deepEqual(users._getFollowedBySummary(123, 1), {
+        env.channelID = 123;
+        assert.deepEqual(users._getFollowedBySummary(1), {
             userID: 1,
             unknown: 1,
             following: 2,
             admiring: 0,
         });
 
-        assert.deepEqual(users._getFollowedBySummary(77, 1), {
+        env.channelID = 77;
+        assert.deepEqual(users._getFollowedBySummary(1), {
             userID: 1,
             unknown: 1,
             following: 0,
             admiring: 2,
         });
 
-        assert.deepEqual(users._getFollowedBySummary(123, 777), {
+        env.channelID = 123;
+        assert.deepEqual(users._getFollowedBySummary(777), {
             userID: 777,
             unknown: 0,
             following: 0,
             admiring: 0,
         });
 
-        assert.deepEqual(users._getFollowedBySummary(123, 33), {
+        assert.deepEqual(users._getFollowedBySummary(33), {
             userID: 33,
             unknown: 0,
             following: 0,
             admiring: 1,
         });
 
-        assert.isUndefined(users._getFollowedBySummary(123, 17263));
+        assert.isUndefined(users._getFollowedBySummary(17263));
     });
 
     it('processChannelSubscribedResp', () => {
@@ -506,13 +512,15 @@ describe('users.js', () => {
         });
 
         it('empty', () => {
-            const res = users.getSubscriptionsByTiers(0, chartFilter.getUserFilter());
+            env.channelID = 0;
+            const res = users.getSubscriptionsByTiers(chartFilter.getUserFilter());
 
             assert.deepEqual(res, {});
         });
 
         it('with a match', () => {
-            const res = users.getSubscriptionsByTiers(111, chartFilter.getUserFilter());
+            env.channelID = 111;
+            const res = users.getSubscriptionsByTiers(chartFilter.getUserFilter());
 
             assert.deepEqual(res, {
                 1000: {

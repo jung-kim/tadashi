@@ -29,7 +29,7 @@ class UserFilter {
             return undefined;
         }
 
-        return user.isFollowing(twitchClient.getChannelID());
+        return user.isFollowingCurrent();
     }
 
     _isNotFollowing(name) {

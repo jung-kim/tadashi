@@ -92,8 +92,11 @@ class User {
      * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowing(targetUserID) {
-        targetUserID = targetUserID || env.channelId
         return this._following ? this._following.has(targetUserID) : undefined;
+    }
+
+    isFollowingCurrent() {
+        return this.isFollowing(env.channelID);
     }
 
     /**
@@ -103,7 +106,6 @@ class User {
      * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowedBy(targetUserID) {
-        targetUserID = targetUserID || env.channelId
         return this._followedBy ? this._followedBy.has(targetUserID) : undefined;
     }
 
@@ -113,28 +115,30 @@ class User {
      * @returns {Object} subscribed info
      */
     getSubscribedTo(targetUserID) {
-        targetUserID = targetUserID || env.channelId
         return this._subscribedTo ? this._subscribedTo[targetUserID] : undefined;
+    }
+
+    getSubscribedToCurrent() {
+        return this.getSubscribedTo(env.channelID);
     }
 
     /**
      * Returns general info about this user to display
      * 
-     * @returns {String}
+     * @returns {Object}
      */
     getInfo() {
-        let info = `following: ${this.isFollowing()}`;
-        const subscribedObj = this.getSubscribedTo();
+        const info = { following: this.isFollowingCurrent() }
+        const subscribedObj = this.getSubscribedToCurrent();
         if (subscribedObj) {
-            info += `\nis_subscribed: true`;
-            info += `\ntier: ${subscribedObj.tier}`;
-            info += `\nplan_name: ${subscribedObj.plan_name}`;
+            info.is_subscribed = true;
+            info.tier = subscribedObj.tier;
+            info.plan_name = subscribedObj.plan_name;
             if (subscribedObj.is_gift) {
-                info += `\ngifter_name: ${subscribedObj.gifter_name}`;
+                info.gifter_name = subscribedObj.gifter_name;
             }
-
         } else {
-            info += `\nis_subscribed: false`;
+            info.is_subscribed = false;
         }
 
         return info;
@@ -146,7 +150,7 @@ class User {
      * @returns {string}
      */
     getInfoCss() {
-        const subObj = this.getSubscribedTo(env.channelId);
+        const subObj = this.getSubscribedTo(env.channelID);
         return subObj ? 'subscribed' : 'not-subscribed';
     }
 }

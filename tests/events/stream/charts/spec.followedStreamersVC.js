@@ -3,8 +3,8 @@ const sinon = require('sinon');
 
 const followedStreamersVC = require('../../../../js/events/stream/charts/followedStreamersVC');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
-const twitchClient = require('../../../../js/singletons/twitchClient');
 const users = require('../../../../js/singletons/users');
+const env = require('../../../../js/env');
 
 
 describe('followedStreamersVC.js', () => {
@@ -22,9 +22,9 @@ describe('followedStreamersVC.js', () => {
             4: getUserObject(1, 'd'),
         }
 
-        sinon.stub(twitchClient, 'getChannelID').returns(123);
+        env.channelID = 123;
         sinon.stub(users, 'getTopFollowedBySummary').
-            withArgs(123, chartFilter.getUserFilter()).
+            withArgs(chartFilter.getUserFilter()).
             returns([])
 
 
@@ -36,9 +36,9 @@ describe('followedStreamersVC.js', () => {
 
         sinon.verifyAndRestore();
 
-        sinon.stub(twitchClient, 'getChannelID').returns(123);
+        env.channelID = 123;
         sinon.stub(users, 'getTopFollowedBySummary').
-            withArgs(123, chartFilter.getUserFilter()).
+            withArgs(chartFilter.getUserFilter()).
             returns([{
                 userID: 1,
                 unknown: 0,
@@ -55,9 +55,9 @@ describe('followedStreamersVC.js', () => {
 
         sinon.verifyAndRestore();
 
-        sinon.stub(twitchClient, 'getChannelID').returns(123);
+        env.channelID = 123;
         sinon.stub(users, 'getTopFollowedBySummary').
-            withArgs(123, chartFilter.getUserFilter()).
+            withArgs(chartFilter.getUserFilter()).
             returns([{
                 userID: 1,
                 unknown: 0,
@@ -74,7 +74,6 @@ describe('followedStreamersVC.js', () => {
                 following: 4,
                 admiring: 2,
             }]);
-
 
         followedStreamersVC._update();
         assert.deepEqual(followedStreamersVC._getDataset()[0].data, [7, 9, 2]);

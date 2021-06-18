@@ -207,34 +207,34 @@ describe('User.js', () => {
     describe('getInfo', () => {
         it('without sub', () => {
             const user = getUserObject(111, 'abc');
-            env.channelId = 123;
-            assert.equal(user.getInfo(), "following: undefined\nis_subscribed: false");
+            env.channelID = 123;
+            assert.deepEqual(user.getInfo(), { following: undefined, is_subscribed: false });
         });
 
         it('with none gifted sub', () => {
             const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: false } });
-            env.channelId = 123;
-            assert.equal(user.getInfo(), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan");
+            env.channelID = 123;
+            assert.deepEqual(user.getInfo(), { following: true, is_subscribed: true, tier: '1000', plan_name: 'a-plan' });
         });
 
         it('with gifted sub', () => {
             const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: true, gifter_name: 'a-gifter' } });
-            env.channelId = 123;
-            assert.equal(user.getInfo(), "following: true\nis_subscribed: true\ntier: 1000\nplan_name: a-plan\ngifter_name: a-gifter");
+            env.channelID = 123;
+            assert.deepEqual(user.getInfo(), { following: true, is_subscribed: true, tier: '1000', plan_name: 'a-plan', gifter_name: 'a-gifter' });
         });
     });
 
     describe('getInfoCss', () => {
         it('not subscribed', () => {
             const user = getUserObject(111, 'abc');
-            env.channelId = 123;
+            env.channelID = 123;
             assert.equal(user.getInfoCss(), 'not-subscribed');
         });
 
         it('subscribed', () => {
             const user = getUserObject(111, 'abc');
             user.addSubscribedTo({ broadcaster_id: 123 })
-            env.channelId = 123;
+            env.channelID = 123;
             assert.equal(user.getInfoCss(), 'subscribed');
         });
     });

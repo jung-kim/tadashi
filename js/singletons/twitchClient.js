@@ -195,7 +195,7 @@ class TwitchClient {
             const resp = await api.queryTwitchApi(`kraken/users?login=${this.getChannel()}`);
             this._channelID = parseInt(resp.users[0]._id);
         }
-        env.channelId = this._channelID;
+        env.channelID = this._channelID;
     }
 
     async changeToRandomFeaturedStream() {

@@ -269,11 +269,10 @@ class Users {
     /**
      * get top N followed by summary
      * 
-     * @param {number} currentStreamID userID of the current streamer
      * @param {UserFilter} filter filter to be applied on user lists
      * @returns {Array.<Object>} array of followed by summary objects
      */
-    getTopFollowedBySummary(currentStreamID, filter) {
+    getTopFollowedBySummary(filter) {
         return filter.filterUsers(Object.values(this._idToUser)).
             sort((left, right) => {
                 const followedByCount = (right.getFollowedByCounts() || 0) - (left.getFollowedByCounts() || 0);
@@ -283,21 +282,20 @@ class Users {
                     return followedByCount;
                 }
             }).slice(0, 10).
-            map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
+            map(userObj => this._getFollowedBySummary(userObj.getID()));
     }
 
     /**
      * return subscription by tiers separated out by gifted or non gifted.
      * 
-     * @param {numbr} currentStreamerID streamer id
      * @param {userFilter} filter to filter out users
      * @returns {Object} count of gifted and non gifted subs grouped by tiers
      */
-    getSubscriptionsByTiers(currentStreamerID, filter) {
+    getSubscriptionsByTiers(filter) {
         return filter.filterUsers(Object.values(this._idToUser)).
-            filter(user => user.getSubscribedTo(currentStreamerID)).
+            filter(user => user.getSubscribedToCurrent()).
             reduce((res, curr) => {
-                const subscribedTo = curr.getSubscribedTo(currentStreamerID);
+                const subscribedTo = curr.getSubscribedToCurrent();
                 if (subscribedTo) {
                     if (!res[subscribedTo.tier]) {
                         res[subscribedTo.tier] = {
@@ -320,11 +318,10 @@ class Users {
      * Get followed summary of a user grouped by if they are following 
      * current streamer or not
      * 
-     * @param {number} currentStreamID userID of the current streamer
      * @param {number} userID userID of a user to get followed by summary
      * @returns {Object} { userID, unknown, folowing, admiring}
      */
-    _getFollowedBySummary(currentStreamID, userID) {
+    _getFollowedBySummary(userID) {
         if (!this.getUserByID(userID)) {
             return undefined;
         }
@@ -332,7 +329,7 @@ class Users {
         return [...(this.getUserByID(userID)._followedBy || [])].
             map(id => this.getUserByID(id)).
             reduce((accumulator, current) => {
-                switch (current.isFollowing(currentStreamID)) {
+                switch (current.isFollowingCurrent()) {
                     case undefined:
                         accumulator.unknown++;
                         break;

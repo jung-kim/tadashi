@@ -4,6 +4,7 @@ const filter = require("../../../../js/events/shared/chartFilter").getUserFilter
 const users = require("../../../../js/singletons/users");
 const sinon = require('sinon');
 const twitchClient = require("../../../../js/singletons/twitchClient");
+const env = require("../../../../js/env");
 
 describe('userFilter.js', () => {
     afterEach(() => {
@@ -32,17 +33,17 @@ describe('userFilter.js', () => {
 
         sinon.verifyAndRestore();
         sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a'));
-        sinon.stub(twitchClient, 'getChannelID').returns(22);
+        env.channelID = 22;
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
         sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [22, 33]));
-        sinon.stub(twitchClient, 'getChannelID').returns(22);
+        env.channelID = 22;
         assert.isTrue(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
         sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [], [22, 33]));
-        sinon.stub(twitchClient, 'getChannelID').returns(44);
+        env.channelID = 44;
         assert.isFalse(filter.isApplicable('a'));
     });
 
@@ -53,17 +54,17 @@ describe('userFilter.js', () => {
 
         sinon.verifyAndRestore();
         sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a'));
-        sinon.stub(twitchClient, 'getChannelID').returns(22);
+        env.channelID = 22;
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
         sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [22, 33]));
-        sinon.stub(twitchClient, 'getChannelID').returns(22);
+        env.channelID = 22;
         assert.isFalse(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
         sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [], [22, 33]));
-        sinon.stub(twitchClient, 'getChannelID').returns(44);
+        env.channelID = 44;
         assert.isTrue(filter.isApplicable('a'));
     });
 
