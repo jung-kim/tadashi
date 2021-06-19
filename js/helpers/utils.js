@@ -96,5 +96,9 @@ module.exports = {
 
     getBorderColor(labels) {
         return labels.map((userName) => getHashedColor(userName, 'FF'));
+    },
+
+    convertObjectToHTML(obj) {
+        return Object.entries(obj || {}).map(([k, v]) => `${k}: ${v}`).join('<br>');
     }
 }

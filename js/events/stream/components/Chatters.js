@@ -4,8 +4,8 @@ const NUM_PER_PAGE = 250;
 
 const chattersGroupHBS = templates[`./hbs/stream/components/chatters-group.hbs`];
 const chattersGroupListHBS = templates[`./hbs/stream/components/chatters-group-list.hbs`];
-const twitchClient = require('../../../singletons/twitchClient');
 const users = require('../../../singletons/users');
+const utils = require('../../../helpers/utils');
 
 // Chatters are a data storage around array of users to help display them at the front end.
 class Chatters {
@@ -65,7 +65,7 @@ class Chatters {
 
                 new BSN.Popover(target.firstElementChild, {
                     title: userName,
-                    content: userObj.getInfo(twitchClient.getChannelID()),
+                    content: utils.convertObjectToHTML(userObj.getInfo()),
                 });
             });
         }

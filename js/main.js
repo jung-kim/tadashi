@@ -121,10 +121,14 @@ class Main {
         const user = users.getUserByName(userName);
 
         if (user) {
-            return user.getInfo(twitchClient.getChannelID());
+            return user.getInfo();
         } else {
             return 'unavilable';
         }
+    }
+
+    getInfoCss(userName) {
+        return users.getUserByName(userName).getInfoCss();
     }
 
     activityStatusPopover() {
@@ -210,6 +214,5 @@ window.domEvent = (event, id) => {
 const main = new Main();
 
 Handlebars.registerHelper('userFollowsCSS', main.userFollowsCSS);
-Handlebars.registerHelper('getUserSubscriptionForCurrent', main.getUserSubscriptionForCurrent);
-Handlebars.registerHelper('userSubsContent', main.userSubsContent);
+Handlebars.registerHelper('getInfoCss', main.getInfoCss);
 module.exports = main;

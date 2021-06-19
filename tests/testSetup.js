@@ -117,11 +117,7 @@ Handlebars.registerHelper('userFollowsCSS', () => {
     // do nothing
 });
 
-Handlebars.registerHelper('userSubsCSS', () => {
-    // do nothing
-});
-
-Handlebars.registerHelper('userSubsContent', () => {
+Handlebars.registerHelper('getInfoCss', () => {
     // do nothing
 });
 

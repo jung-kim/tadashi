@@ -1,5 +1,4 @@
 const users = require('../../../singletons/users');
-const twitchClient = require('../../../singletons/twitchClient');
 
 const followingFlag = ':following';
 const notFollowingFlag = ':notfollowing';
