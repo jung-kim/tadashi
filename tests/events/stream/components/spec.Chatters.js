@@ -4,11 +4,13 @@ const { assert } = require('chai');
 const Chatters = require('../../../../js/events/stream/components/Chatters');
 const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
 const testUtils = require('../../../testUtils');
+const users = require('../../../../js/singletons/users');
 
 describe('Chatters.js', () => {
     afterEach(() => {
         reset();
         document.getElementById.reset();
+        document.getElementsByClassName.reset();
     });
 
     it('Chatters', () => {
@@ -137,5 +139,33 @@ describe('Chatters.js', () => {
 
         c._toPreviousPage();
         assert.equal(c._pageNumber, 0);
+    });
+
+    it('_updateChattersList', () => {
+        document.getElementsByClassName
+            .withArgs('user-info')
+            .returns([
+                { id: 'chatters-subs-aaa', firstElementChild: 'first-elem1' },
+                { id: 'chatters-subs-bbb', firstElementChild: 'first-elem2' },
+            ]);
+
+        sinon.stub(users, 'getUserByName')
+            .withArgs('aaa').returns(getUserObject(111, 'aaa'))
+            .withArgs('bbb').returns(getUserObject(222, 'bbb'));
+
+        testUtils.setChattersStubs();
+        const c = new Chatters('viewers', []);
+
+        const firstPopover = BSN.Popover.withArgs('first-elem1', {
+            title: 'aaa',
+            content: 'following: undefined<br>is_subscribed: false',
+        });
+        sinon.assert.calledOnce(firstPopover);
+        const secondPopover = BSN.Popover.withArgs('first-elem2', {
+            title: 'bbb',
+            content: 'following: undefined<br>is_subscribed: false',
+        });
+        sinon.assert.calledOnce(secondPopover);
+
     });
 });

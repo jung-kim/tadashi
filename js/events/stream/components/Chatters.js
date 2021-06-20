@@ -57,9 +57,9 @@ class Chatters {
         document.getElementById(`${this._key}-list-chatters`).
             innerHTML = chattersGroupListHBS(this._getPage());
 
-        const userInfoPopovers = document.getElementsByClassName('user-info');
-        if (userInfoPopovers) {
-            Array.from(document.getElementsByClassName('user-info')).forEach(target => {
+        const userInfoDoms = document.getElementsByClassName('user-info');
+        if (userInfoDoms) {
+            Array.from(userInfoDoms).forEach(target => {
                 const userName = target.id.replace('chatters-subs-', '');
                 const userObj = users.getUserByName(userName);
 
