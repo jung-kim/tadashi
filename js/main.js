@@ -111,22 +111,6 @@ class Main {
         }
     }
 
-    getUserSubscriptionForCurrent(userName) {
-        const user = users.getUserByName(userName);
-        const subscription = user ? user.getSubscribedToCurrent() : undefined;
-        return subscription;
-    }
-
-    userSubsContent(userName) {
-        const user = users.getUserByName(userName);
-
-        if (user) {
-            return user.getInfo();
-        } else {
-            return 'unavilable';
-        }
-    }
-
     getInfoCss(userName) {
         return users.getUserByName(userName).getInfoCss();
     }

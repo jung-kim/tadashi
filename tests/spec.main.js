@@ -418,34 +418,12 @@ describe('main.js', () => {
         });
     });
 
-    describe('getUserSubscriptionForCurrent', () => {
+    it('getInfoCss', () => {
+        const name = 'abc';
+        const id = 123;
+        const userObj = getUserObject(id, name)
+        sinon.stub(users, 'getUserByName').returns(userObj);
 
-        it('invalid user', () => {
-            const name = 'abc';
-            sinon.stub(users, 'getUserByName').returns(undefined);
-
-            assert.isUndefined(main.getUserSubscriptionForCurrent(name));
-        });
-
-        it('not following current', () => {
-            const name = 'abc';
-            const id = 123;
-            const userObj = getUserObject(id, name)
-            sinon.stub(users, 'getUserByName').returns(userObj);
-            env.channelID = 123;
-
-            assert.isUndefined(main.getUserSubscriptionForCurrent(name));
-        });
-
-        it('valid case', () => {
-            const name = 'abc';
-            const id = 123;
-            const userObj = getUserObject(id, name, undefined, undefined, { 123: 'an-object' })
-            sinon.stub(users, 'getUserByName').returns(userObj);
-            env.channelID = 123;
-
-            assert.equal(main.getUserSubscriptionForCurrent(name), 'an-object');
-        });
-
+        assert.equal(main.getInfoCss(name), 'not-subscribed');
     });
 });

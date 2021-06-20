@@ -164,4 +164,17 @@ describe('Utils.js', () => {
             "#FFCC80FF",
         ]);
     });
+
+    describe('convertObjectToHTML', () => {
+        it('with valid', () => {
+            const str = utils.convertObjectToHTML({ a: 123, b: 444 });
+            assert.equal(str, "a: 123<br>b: 444");
+        });
+
+        it('with null', () => {
+            const str = utils.convertObjectToHTML();
+            assert.equal(str, "");
+        })
+
+    });
 });
