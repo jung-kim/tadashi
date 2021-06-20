@@ -10,10 +10,15 @@ const utils = require('../../../helpers/utils');
 // Chatters are a data storage around array of users to help display them at the front end.
 class Chatters {
     constructor(key, allChatters) {
-        this._update(key, allChatters);
+        this._chatterContainerDom = document.getElementById('chatter-container').
+            insertAdjacentHTML('beforeend', chattersGroupHBS(key));
+        new BSN.Collapse(document.getElementById(`${key}-expand`));
+
         this.toPreviousPage = _.throttle(this._toPreviousPage.bind(this), 200);
         this.toNextPage = _.throttle(this._toNextPage.bind(this), 200);
         this.updateChattersList = _.throttle(this._updateChattersList.bind(this), 2000);
+
+        this._update(key, allChatters);
     }
 
     _update(key, allChatters) {
@@ -21,12 +26,6 @@ class Chatters {
         this.allChatters = chartFilter.getUserFilter().filterUsers(allChatters);
         this._validatePageNumber();
         this._key = key
-
-        if (!this._expandButton) {
-            this._chatterContainerDom = document.getElementById('chatter-container').
-                insertAdjacentHTML('beforeend', chattersGroupHBS(this._key));
-            this._expandButton = new BSN.Collapse(document.getElementById(`${this._key}-expand`));
-        }
 
         if (this.allChatters.length <= NUM_PER_PAGE) {
             // hide pagination

@@ -88,7 +88,7 @@ class User {
     /**
      * Check if this user is following the target user
      * 
-     * @param {number} targetUserID of a user to check if this user is following by that user, defaults to currnet channel id
+     * @param {number} targetUserID of a user to check if this user is following by that user
      * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowing(targetUserID) {
@@ -102,7 +102,7 @@ class User {
     /**
      * Check if this user is followed by the target user
      * 
-     * @param {number} targetUserID of a user to check if this user is followed by that user, defaults to currnet channel id
+     * @param {number} targetUserID of a user to check if this user is followed by that user
      * @returns {Boolean|undefined} returns true if this this user is following the target user
      */
     isFollowedBy(targetUserID) {
@@ -112,6 +112,7 @@ class User {
     /**
      * Returns subscription info for current channel
      * 
+     * @param {number} targetUserID of a user to check if this user is subscribed to that user
      * @returns {Object} subscribed info
      */
     getSubscribedTo(targetUserID) {
@@ -125,7 +126,7 @@ class User {
     /**
      * Returns general info about this user to display
      * 
-     * @returns {Object}
+     * @returns {Object} JSON overviw of this user
      */
     getInfo() {
         const info = { following: this.isFollowingCurrent() }
@@ -147,7 +148,7 @@ class User {
     /**
      * Returns css string to display for the info icon
      * 
-     * @returns {string}
+     * @returns {string} css class depends on subscribed or not
      */
     getInfoCss() {
         const subObj = this.getSubscribedTo(env.channelID);

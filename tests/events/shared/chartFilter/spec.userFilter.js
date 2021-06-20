@@ -1,9 +1,8 @@
 const { assert } = require("chai");
+const sinon = require('sinon');
 
 const filter = require("../../../../js/events/shared/chartFilter").getUserFilter();
 const users = require("../../../../js/singletons/users");
-const sinon = require('sinon');
-const twitchClient = require("../../../../js/singletons/twitchClient");
 const env = require("../../../../js/env");
 
 describe('userFilter.js', () => {

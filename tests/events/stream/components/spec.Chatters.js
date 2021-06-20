@@ -142,19 +142,19 @@ describe('Chatters.js', () => {
     });
 
     it('_updateChattersList', () => {
-        document.getElementsByClassName
-            .withArgs('user-info')
-            .returns([
+        document.getElementsByClassName.
+            withArgs('user-info').
+            returns([
                 { id: 'chatters-subs-aaa', firstElementChild: 'first-elem1' },
                 { id: 'chatters-subs-bbb', firstElementChild: 'first-elem2' },
             ]);
 
-        sinon.stub(users, 'getUserByName')
-            .withArgs('aaa').returns(getUserObject(111, 'aaa'))
-            .withArgs('bbb').returns(getUserObject(222, 'bbb'));
+        sinon.stub(users, 'getUserByName').
+            withArgs('aaa').returns(getUserObject(111, 'aaa')).
+            withArgs('bbb').returns(getUserObject(222, 'bbb'));
 
         testUtils.setChattersStubs();
-        const c = new Chatters('viewers', []);
+        new Chatters('viewers', []);
 
         const firstPopover = BSN.Popover.withArgs('first-elem1', {
             title: 'aaa',
