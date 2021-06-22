@@ -181,6 +181,7 @@ class TwitchClient {
      */
     _setChannel(channel) {
         this._channel = channel;
+        env.channel = channel;
     }
 
     /**

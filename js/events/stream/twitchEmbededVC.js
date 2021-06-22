@@ -1,4 +1,4 @@
-const twitchClient = require('../../singletons/twitchClient');
+const env = require('../../env');
 
 const keyIsOpenTwitchEmbeded = 'isOpenTwitchEmbeded';
 
@@ -31,7 +31,7 @@ class TwitchEmbededVC {
             this.embededTwitch = new Twitch.Embed("twitch-embed", {
                 width: '100%',
                 height: '100%',
-                channel: twitchClient.getChannel(),
+                channel: env.channel,
                 autoplay: true,
                 muted: true,
                 allowfullscreen: false

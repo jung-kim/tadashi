@@ -5,7 +5,7 @@ const sinon = require('sinon')
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const constants = require('../../../../js/helpers/constants');
 const ChartRoot = require('../../../../js/events/stream/charts/ChartRoot');
-const twitchClient = require('../../../../js/singletons/twitchClient');
+const env = require('../../../../js/env');
 
 describe('ChartRoot.js', () => {
     afterEach(() => {
@@ -14,7 +14,7 @@ describe('ChartRoot.js', () => {
 
     it('_getParameters()', () => {
         const chartRoot = new ChartRoot({});
-        sinon.stub(twitchClient, 'getChannel').returns('abc');
+        env.channel = 'abc';
 
         chartFilter._start = moment('2020-01-01 10:00');
         chartFilter._end = moment('2020-01-01 10:07');

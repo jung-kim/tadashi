@@ -112,6 +112,7 @@ const User = require('../js/singletons/users/User');
 const filter = require('../js/events/shared/chartFilter').getUserFilter();
 const userIDFetcher = require('../js/singletons/users/userIDFetcher');
 const users = require('../js/singletons/users');
+const env = require('../js/env');
 
 Handlebars.registerHelper('userFollowsCSS', () => {
     // do nothing
@@ -136,6 +137,8 @@ reset = () => {
     domSignals.dispatch.reset();
     userIDFetcher._isRunning = undefined;
     users.reset();
+    env.channel = undefined;
+    env.channelID = undefined;
 }
 
 Twitch = {

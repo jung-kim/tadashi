@@ -1,9 +1,9 @@
 
 const { assert } = require('chai');
 const sinon = require('sinon');
+const env = require('../../../js/env');
 
 const twitchEmbededVC = require('../../../js/events/stream/twitchEmbededVC');
-const twitchClient = require('../../../js/singletons/twitchClient');
 
 describe('twitchEmbededVC', () => {
     beforeEach(() => { reset() });
@@ -31,7 +31,7 @@ describe('twitchEmbededVC', () => {
     describe('_handleEmbededTwitch', () => {
         it('_getIsOpenTwitchEmbeded true', () => {
             sinon.stub(twitchEmbededVC, '_getIsOpenTwitchEmbeded').returns(true);
-            sinon.stub(twitchClient, 'getChannel').returns('abc');
+            env.channel = 'abc'
 
             const embed = Twitch.Embed.withArgs('twitch-embed', {
                 width: '100%',

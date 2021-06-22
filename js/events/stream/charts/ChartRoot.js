@@ -1,8 +1,8 @@
 const eventSignals = require('../../../helpers/signals').eventSignals;
 const chartFilter = require('../../shared/chartFilter');
-const twitchClient = require('../../../singletons/twitchClient');
 const utils = require('../../../helpers/utils');
 const constants = require('../../../helpers/constants');
+const env = require('../../../env');
 const _ = require('lodash');
 
 const MAX_DATAPOINT_LIMIT = 250;
@@ -96,7 +96,7 @@ class ChartRoot {
             interval: interval,
             startBucket: startBucket,
             endBucket: endBucket,
-            channel: twitchClient.getChannel(),
+            channel: env.channel,
             filter: chartFilter.getUserFilter(),
             length: length,
         }
