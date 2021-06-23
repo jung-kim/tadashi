@@ -8,6 +8,7 @@ const twitchClient = require('./singletons/twitchClient');
 const auth = require('./simpletons/auth');
 const users = require('./singletons/users');
 const chartFilter = require('./events/shared/chartFilter');
+const env = require('./env');
 
 const ACTIVE = 'cir-active';
 const INACTIVE = 'cir-inactive';
@@ -176,7 +177,7 @@ window.authLogout = () => {
 window.minuteEventDispatcher = () => {
     eventSignals.dispatch({
         event: 'main.minute',
-        channel: twitchClient.getChannel(),
+        channel: env.channel,
         filter: chartFilter.getUserFilter(),
     });
 

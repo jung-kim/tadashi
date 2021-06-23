@@ -4,6 +4,7 @@ const auth = require('../../simpletons/auth');
 const api = require('../../simpletons/api');
 const constants = require('../../helpers/constants');
 const chartFilter = require('../shared/chartFilter');
+const env = require('../../env');
 
 class NavOptionVC {
     constructor() {
@@ -14,7 +15,7 @@ class NavOptionVC {
         this.streamSelect = _.debounce(this._streamSelect.bind(this), 500, { leading: false });
         this.populateStreamInfo = _.debounce(this._populateStreamInfo.bind(this), 500, { leading: false });
         this.syncChannelInput = _.debounce(() => {
-            this.channelInputAutoComplete.input.value = twitchClient.getChannel();
+            this.channelInputAutoComplete.input.value = env.channel;
         }, 250, { leading: false });
         require('../../helpers/signals').domSignals.add(this._domSignalsFunc.bind(this));
     }
@@ -97,19 +98,18 @@ class NavOptionVC {
     }
 
     async _populateStreamInfo() {
-        const channel = twitchClient.getChannel();
-        this.channelInputAutoComplete.input.value = this.lastSearchedChannel || channel;
-        document.getElementById('embeded-twitch-channel').innerText = channel;
+        this.channelInputAutoComplete.input.value = this.lastSearchedChannel || env.channel;
+        document.getElementById('embeded-twitch-channel').innerText = env.channel;
 
         try {
-            this.streamInfo = await api.getChannelInfo(channel, auth.getAuthObj());
+            this.streamInfo = await api.getChannelInfo(env.channel, auth.getAuthObj());
             if (this.streamInfo && this.streamInfo.data && this.streamInfo.data.length > 0) {
                 document.getElementById('embeded-twitch-desc').innerHTML = `${this.streamInfo.data[0].title}`;
             } else {
                 document.getElementById('embeded-twitch-desc').innerHTML = `(inactive...)`;
             }
         } catch (err) {
-            document.getElementById('embeded-twitch-desc').innerHTML = `${channel}'s stream`;
+            document.getElementById('embeded-twitch-desc').innerHTML = `${env.channel}'s stream`;
         }
     }
 

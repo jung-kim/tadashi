@@ -230,7 +230,7 @@ describe('main.js', () => {
     });
 
     it('minuteEventDispatcher', () => {
-        sinon.stub(twitchClient, 'getChannel').returns('abc');
+        env.channel = 'abc';
         sinon.stub(chartFilter, 'getUserFilter').returns('a filter');
         const setMinTopTimeoutEvent = sinon.stub(window, 'setMinTopTimeoutEvent');
 

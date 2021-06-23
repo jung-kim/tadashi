@@ -8,6 +8,7 @@ const constants = require('../../../js/helpers/constants');
 const api = require('../../../js/simpletons/api');
 const auth = require('../../../js/simpletons/auth');
 const twitchClient = require('../../../js/singletons/twitchClient');
+const env = require('../../../js/env');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 describe('navOptionVC', () => {
@@ -198,7 +199,7 @@ describe('navOptionVC', () => {
 
     describe('_populateStreamInfo', () => {
         it('success', async () => {
-            sinon.stub(twitchClient, 'getChannel').returns('a-channel');
+            env.channel = 'a-channel';
             navOptionVC.channelInputAutoComplete = { input: {} };
 
             const channelDom = {},
@@ -219,7 +220,7 @@ describe('navOptionVC', () => {
         });
 
         it('inactive', async () => {
-            sinon.stub(twitchClient, 'getChannel').returns('a-channel');
+            env.channel = 'a-channel';
             navOptionVC.channelInputAutoComplete = { input: {} };
 
             const channelDom = {},
@@ -241,7 +242,7 @@ describe('navOptionVC', () => {
 
 
         it('fail', async () => {
-            sinon.stub(twitchClient, 'getChannel').returns('a-channel');
+            env.channel = 'a-channel';
             navOptionVC.channelInputAutoComplete = { input: {} };
 
             const channelDom = {},

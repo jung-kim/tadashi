@@ -18,8 +18,6 @@ const DEFAULT_CHANNEL_ID = 71092938;
 
 class TwitchClient {
     constructor() {
-        this._channel = undefined;
-        this._channelID = undefined;
         this._enabled = false;
         this.updateViewersCache = _.debounce(this._updateViewersCache.bind(this), 500, { leading: false });
         this.saveChannel = _.debounce(this._saveChannel.bind(this), 500, { leading: false });
@@ -57,7 +55,7 @@ class TwitchClient {
             await twitchClient._initPromise;
         }
 
-        if (!this.getChannel()) {
+        if (!env.channel) {
             if (localStorage.getItem(CHANNEL_LS_KEY)) {
                 this._setChannel(localStorage.getItem(CHANNEL_LS_KEY));
                 this._setChannelID(localStorage.getItem(CHANNEL_LS_ID_KEY));
@@ -79,7 +77,7 @@ class TwitchClient {
                 reconnectDecay: 1.0,
                 timeout: 5000,
             },
-            channels: [this.getChannel()]
+            channels: [env.channel]
         });
 
         // eslint-disable-next-line no-unused-vars
@@ -116,26 +114,26 @@ class TwitchClient {
     }
 
     async changeChannel(channel, id) {
-        if (this.getChannel() === channel) {
+        if (env.channel === channel) {
             // channel is already set, return
             return;
         }
 
-        if (this.getChannel()) {
-            this._client.part(this.getChannel());
+        if (env.channel) {
+            this._client.part(env.channel);
         }
 
         this._setChannel(channel);
         this._setChannelID(id);
 
-        await this._client.join(this.getChannel());
+        await this._client.join(env.channel);
 
         this.updateViewersCache();
         eventSignals.dispatch({
             event: 'channel.input.update',
             data: {
-                id: this.getChannelID(),
-                channel: this.getChannel(),
+                id: env.channelID,
+                channel: env.channel,
             }
         });
     }
@@ -160,16 +158,16 @@ class TwitchClient {
     }
 
     async _updateViewersCache() {
-        if (!this._enabled || !this.getChannel()) {
+        if (!this._enabled || !env.channel) {
             return;
         }
 
-        const json = await api.queryTmiApi(`group/user/${this.getChannel()}/chatters`);
+        const json = await api.queryTmiApi(`group/user/${env.channel}/chatters`);
 
         eventSignals.dispatch({
             event: "chatters.data.update",
             data: json[CHATTERS_KEY],
-            channelID: this.getChannelID(),
+            channelID: env.channelID,
         });
     }
 
@@ -180,7 +178,6 @@ class TwitchClient {
      * @returns {undefined}
      */
     _setChannel(channel) {
-        this._channel = channel;
         env.channel = channel;
     }
 
@@ -191,12 +188,11 @@ class TwitchClient {
      */
     async _setChannelID(id) {
         if (id) {
-            this._channelID = parseInt(id);
-        } else if (this.getChannel()) {
-            const resp = await api.queryTwitchApi(`kraken/users?login=${this.getChannel()}`);
-            this._channelID = parseInt(resp.users[0]._id);
+            env.channelID = parseInt(id);
+        } else if (env.channel) {
+            const resp = await api.queryTwitchApi(`kraken/users?login=${env.channel}`);
+            env.channelID = parseInt(resp.users[0]._id);
         }
-        env.channelID = this._channelID;
     }
 
     async changeToRandomFeaturedStream() {
@@ -215,17 +211,9 @@ class TwitchClient {
         }
     }
 
-    getChannel() {
-        return this._channel;
-    }
-
-    getChannelID() {
-        return this._channelID;
-    }
-
     _saveChannel() {
-        localStorage.setItem(CHANNEL_LS_KEY, this._channel);
-        localStorage.setItem(CHANNEL_LS_ID_KEY, this._channelID);
+        localStorage.setItem(CHANNEL_LS_KEY, env.channel);
+        localStorage.setItem(CHANNEL_LS_ID_KEY, env.channelID);
         eventSignals.dispatch({
             alert: {
                 type: 'success',

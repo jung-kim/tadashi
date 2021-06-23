@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const tmi = require('tmi.js');
 const constants = require('../../js/helpers/constants');
 
+const env = require('../../js/env');
 const auth = require('../../js/simpletons/auth');
 const twitchClient = require("../../js/singletons/twitchClient");
 const api = require("../../js/simpletons/api");
@@ -11,11 +12,6 @@ const eventSignals = require('../../js/helpers/signals').eventSignals;
 
 
 describe('twitchClient.js', () => {
-    beforeEach(() => {
-        twitchClient._channel = undefined;
-        twitchClient._channelID = undefined;
-    });
-
     afterEach(() => {
         twitchClient._disable();
         reset();
@@ -27,8 +23,6 @@ describe('twitchClient.js', () => {
         afterEach(() => {
             twitchClient._initPromise = undefined;
             twitchClient._client = fakeClient;
-            twitchClient.channel = undefined;
-            twitchClient._channelID = undefined;
             localStorage.clear();
             reset();
         });
@@ -45,12 +39,12 @@ describe('twitchClient.js', () => {
         });
 
         it('run after intialized', async () => {
-            const getChannelStub = sinon.stub(twitchClient, 'getChannel');
+            const tmiClientStub = sinon.stub(tmi, 'Client');
 
             twitchClient._client = 'abc';
             await twitchClient.initializeClient();
             assert.equal(twitchClient._client, 'abc');
-            sinon.assert.notCalled(getChannelStub);
+            sinon.assert.notCalled(tmiClientStub);
         });
 
         it('channel is in localstorage but not id', async () => {
@@ -70,8 +64,8 @@ describe('twitchClient.js', () => {
 
             await twitchClient.initializeClient();
 
-            assert.equal(twitchClient._channel, 'hi');
-            assert.equal(twitchClient._channelID, 88);
+            assert.equal(env.channel, 'hi');
+            assert.equal(env.channelID, 88);
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
@@ -91,8 +85,8 @@ describe('twitchClient.js', () => {
             await twitchClient.initializeClient();
 
             sinon.assert.calledOnce(ping);
-            assert.equal(twitchClient._channel, 'hi');
-            assert.equal(twitchClient._channelID, 99);
+            assert.equal(env.channel, 'hi');
+            assert.equal(env.channelID, 99);
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
@@ -112,8 +106,8 @@ describe('twitchClient.js', () => {
             await twitchClient.initializeClient();
 
             sinon.assert.calledOnce(ping);
-            assert.equal(twitchClient._channel, 'someone');
-            assert.equal(twitchClient._channelID, 123);
+            assert.equal(env.channel, 'someone');
+            assert.equal(env.channelID, 123);
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
@@ -131,8 +125,8 @@ describe('twitchClient.js', () => {
 
             sinon.assert.calledOnce(ping);
             sinon.assert.calledOnce(fakeClient.connect);
-            assert.equal(twitchClient._channel, 'xqcow');
-            assert.equal(twitchClient._channelID, 71092938);
+            assert.equal(env.channel, 'xqcow');
+            assert.equal(env.channelID, 71092938);
         });
     });
 
@@ -152,12 +146,12 @@ describe('twitchClient.js', () => {
                     channel: 'abcde',
                 }
             }));
-            assert.equal(twitchClient._channel, 'abcde');
-            assert.equal(twitchClient._channelID, 5);
+            assert.equal(env.channel, 'abcde');
+            assert.equal(env.channelID, 5);
         });
 
         it('from same channel', async () => {
-            twitchClient._channel = 'abcde'
+            env.channel = 'abcde'
             let joinStub = sinon.stub(twitchClient._client, 'join');
             let partStub = sinon.stub(twitchClient._client, 'part');
             let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
@@ -166,12 +160,12 @@ describe('twitchClient.js', () => {
             sinon.assert.notCalled(partStub);
             sinon.assert.notCalled(updateViewerCacheStub);
             sinon.assert.notCalled(eventSignals.dispatch);
-            assert.equal(twitchClient._channel, 'abcde');
+            assert.equal(env.channel, 'abcde');
         });
 
         it('from another channel', async () => {
-            twitchClient._channel = '1111';
-            twitchClient._channelID = 1111;
+            env.channel = '1111';
+            env.channelID = 1111;
             let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
             let partStub = sinon.stub(twitchClient._client, 'part').withArgs('1111');
             let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
@@ -186,8 +180,8 @@ describe('twitchClient.js', () => {
                     channel: 'abcde',
                 }
             }));
-            assert.equal(twitchClient._channel, 'abcde');
-            assert.equal(twitchClient._channelID, 5);
+            assert.equal(env.channel, 'abcde');
+            assert.equal(env.channelID, 5);
         });
     });
 
@@ -234,18 +228,18 @@ describe('twitchClient.js', () => {
         sinon.assert.notCalled(eventSignals.dispatch);
 
         twitchClient._enabled = true;
-        sinon.stub(twitchClient, 'getChannel').returns(undefined);
+        env.channel = undefined;
         await twitchClient._updateViewersCache();
         sinon.assert.notCalled(queryStub);
         sinon.assert.notCalled(eventSignals.dispatch);
 
         sinon.verifyAndRestore();
-        sinon.stub(twitchClient, 'getChannelID').returns(333);
+        env.channelID = 333;
         queryStub = sinon.stub(api, 'queryTmiApi').withArgs(`group/user/abc/chatters`).returns({
             chatters: 'data'
         });
         twitchClient._enabled = true;
-        sinon.stub(twitchClient, 'getChannel').returns('abc');
+        env.channel = 'abc'
         await twitchClient._updateViewersCache();
         sinon.assert.calledOnce(queryStub);
         sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
@@ -257,26 +251,25 @@ describe('twitchClient.js', () => {
 
     it('_setChannel', () => {
         twitchClient._setChannel('abc');
-        assert.equal(twitchClient._channel, 'abc');
+        assert.equal(env.channel, 'abc');
     });
 
     it('_setChannelID', async () => {
         await twitchClient._setChannelID(123);
-        assert.equal(twitchClient._channelID, 123);
+        assert.equal(env.channelID, 123);
 
-
-        sinon.stub(twitchClient, 'getChannel').returns('abc');
+        env.channel = 'abc';
         sinon.stub(api, 'queryTwitchApi').
             withArgs(`kraken/users?login=abc`).
             returns({ users: [{ _id: '111' }] });
         await twitchClient._setChannelID();
-        assert.equal(twitchClient._channelID, 111);
+        assert.equal(env.channelID, 111);
 
         sinon.verifyAndRestore();
 
-        sinon.stub(twitchClient, 'getChannel').returns(undefined);
+        env.channel = undefined;
         await twitchClient._setChannelID();
-        assert.equal(twitchClient._channelID, 111);
+        assert.equal(env.channelID, 111);
     });
 
     describe('changeToRandomFeaturedStream', () => {
@@ -316,8 +309,8 @@ describe('twitchClient.js', () => {
                 });
 
             await twitchClient.changeToRandomFeaturedStream();
-            assert.equal(twitchClient.getChannel(), 'two');
-            assert.equal(twitchClient.getChannelID(), 333);
+            assert.equal(env.channel, 'two');
+            assert.equal(env.channelID, 333);
         });
 
         it('should default to xqcow with any fails', async () => {
@@ -327,24 +320,14 @@ describe('twitchClient.js', () => {
 
             await twitchClient.changeToRandomFeaturedStream();
 
-            assert.equal(twitchClient.getChannel(), 'xqcow');
-            assert.equal(twitchClient.getChannelID(), 71092938);
+            assert.equal(env.channel, 'xqcow');
+            assert.equal(env.channelID, 71092938);
         });
     });
 
-    it('getChannel', () => {
-        twitchClient._channel = 'abc'
-        assert.equal(twitchClient.getChannel(), 'abc');
-    });
-
-    it('getChannelID', () => {
-        twitchClient._channel = 77
-        assert.equal(twitchClient.getChannel(), 77);
-    });
-
     it('saveChannel', () => {
-        twitchClient._channelID = 111;
-        twitchClient._channel = 'abc'
+        env.channelID = 111;
+        env.channel = 'abc'
         twitchClient._saveChannel();
 
         assert.equal(localStorage.getItem('channel'), 'abc');
