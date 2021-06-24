@@ -43,11 +43,11 @@ class ChattersTableVC {
         this._chatters = this._chatters || {};
 
         for (const [key, allChatters] of Object.entries(users.getViewers()) || {}) {
-            if (this._chatters[key]) {
-                this._chatters[key].update(allChatters)
-            } else {
-                this._chatters[key] = new Chatters(key, allChatters);
+            if (!this._chatters[key]) {
+                this._chatters[key] = new Chatters(key);
             }
+
+            this._chatters[key].update(allChatters)
         }
     }
 

@@ -125,7 +125,7 @@ describe('auth.js', () => {
             auth.logout();
             reset();
         });
-        afterEach(() => { env.CLIENT_SECRET = undefined; });
+        beforeEach(() => { env.CLIENT_SECRET = undefined; });
 
         it('already authenticated', async () => {
             sinon.stub(auth, 'isAuthenticated').returns(true);

@@ -207,7 +207,7 @@ class TwitchClient {
 
             this.changeChannel(selected.stream.channel.name, selected.stream.channel._id);
         } catch (err) {
-            this.changeChannel('xqcow', 71092938);
+            this.changeChannel(DEFAULT_CHANNEL, DEFAULT_CHANNEL_ID);
         }
     }
 

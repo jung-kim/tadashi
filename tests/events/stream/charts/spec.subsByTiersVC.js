@@ -8,7 +8,7 @@ const env = require('../../../../js/env');
 
 
 describe('subsByTiers.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         reset();
         document.getElementById.withArgs('chart-subs-by-tiers').returns({});
         subsByTiersVC.reset();

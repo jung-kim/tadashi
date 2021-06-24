@@ -16,7 +16,7 @@ describe('userFollowsFetcher.js', () => {
         reset();
     });
 
-    afterEach(() => {
+    beforeEach(() => {
         userFollowsFetcher.reset();
         auth._auth = undefined;
     });

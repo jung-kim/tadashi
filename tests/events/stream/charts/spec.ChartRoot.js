@@ -8,7 +8,7 @@ const ChartRoot = require('../../../../js/events/stream/charts/ChartRoot');
 const env = require('../../../../js/env');
 
 describe('ChartRoot.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         reset();
     });
 

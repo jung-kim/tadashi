@@ -6,7 +6,7 @@ const dataCache = require('../../../../js/simpletons/dataCache');
 const proceedsByTypesVC = require('../../../../js/events/stream/charts/proceedsByTypesVC');
 
 describe('proceedsByTypesVC.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         sinon.verifyAndRestore();
     });
 

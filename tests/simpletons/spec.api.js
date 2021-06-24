@@ -21,7 +21,7 @@ describe('api.js', () => {
         env.CLIENT_ID = 'CLIENT-ID';
     });
 
-    afterEach(() => {
+    beforeEach(() => {
         testUtils.unsetFakeNow();
         env.CLIENT_ID = '';
         reset();

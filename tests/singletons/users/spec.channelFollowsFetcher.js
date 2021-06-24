@@ -7,7 +7,7 @@ const api = require('../../../js/simpletons/api');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 describe('channelFollowsFetcher.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         channelFollowsFetcher._paginations = {};
         eventSignals.dispatch.reset();
         reset();

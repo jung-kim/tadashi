@@ -17,7 +17,7 @@ describe('users.js', () => {
         reset();
     });
 
-    afterEach(() => {
+    beforeEach(() => {
         userIDFetcher.reset();
         userFollowsFetcher.reset();
         reset();

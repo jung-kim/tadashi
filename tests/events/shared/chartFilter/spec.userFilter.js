@@ -6,7 +6,7 @@ const users = require("../../../../js/singletons/users");
 const env = require("../../../../js/env");
 
 describe('userFilter.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         sinon.verifyAndRestore();
         filter.changeSearchString('');
     })

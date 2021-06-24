@@ -9,7 +9,7 @@ const utils = require('../../../helpers/utils');
 
 // Chatters are a data storage around array of users to help display them at the front end.
 class Chatters {
-    constructor(key, allChatters) {
+    constructor(key) {
         this._chatterContainerDom = document.getElementById('chatter-container').
             insertAdjacentHTML('beforeend', chattersGroupHBS(key));
         new BSN.Collapse(document.getElementById(`${key}-expand`));
@@ -17,8 +17,6 @@ class Chatters {
         this.toPreviousPage = _.throttle(this._toPreviousPage.bind(this), 200);
         this.toNextPage = _.throttle(this._toNextPage.bind(this), 200);
         this.updateChattersList = _.throttle(this._updateChattersList.bind(this), 2000);
-
-        this._update(key, allChatters);
     }
 
     _update(key, allChatters) {

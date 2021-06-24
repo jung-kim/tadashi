@@ -12,7 +12,7 @@ describe('timeseriesVC.js', () => {
         document.getElementById.withArgs(timeseriesVC._chartDomSelector).returns({});
         timeseriesVC.reset();
     });
-    afterEach(() => {
+    beforeEach(() => {
         reset();
     });
 

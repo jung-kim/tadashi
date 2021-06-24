@@ -53,7 +53,7 @@ const secondResponse = {
 
 
 describe('channelSubscribedFetcher.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         channelSubscribedFetcher._paginations = {};
         channelSubscribedFetcher._isRunning = undefined;
         reset();

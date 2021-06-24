@@ -11,7 +11,7 @@ describe('userIDFetcher.js', () => {
         reset();
     });
 
-    afterEach(() => {
+    beforeEach(() => {
         userIDFetcher.reset();
         auth._auth = undefined;
     });

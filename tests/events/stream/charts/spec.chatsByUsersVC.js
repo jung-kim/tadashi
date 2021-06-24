@@ -7,7 +7,7 @@ const dataCache = require('../../../../js/simpletons/dataCache');
 
 
 describe('chatsByUsersVC.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         reset();
     });
 

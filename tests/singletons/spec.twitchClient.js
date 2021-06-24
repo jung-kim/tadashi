@@ -10,23 +10,17 @@ const api = require("../../js/simpletons/api");
 const dataCache = require('../../js/simpletons/dataCache');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 
+const fakeClient = twitchClient._client;
 
 describe('twitchClient.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         twitchClient._disable();
         reset();
+        twitchClient._client = fakeClient;
+        twitchClient._initPromise = undefined;
     });
 
     describe('initializeClient', () => {
-        let fakeClient = twitchClient._client;
-
-        afterEach(() => {
-            twitchClient._initPromise = undefined;
-            twitchClient._client = fakeClient;
-            localStorage.clear();
-            reset();
-        });
-
         it('run while initializing', async () => {
             twitchClient._initPromise = new Promise((resolve) => {
                 setTimeout(resolve, 500);

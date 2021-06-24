@@ -15,7 +15,7 @@ const constants = require('../js/helpers/constants');
 const env = require('../js/env');
 
 describe('main.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         window.location = undefined;
         main.activityStatusDom = {};
         reset();
