@@ -20,7 +20,7 @@ class Chatters {
         this.updateChattersList = _.throttle(this._updateChattersList.bind(this), 2000);
     }
 
-    _update(key, allChatters) {
+    update(allChatters) {
         // @todo search
         this.allChatters = chartFilter.getUserFilter().filterUsers(allChatters);
         this._validatePageNumber();
@@ -65,10 +65,6 @@ class Chatters {
                 content: utils.convertObjectToHTML(userObj.getInfo()),
             });
         });
-    }
-
-    update(newChatters) {
-        this._update(this._key, newChatters);
     }
 
     getLeftIndex() {

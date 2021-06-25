@@ -123,4 +123,76 @@ describe('Chatters.js', () => {
             }));
         });
     });
+
+    it('getLeftIndex', () => {
+        document.getElementById.
+            onCall(0).
+            returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+            onCall(1).
+            returns('something');
+        const chatter = new Chatters('a-key');
+
+        chatter._pageNumber = 2;
+
+        assert.equal(chatter.getLeftIndex(), 500);
+    });
+
+    it('getRightIndex', () => {
+        document.getElementById.
+            onCall(0).
+            returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+            onCall(1).
+            returns('something');
+        const chatter = new Chatters('a-key');
+        chatter._pageNumber = 0;
+
+        chatter.allChatters = [1, 2, 3, 4, 5, 6];
+
+        assert.equal(chatter.getRightIndex(), 6);
+    });
+
+    describe('_toNextPage', () => {
+        it('can move to next', () => {
+            document.getElementById.
+                onCall(0).
+                returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+                onCall(1).
+                returns('something');
+            const chatter = new Chatters('a-key');
+
+            const _updatePaginationNumbers = sinon.stub(chatter, '_updatePaginationNumbers');
+            const _updateChattersList = sinon.stub(chatter, '_updateChattersList');
+
+            chatter._pageNumber = 0;
+            chatter.allChatters = new Array(260).fill(1);
+
+            chatter._toNextPage();
+
+            assert.equal(chatter._pageNumber, 1);
+            sinon.assert.calledOnce(_updatePaginationNumbers);
+            sinon.assert.calledOnce(_updateChattersList);
+        });
+
+        it('cannot move to next', () => {
+            document.getElementById.
+                onCall(0).
+                returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+                onCall(1).
+                returns('something');
+            const chatter = new Chatters('a-key');
+
+            const _updatePaginationNumbers = sinon.stub(chatter, '_updatePaginationNumbers');
+            const _updateChattersList = sinon.stub(chatter, '_updateChattersList');
+
+            chatter._pageNumber = 0;
+            chatter.allChatters = new Array(10).fill(1);
+
+            chatter._toNextPage();
+
+            assert.equal(chatter._pageNumber, 0);
+            sinon.assert.notCalled(_updatePaginationNumbers);
+            sinon.assert.notCalled(_updateChattersList);
+        });
+    });
+
 });
