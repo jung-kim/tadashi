@@ -62,13 +62,6 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
     /*eslint-enable no-eval*/
 });
 
-// stub out boostrap functions 
-BSN = {
-    Collapse: sinon.stub(),
-    Popover: sinon.stub(),
-    Dropdown: sinon.stub(),
-    Alert: sinon.stub(),
-}
 
 // disable signal dispatch
 eventSignals.dispatch = sinon.stub();
@@ -128,6 +121,7 @@ Awesomplete = sinon.stub();
 reset = () => {
     sinon.verifyAndRestore();
     document.getElementById.reset();
+    document.getElementsByClassName.reset();
     auth.logout();
     localStorage.clear();
     fetchMock.reset();
@@ -139,6 +133,14 @@ reset = () => {
     users.reset();
     env.channel = undefined;
     env.channelID = undefined;
+
+    // stub out boostrap functions 
+    BSN = {
+        Collapse: sinon.stub(),
+        Popover: sinon.stub(),
+        Dropdown: sinon.stub(),
+        Alert: sinon.stub(),
+    }
 }
 
 Twitch = {

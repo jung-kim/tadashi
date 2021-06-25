@@ -10,6 +10,7 @@ const utils = require('../../../helpers/utils');
 // Chatters are a data storage around array of users to help display them at the front end.
 class Chatters {
     constructor(key) {
+        this._key = key
         this._chatterContainerDom = document.getElementById('chatter-container').
             insertAdjacentHTML('beforeend', chattersGroupHBS(key));
         new BSN.Collapse(document.getElementById(`${key}-expand`));
@@ -23,7 +24,6 @@ class Chatters {
         // @todo search
         this.allChatters = chartFilter.getUserFilter().filterUsers(allChatters);
         this._validatePageNumber();
-        this._key = key
 
         if (this.allChatters.length <= NUM_PER_PAGE) {
             // hide pagination
@@ -55,17 +55,16 @@ class Chatters {
             innerHTML = chattersGroupListHBS(this._getPage());
 
         const userInfoDoms = document.getElementsByClassName('user-info');
-        if (userInfoDoms) {
-            Array.from(userInfoDoms).forEach(target => {
-                const userName = target.id.replace('chatters-subs-', '');
-                const userObj = users.getUserByName(userName);
+        Array.from(userInfoDoms || []).forEach(target => {
+            console.log(238482)
+            const userName = target.id.replace('chatters-subs-', '');
+            const userObj = users.getUserByName(userName);
 
-                new BSN.Popover(target.firstElementChild, {
-                    title: userName,
-                    content: utils.convertObjectToHTML(userObj.getInfo()),
-                });
+            new BSN.Popover(target.firstElementChild, {
+                title: userName,
+                content: utils.convertObjectToHTML(userObj.getInfo()),
             });
-        }
+        });
     }
 
     update(newChatters) {
