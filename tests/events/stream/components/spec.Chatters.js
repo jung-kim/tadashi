@@ -88,7 +88,7 @@ describe('Chatters.js', () => {
                 onCall(1).
                 returns('something');
             const chatter = new Chatters('a-key');
-            sinon.stub(chatter, '_getPage').returns('a-page');
+            sinon.stub(chatter, '_getPage').returns([]);
             const listChattersDom = {};
             document.getElementById.withArgs(`a-key-list-chatters`).returns(listChattersDom);
             document.getElementsByClassName.withArgs('user-info').returns(undefined);
@@ -106,7 +106,7 @@ describe('Chatters.js', () => {
                 onCall(1).
                 returns('something');
             const chatter = new Chatters('a-key');
-            sinon.stub(chatter, '_getPage').returns('a-page');
+            sinon.stub(chatter, '_getPage').returns([]);
             const listChattersDom = {};
             document.getElementById.withArgs(`a-key-list-chatters`).returns(listChattersDom);
             document.getElementsByClassName.withArgs('user-info').returns([
@@ -195,4 +195,59 @@ describe('Chatters.js', () => {
         });
     });
 
+    it('_getPage', () => {
+        document.getElementById.
+            onCall(0).
+            returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+            onCall(1).
+            returns('something');
+        const chatter = new Chatters('a-key');
+        sinon.stub(chatter, 'getLeftIndex').returns(2);
+        sinon.stub(chatter, 'getRightIndex').returns(6);
+
+        chatter.allChatters = [0, 1, 2, 3, 4, 5, 6, 7, 8, 8];
+
+        assert.deepEqual(chatter._getPage(), [2, 3, 4, 5]);
+    });
+
+    describe('_toPreviousPage', () => {
+        it('can move to previous', () => {
+            document.getElementById.
+                onCall(0).
+                returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+                onCall(1).
+                returns('something');
+            const chatter = new Chatters('a-key');
+            const _updatePaginationNumbers = sinon.stub(chatter, '_updatePaginationNumbers');
+            const _updateChattersList = sinon.stub(chatter, '_updateChattersList');
+
+            chatter._pageNumber = 4;
+
+            chatter._toPreviousPage();
+
+            assert.equal(chatter._pageNumber, 3);
+            sinon.assert.calledOnce(_updatePaginationNumbers);
+            sinon.assert.calledOnce(_updateChattersList);
+        });
+
+        it('cannot move to previous', () => {
+            document.getElementById.
+                onCall(0).
+                returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+                onCall(1).
+                returns('something');
+            const chatter = new Chatters('a-key');
+            const _updatePaginationNumbers = sinon.stub(chatter, '_updatePaginationNumbers');
+            const _updateChattersList = sinon.stub(chatter, '_updateChattersList');
+
+            chatter._pageNumber = 0;
+
+            chatter._toPreviousPage();
+
+            assert.equal(chatter._pageNumber, 0);
+            sinon.assert.notCalled(_updatePaginationNumbers);
+            sinon.assert.notCalled(_updateChattersList);
+
+        })
+    });
 });
