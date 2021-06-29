@@ -2,8 +2,6 @@ const sinon = require('sinon');
 const { assert } = require('chai');
 
 const Chatters = require('../../../../js/events/stream/components/Chatters');
-const filter = require('../../../../js/events/shared/chartFilter').getUserFilter();
-const testUtils = require('../../../testUtils');
 const users = require('../../../../js/singletons/users');
 
 describe('Chatters.js', () => {
@@ -249,5 +247,70 @@ describe('Chatters.js', () => {
             sinon.assert.notCalled(_updateChattersList);
 
         })
+    });
+
+    describe('update', () => {
+        afterEach(() => {
+            document.getElementById = sinon.stub().withArgs(sinon.match.any).returns({});
+        });
+
+        it('empty', () => {
+            document.getElementById.
+                onCall(0).
+                returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+                onCall(1).
+                returns('something');
+            const chatter = new Chatters('a-key');
+
+            const _validatePageNumber = sinon.stub(chatter, '_validatePageNumber');
+            const _updateChattersList = sinon.stub(chatter, '_updateChattersList');
+            const addOrRemove = sinon.stub().withArgs('d-none');
+            const countObj = {};
+            document.getElementById = sinon.stub();
+            document.getElementById
+                .withArgs('a-key-paginator')
+                .returns({ classList: { add: addOrRemove } });
+            document.getElementById
+                .withArgs('a-key-count')
+                .returns(countObj);
+
+            chatter.update([]);
+
+            sinon.assert.calledOnce(_validatePageNumber);
+            sinon.assert.calledOnce(addOrRemove);
+            sinon.assert.calledOnce(_updateChattersList);
+            assert.deepEqual(countObj, { textContent: 0 });
+        });
+
+
+        it('none-empty', () => {
+            document.getElementById.
+                onCall(0).
+                returns({ insertAdjacentHTML: sinon.stub().returns('insertAdjacentHTMLCall') }).
+                onCall(1).
+                returns('something');
+            const chatter = new Chatters('a-key');
+
+            const _validatePageNumber = sinon.stub(chatter, '_validatePageNumber');
+            const _updateChattersList = sinon.stub(chatter, '_updateChattersList');
+            const _updatePaginationNumbers = sinon.stub(chatter, '_updatePaginationNumbers');
+            const addOrRemove = sinon.stub().withArgs('d-none');
+            const countObj = {};
+            document.getElementById = sinon.stub();
+            document.getElementById
+                .withArgs('a-key-paginator')
+                .returns({ classList: { remove: addOrRemove } });
+            document.getElementById
+                .withArgs('a-key-count')
+                .returns(countObj);
+
+            chatter.update(new Array(260).fill(1));
+
+            sinon.assert.calledOnce(_validatePageNumber);
+            sinon.assert.calledOnce(addOrRemove);
+            sinon.assert.calledOnce(_updateChattersList);
+            sinon.assert.calledOnce(_updatePaginationNumbers);
+            assert.deepEqual(countObj, { textContent: 260 });
+        });
     });
 });
