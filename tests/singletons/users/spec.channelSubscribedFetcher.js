@@ -104,5 +104,31 @@ describe('channelSubscribedFetcher.js', () => {
             assert.isFalse(channelSubscribedFetcher._isRunning);
             assert.deepEqual(channelSubscribedFetcher._paginations, { 111: 'done' });
         });
+
+        it('error', async () => {
+            sinon.stub(auth, 'getAuthObj').returns('an-auth');
+            sinon.stub(api, 'queryTwitchApi').
+                withArgs(`helix/subscriptions?first=100&broadcaster_id=111`, 'an-auth').
+                returns(firstResponse).
+                withArgs(`helix/subscriptions?first=100&broadcaster_id=111&after=xxxx`, 'an-auth').
+                throws('some error');
+
+            await channelSubscribedFetcher._fetch(111);
+
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
+                event: 'fetch.channel.subscribed.resp',
+                data: firstResponse,
+                channelID: 111
+            }));
+
+            sinon.assert.notCalled(eventSignals.dispatch.withArgs({
+                event: 'fetch.channel.subscribed.resp',
+                data: secondResponse,
+                channelID: 111
+            }));
+
+            assert.isFalse(channelSubscribedFetcher._isRunning);
+            assert.deepEqual(channelSubscribedFetcher._paginations, { 111: 'xxxx' });
+        });
     });
 });

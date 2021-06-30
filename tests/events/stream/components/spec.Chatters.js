@@ -267,12 +267,12 @@ describe('Chatters.js', () => {
             const addOrRemove = sinon.stub().withArgs('d-none');
             const countObj = {};
             document.getElementById = sinon.stub();
-            document.getElementById
-                .withArgs('a-key-paginator')
-                .returns({ classList: { add: addOrRemove } });
-            document.getElementById
-                .withArgs('a-key-count')
-                .returns(countObj);
+            document.getElementById.
+                withArgs('a-key-paginator').
+                returns({ classList: { add: addOrRemove } });
+            document.getElementById.
+                withArgs('a-key-count').
+                returns(countObj);
 
             chatter.update([]);
 
@@ -297,12 +297,12 @@ describe('Chatters.js', () => {
             const addOrRemove = sinon.stub().withArgs('d-none');
             const countObj = {};
             document.getElementById = sinon.stub();
-            document.getElementById
-                .withArgs('a-key-paginator')
-                .returns({ classList: { remove: addOrRemove } });
-            document.getElementById
-                .withArgs('a-key-count')
-                .returns(countObj);
+            document.getElementById.
+                withArgs('a-key-paginator').
+                returns({ classList: { remove: addOrRemove } });
+            document.getElementById.
+                withArgs('a-key-count').
+                returns(countObj);
 
             chatter.update(new Array(260).fill(1));
 

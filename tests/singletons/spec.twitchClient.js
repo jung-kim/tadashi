@@ -45,8 +45,7 @@ describe('twitchClient.js', () => {
             twitchClient._client = undefined;
             const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
-            sinon.stub(localStorage, 'getItem').
-                withArgs('channel').returns('hi');
+            localStorage.setItem('channel', 'hi');
             sinon.stub(tmi, 'Client').
                 callThroughWithNew().
                 withArgs(sinon.match.any).
@@ -67,9 +66,8 @@ describe('twitchClient.js', () => {
             twitchClient._client = undefined;
             const fakeClient = { connect: sinon.stub(), on: () => ({}) };
 
-            sinon.stub(localStorage, 'getItem').
-                withArgs('channel').returns('hi').
-                withArgs('channel-id').returns('99');
+            localStorage.setItem('channel', 'hi');
+            localStorage.setItem('channel-id', '99');
             sinon.stub(tmi, 'Client').
                 callThroughWithNew().
                 withArgs(sinon.match.any).

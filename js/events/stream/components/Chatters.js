@@ -56,7 +56,6 @@ class Chatters {
 
         const userInfoDoms = document.getElementsByClassName('user-info');
         Array.from(userInfoDoms || []).forEach(target => {
-            console.log(238482)
             const userName = target.id.replace('chatters-subs-', '');
             const userObj = users.getUserByName(userName);
 

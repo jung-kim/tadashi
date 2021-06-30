@@ -1,17 +1,13 @@
 const Common = require('./Common');
 
-const getSubType = (methods) => {
+const getSubType = (userstate, methods) => {
     if (!methods) {
-        return undefined;
+        return userstate.subType;
     }
-    return methods['prime'] ? 'prime' : methods['planName'];
-}
-
-const getSubRan = (methods) => {
-    if (!methods) {
-        return undefined;
+    if (methods['prime']) {
+        return 'prime';
     }
-    return methods['plan'];
+    return methods['planName'];
 }
 
 class Sub extends Common {
@@ -19,8 +15,8 @@ class Sub extends Common {
         super(userstate);
         this.months = months || userstate.months;
         this.totalMonths = userstate['msg-param-cumulative-months'] || userstate.totalMonths;
-        this.subType = methods ? getSubType(methods) : userstate.subType;
-        this.subRank = methods ? getSubRan(methods) : userstate.subRank;
+        this.subType = getSubType(userstate, methods);
+        this.subRank = methods ? methods['plan'] : userstate.subRank;
     }
 }
 
