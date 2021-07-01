@@ -1,21 +1,15 @@
 const Common = require('./Common');
 
-const getSubType = (userstate, methods) => {
-    if (!methods) {
-        return userstate.subType;
-    }
-    if (methods['prime']) {
-        return 'prime';
-    }
-    return methods['planName'];
-}
-
 class Sub extends Common {
-    constructor(userstate, methods, months) {
+    constructor(userstate, methods) {
         super(userstate);
-        this.months = months || userstate.months;
-        this.totalMonths = userstate['msg-param-cumulative-months'] || userstate.totalMonths;
-        this.subType = getSubType(userstate, methods);
+        this.methods = methods;
+
+        if (methods && methods['prime']) {
+            this.subType = 'prime';
+        } else if (methods) {
+            this.subType = this.methods['planName'];
+        }
         this.subRank = methods ? methods['plan'] : userstate.subRank;
     }
 }
