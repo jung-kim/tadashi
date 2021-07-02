@@ -8,34 +8,24 @@ describe('Sub.js', () => {
             'user-id': 111,
             'display-name': 'abc',
             'tmi-sent-ts': 11111111,
-            'months': 5,
-            'msg-param-cumulative-months': 6,
-            'subType': 'a-sub-type',
-            'subRank': 'a-sub-rank'
         });
 
         assert.deepEqual(s, {
             userID: 111,
             displayName: 'abc',
             timestamp: 11111111,
-            months: 5,
-            totalMonths: 6,
-            subType: 'a-sub-type',
-            subRank: 'a-sub-rank',
+            subType: undefined,
+            methods: undefined,
         });
     });
 
-    it('user state override', () => {
+    it('with prime methods', () => {
         const s = new Sub({
             'user-id': 111,
             'display-name': 'abc',
             'tmi-sent-ts': 11111111,
-            'months': 5,
-            'msg-param-cumulative-months': 6,
-            'subType': 'a-sub-type',
-            'subRank': 'a-sub-rank'
         }, {
-            plan: 'a-plan',
+            plan: 'prime',
             prime: true
         }, 222);
 
@@ -43,10 +33,32 @@ describe('Sub.js', () => {
             userID: 111,
             displayName: 'abc',
             timestamp: 11111111,
-            months: 222,
-            totalMonths: 5,
             subType: 'prime',
-            subRank: 'a-plan',
+            methods: {
+                plan: 'prime',
+                prime: true,
+            },
+        });
+    });
+
+
+    it('with none prime methods', () => {
+        const s = new Sub({
+            'user-id': 111,
+            'display-name': 'abc',
+            'tmi-sent-ts': 11111111,
+        }, {
+            plan: 'a-plan',
+        }, 222);
+
+        assert.deepEqual(s, {
+            userID: 111,
+            displayName: 'abc',
+            timestamp: 11111111,
+            subType: 'a-plan',
+            methods: {
+                plan: 'a-plan',
+            },
         });
     });
 });

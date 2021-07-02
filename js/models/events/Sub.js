@@ -5,12 +5,12 @@ class Sub extends Common {
         super(userstate);
         this.methods = methods;
 
-        if (methods && methods['prime']) {
-            this.subType = 'prime';
-        } else if (methods) {
-            this.subType = this.methods['planName'];
+        // plan can be ['Prime'] or whatever
+        if (methods) {
+            this.subType = this.methods['plan'];
+        } else {
+            this.subType = undefined;
         }
-        this.subRank = methods ? methods['plan'] : userstate.subRank;
     }
 }
 
