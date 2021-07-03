@@ -100,19 +100,15 @@ class TwitchClient {
         });
 
         this._client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
-            console.log('submysterygift', channel, username, numbOfSubs, methods, userstate)
             this._processChatMessage(channel, events.MysterySubGift, userstate, methods, numbOfSubs);
         });
         this._client.on("resub", (channel, username, months, message, userstate, methods) => {
-            console.log('resub', channel, username, months, message, userstate, methods)
             this._processChatMessage(channel, events.ReSub, userstate, methods, months);
         });
         this._client.on("subscription", (channel, username, methods, message, userstate) => {
-            console.log('subscription', channel, username, methods, message, userstate)
             this._processChatMessage(channel, events.Sub, userstate, methods);
         });
         this._client.on("subgift", (channel, username, numbOfSubs, recipient, methods, userstate) => {
-            console.log('subgift', channel, username, numbOfSubs, recipient, methods, userstate)
             this._processChatMessage(channel, events.SubGift, userstate, methods, numbOfSubs);
         });
 

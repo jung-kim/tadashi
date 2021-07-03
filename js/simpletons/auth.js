@@ -64,9 +64,7 @@ class Auth {
             try {
                 const res = await fetch(`${env.TWITCH_ENDPOINT}/helix/users`, this.getAuthObj());
                 const json = await res.json();
-                if (json) {
-                    this._user = json.data[0];
-                }
+                this._user = json.data[0];
             } catch (err) {
                 console.warn(`failed to fetch logged in user info: ${err}`);
             }
