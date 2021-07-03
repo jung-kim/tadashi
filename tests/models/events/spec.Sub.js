@@ -4,23 +4,25 @@ const Sub = require('../../../js/models/events/Sub');
 
 describe('Sub.js', () => {
     it('just user state', () => {
-        const s = new Sub({
+        const event = new Sub({
             'user-id': 111,
             'display-name': 'abc',
             'tmi-sent-ts': 11111111,
         });
 
-        assert.deepEqual(s, {
+        assert.deepEqual(event, {
             userID: 111,
             displayName: 'abc',
             timestamp: 11111111,
             subType: undefined,
             methods: undefined,
         });
+
+        assert.isTrue(event instanceof Sub);
     });
 
     it('with prime methods', () => {
-        const s = new Sub({
+        const event = new Sub({
             'user-id': 111,
             'display-name': 'abc',
             'tmi-sent-ts': 11111111,
@@ -29,7 +31,7 @@ describe('Sub.js', () => {
             prime: true
         }, 222);
 
-        assert.deepEqual(s, {
+        assert.deepEqual(event, {
             userID: 111,
             displayName: 'abc',
             timestamp: 11111111,
@@ -39,11 +41,12 @@ describe('Sub.js', () => {
                 prime: true,
             },
         });
+        assert.isTrue(event instanceof Sub);
     });
 
 
     it('with none prime methods', () => {
-        const s = new Sub({
+        const event = new Sub({
             'user-id': 111,
             'display-name': 'abc',
             'tmi-sent-ts': 11111111,
@@ -51,7 +54,7 @@ describe('Sub.js', () => {
             plan: 'a-plan',
         }, 222);
 
-        assert.deepEqual(s, {
+        assert.deepEqual(event, {
             userID: 111,
             displayName: 'abc',
             timestamp: 11111111,
@@ -60,5 +63,6 @@ describe('Sub.js', () => {
                 plan: 'a-plan',
             },
         });
+        assert.isTrue(event instanceof Sub);
     });
 });

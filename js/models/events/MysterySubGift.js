@@ -2,10 +2,10 @@
 const Sub = require('./Sub');
 
 class MysterySubGift extends Sub {
-    constructor(userstate, methods, counts) {
+    constructor(userstate, methods, count) {
         super(userstate, methods);
 
-        this.counts = counts;
+        this.count = count;
     }
 }
 
