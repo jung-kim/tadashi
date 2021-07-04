@@ -174,6 +174,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_ANONGIFT]: node1,
                 [constants.TYPE_SUBGIFT]: node1,
                 [constants.TYPE_SUBMYSTERY]: node1,
+                [constants.TYPE_TIMEOUT]: node1,
             });
 
             const dataBucket2 = new DataBucket({
@@ -185,6 +186,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_ANONGIFT]: node2,
                 [constants.TYPE_SUBGIFT]: node2,
                 [constants.TYPE_SUBMYSTERY]: node2,
+                [constants.TYPE_TIMEOUT]: node2,
             });
 
             dataBucket1.merge(userFilter, dataBucket2);
@@ -221,7 +223,11 @@ describe('DataBucket.js', () => {
                 7: {
                     _sum: 3,
                     _users: { a: 2, aa: 1 }
-                }
+                },
+                8: {
+                    _sum: 3,
+                    _users: { a: 2, aa: 1 }
+                },
             });
 
 
@@ -257,7 +263,11 @@ describe('DataBucket.js', () => {
                 7: {
                     _sum: 2,
                     _users: { a: 1, aa: 1 }
-                }
+                },
+                8: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
             });
         });
 
@@ -280,6 +290,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_ANONGIFT]: node1,
                 [constants.TYPE_SUBGIFT]: node1,
                 [constants.TYPE_SUBMYSTERY]: node1,
+                [constants.TYPE_TIMEOUT]: node1,
             });
 
             const dataBucket2 = new DataBucket({
@@ -291,6 +302,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_ANONGIFT]: node2,
                 [constants.TYPE_SUBGIFT]: node2,
                 [constants.TYPE_SUBMYSTERY]: node2,
+                [constants.TYPE_TIMEOUT]: node2,
             });
 
             dataBucket1.merge(userFilter, dataBucket2);
@@ -327,7 +339,11 @@ describe('DataBucket.js', () => {
                 7: {
                     _sum: 2,
                     _users: { a: 1, aa: 1 }
-                }
+                },
+                8: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
             });
 
 
@@ -361,6 +377,10 @@ describe('DataBucket.js', () => {
                     _users: { a: 1, aa: 1 }
                 },
                 7: {
+                    _sum: 2,
+                    _users: { a: 1, aa: 1 }
+                },
+                8: {
                     _sum: 2,
                     _users: { a: 1, aa: 1 }
                 }

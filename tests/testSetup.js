@@ -159,6 +159,7 @@ getTestDataBucket = (count, name) => {
         [constants.TYPE_ANONGIFT]: new DataNode(adjustedCount, { [name || 'f']: adjustedCount }),
         [constants.TYPE_SUBGIFT]: new DataNode(adjustedCount, { [name || 'g']: adjustedCount }),
         [constants.TYPE_SUBMYSTERY]: new DataNode(adjustedCount, { [name || 'h']: adjustedCount }),
+        [constants.TYPE_TIMEOUT]: new DataNode(adjustedCount, { [name || 'i']: adjustedCount }),
     });
 }
 

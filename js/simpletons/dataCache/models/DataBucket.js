@@ -19,6 +19,7 @@ class DataBucket {
             this[constants.TYPE_ANONGIFT] = map[constants.TYPE_ANONGIFT].getCopy();
             this[constants.TYPE_SUBGIFT] = map[constants.TYPE_SUBGIFT].getCopy();
             this[constants.TYPE_SUBMYSTERY] = map[constants.TYPE_SUBMYSTERY].getCopy();
+            this[constants.TYPE_TIMEOUT] = map[constants.TYPE_TIMEOUT].getCopy();
         } else {
             this[constants.TYPE_CHAT] = new DataNode();
             this[constants.TYPE_RESUB] = new DataNode();
@@ -28,6 +29,7 @@ class DataBucket {
             this[constants.TYPE_ANONGIFT] = new DataNode();
             this[constants.TYPE_SUBGIFT] = new DataNode();
             this[constants.TYPE_SUBMYSTERY] = new DataNode();
+            this[constants.TYPE_TIMEOUT] = new DataNode();
         }
     }
 

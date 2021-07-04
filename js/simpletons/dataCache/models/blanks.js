@@ -34,6 +34,7 @@ class BlankDataBucket {
         this[constants.TYPE_ANONGIFT] = blankDataNode;
         this[constants.TYPE_SUBGIFT] = blankDataNode;
         this[constants.TYPE_SUBMYSTERY] = blankDataNode;
+        this[constants.TYPE_TIMEOUT] = blankDataNode;
         Object.freeze(this);
     }
 
@@ -51,6 +52,7 @@ class BlankDataBucket {
         toReturn[constants.TYPE_ANONGIFT] = new DataNode();
         toReturn[constants.TYPE_SUBGIFT] = new DataNode();
         toReturn[constants.TYPE_SUBMYSTERY] = new DataNode();
+        toReturn[constants.TYPE_TIMEOUT] = new DataNode();
         return toReturn;
     }
 }

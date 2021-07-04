@@ -36,6 +36,7 @@ const blankAggsBucketToCompare = new DataBucket({
     [constants.TYPE_ANONGIFT]: emptyDataNodeToCompare,
     [constants.TYPE_SUBGIFT]: emptyDataNodeToCompare,
     [constants.TYPE_SUBMYSTERY]: emptyDataNodeToCompare,
+    [constants.TYPE_TIMEOUT]: emptyDataNodeToCompare,
 });
 
 module.exports = {

@@ -133,6 +133,17 @@ describe('timeseriesVC.js', () => {
                     5, 6, 7, 16
                 ],
                 users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
+            },
+            {
+                label: 'timeout',
+                backgroundColor: 'rgb(0, 225, 139, 0.3)',
+                borderColor: 'rgb(0, 225, 139, 1.0)',
+                borderWidth: 1,
+                data: [
+                    1, 2, 3, 4,
+                    5, 6, 7, 16
+                ],
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }, { e: 5 }, { c: 6 }, { c: 7 }, { b: 16 }]
             }
         ]);
         assert.deepEqual(timeseriesVC._getRootLabels().map(t => t.unix()),
@@ -236,6 +247,16 @@ describe('timeseriesVC.js', () => {
                 label: 'subscription mystery',
                 backgroundColor: 'rgb(128, 128, 128, 0.3)',
                 borderColor: 'rgb(128, 128, 128, 1.0)',
+                borderWidth: 1,
+                data: [
+                    1, 2, 3, 4,
+                ],
+                users: [{ a: 1 }, { b: 2 }, { c: 3 }, { e: 4 }]
+            },
+            {
+                label: 'timeout',
+                backgroundColor: 'rgb(0, 225, 139, 0.3)',
+                borderColor: 'rgb(0, 225, 139, 1.0)',
                 borderWidth: 1,
                 data: [
                     1, 2, 3, 4,
