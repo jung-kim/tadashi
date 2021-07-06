@@ -7,10 +7,11 @@ const moment = require('../../../js/helpers/moment');
 const utils = require('../../../js/helpers/utils');
 const chartFilter = require('../../../js/events/shared/chartFilter');
 const DateTime = require('../../../js/events/stream/components/DateTime');
+const testUtils = require('../../testUtils');
 
 describe('DateTimeRange.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('initialize', () => {

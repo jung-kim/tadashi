@@ -10,40 +10,37 @@ const channelSubscribedFetcher = require('../../../js/singletons/users/channelSu
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const User = require('../../../js/singletons/users/User');
 const env = require('../../../js/env');
+const testUtils = require('../../testUtils');
 
 
 describe('users.js', () => {
     beforeEach(() => {
-        reset();
-    });
-
-    beforeEach(() => {
         userIDFetcher.reset();
         userFollowsFetcher.reset();
-        reset();
+        testUtils.reset();
     });
 
     it('processUserIDsResp()', () => {
-        const aUser = getUserObject(0, 'a');
-        const bUser = getUserObject(undefined, 'b');
-        const cUser = getUserObject(3, 'c');
+        const aUser = testUtils.getUserObject(0, 'a');
+        const bUser = testUtils.getUserObject(undefined, 'b');
+        const cUser = testUtils.getUserObject(3, 'c');
         const stub = sinon.stub(userFollowsFetcher, 'add');
 
         users._idToUser = { 0: aUser, 3: cUser };
         users._nameToUser = { 'a': aUser, 'b': bUser, 'c': cUser };
         users.processUserIDsResp({ data: [{ login: 'A', id: 1 }, { login: 'B', id: 2 }, { login: 'D', id: 4 }] });
         assert.deepEqual(users._nameToUser, {
-            'a': getUserObject(1, 'a'),
-            'b': getUserObject(2, 'b'),
-            'c': getUserObject(3, 'c'),
-            'd': getUserObject(4, 'D'),
+            'a': testUtils.getUserObject(1, 'a'),
+            'b': testUtils.getUserObject(2, 'b'),
+            'c': testUtils.getUserObject(3, 'c'),
+            'd': testUtils.getUserObject(4, 'D'),
         });
         assert.deepEqual(users._idToUser, {
-            0: getUserObject(1, 'a'), // this demonstrates an odd case where id changes
-            1: getUserObject(1, 'a'),
-            2: getUserObject(2, 'b'),
-            3: getUserObject(3, 'c'),
-            4: getUserObject(4, 'D'),
+            0: testUtils.getUserObject(1, 'a'), // this demonstrates an odd case where id changes
+            1: testUtils.getUserObject(1, 'a'),
+            2: testUtils.getUserObject(2, 'b'),
+            3: testUtils.getUserObject(3, 'c'),
+            4: testUtils.getUserObject(4, 'D'),
         });
 
         sinon.assert.calledOnce(stub.withArgs(1));
@@ -51,9 +48,9 @@ describe('users.js', () => {
     });
 
     it('processUserFollowsResp()', () => {
-        const aUser = getUserObject(1, 'a');
-        const bUser = getUserObject(2, 'b');
-        const cUser = getUserObject(3, 'c');
+        const aUser = testUtils.getUserObject(1, 'a');
+        const bUser = testUtils.getUserObject(2, 'b');
+        const cUser = testUtils.getUserObject(3, 'c');
 
         users._idToUser = { 1: aUser, 2: bUser, 3: cUser };
         users._nameToUser = { 'a': aUser, 'b': bUser, 'c': cUser };
@@ -67,18 +64,18 @@ describe('users.js', () => {
         });
 
         assert.deepEqual(users._idToUser, {
-            1: getUserObject(1, 'a', [11, 22]),
-            2: getUserObject(2, 'b'),
-            3: getUserObject(3, 'c'),
-            11: getUserObject(11, 'aa', undefined, [1]),
-            22: getUserObject(22, 'bb', undefined, [1]),
+            1: testUtils.getUserObject(1, 'a', [11, 22]),
+            2: testUtils.getUserObject(2, 'b'),
+            3: testUtils.getUserObject(3, 'c'),
+            11: testUtils.getUserObject(11, 'aa', undefined, [1]),
+            22: testUtils.getUserObject(22, 'bb', undefined, [1]),
         });
         assert.deepEqual(users._nameToUser, {
-            a: getUserObject(1, 'a', [11, 22]),
-            b: getUserObject(2, 'b'),
-            c: getUserObject(3, 'c'),
-            aa: getUserObject(11, 'aa', undefined, [1]),
-            bb: getUserObject(22, 'bb', undefined, [1]),
+            a: testUtils.getUserObject(1, 'a', [11, 22]),
+            b: testUtils.getUserObject(2, 'b'),
+            c: testUtils.getUserObject(3, 'c'),
+            aa: testUtils.getUserObject(11, 'aa', undefined, [1]),
+            bb: testUtils.getUserObject(22, 'bb', undefined, [1]),
         });
         sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: `chatters.data.update.partial` }));
 
@@ -92,22 +89,22 @@ describe('users.js', () => {
 
 
         assert.deepEqual(users._idToUser, {
-            1: getUserObject(1, 'a', [11, 22, 33]),
-            2: getUserObject(2, 'b', [44]),
-            3: getUserObject(3, 'c'),
-            11: getUserObject(11, 'aa', undefined, [1]),
-            22: getUserObject(22, 'bb', undefined, [1]),
-            33: getUserObject(33, 'cc', undefined, [1]),
-            44: getUserObject(44, 'dd', undefined, [2]),
+            1: testUtils.getUserObject(1, 'a', [11, 22, 33]),
+            2: testUtils.getUserObject(2, 'b', [44]),
+            3: testUtils.getUserObject(3, 'c'),
+            11: testUtils.getUserObject(11, 'aa', undefined, [1]),
+            22: testUtils.getUserObject(22, 'bb', undefined, [1]),
+            33: testUtils.getUserObject(33, 'cc', undefined, [1]),
+            44: testUtils.getUserObject(44, 'dd', undefined, [2]),
         });
         assert.deepEqual(users._nameToUser, {
-            a: getUserObject(1, 'a', [11, 22, 33]),
-            b: getUserObject(2, 'b', [44]),
-            c: getUserObject(3, 'c'),
-            aa: getUserObject(11, 'aa', undefined, [1]),
-            bb: getUserObject(22, 'bb', undefined, [1]),
-            cc: getUserObject(33, 'cc', undefined, [1]),
-            dd: getUserObject(44, 'dd', undefined, [2]),
+            a: testUtils.getUserObject(1, 'a', [11, 22, 33]),
+            b: testUtils.getUserObject(2, 'b', [44]),
+            c: testUtils.getUserObject(3, 'c'),
+            aa: testUtils.getUserObject(11, 'aa', undefined, [1]),
+            bb: testUtils.getUserObject(22, 'bb', undefined, [1]),
+            cc: testUtils.getUserObject(33, 'cc', undefined, [1]),
+            dd: testUtils.getUserObject(44, 'dd', undefined, [2]),
         });
         sinon.assert.calledTwice(eventSignals.dispatch.withArgs({ event: `chatters.data.update.partial` }));
     });
@@ -115,7 +112,7 @@ describe('users.js', () => {
     describe('processChattersData()', () => {
         it('default cases', async () => {
             users._nameToUser = {
-                'a': getUserObject(1, 'a')
+                'a': testUtils.getUserObject(1, 'a')
             };
             users._idToUser = { 1: users._nameToUser['a'] };
             const idFetcherAddStub = sinon.stub(userIDFetcher, 'add').
@@ -129,28 +126,28 @@ describe('users.js', () => {
             }, 111);
 
             assert.deepEqual(users._nameToUser, {
-                a: getUserObject(1, 'a'),
-                b: getUserObject(undefined, 'b'),
-                c: getUserObject(undefined, 'c'),
-                d: getUserObject(undefined, 'd'),
+                a: testUtils.getUserObject(1, 'a'),
+                b: testUtils.getUserObject(undefined, 'b'),
+                c: testUtils.getUserObject(undefined, 'c'),
+                d: testUtils.getUserObject(undefined, 'd'),
             });
             assert.deepEqual(users._idToUser, {
-                1: getUserObject(1, 'a'),
+                1: testUtils.getUserObject(1, 'a'),
             });
 
             assert.deepEqual(users._viewers, {
-                broadcaster: [getUserObject(1, 'a')],
+                broadcaster: [testUtils.getUserObject(1, 'a')],
                 viewers: [
-                    getUserObject(undefined, 'b'),
-                    getUserObject(undefined, 'c'),
-                    getUserObject(undefined, 'd'),
+                    testUtils.getUserObject(undefined, 'b'),
+                    testUtils.getUserObject(undefined, 'c'),
+                    testUtils.getUserObject(undefined, 'd'),
                 ]
             });
             sinon.assert.calledOnce(idFetcherAddStub);
         });
 
         it('high viewers throttling', async () => {
-            users._nameToUser = { 'a': getUserObject(1, 'a') };
+            users._nameToUser = { 'a': testUtils.getUserObject(1, 'a') };
             users._idToUser = { 1: users._nameToUser['a'] };
 
             const idFetcherAddStub = sinon.stub(userIDFetcher, 'add');
@@ -231,9 +228,9 @@ describe('users.js', () => {
     });
 
     describe('getUsers', () => {
-        const userA = getUserObject(111, 'a');
-        const userB = getUserObject(222, 'a');
-        const userC = getUserObject(333, 'a');
+        const userA = testUtils.getUserObject(111, 'a');
+        const userB = testUtils.getUserObject(222, 'a');
+        const userC = testUtils.getUserObject(333, 'a');
 
         beforeEach(() => {
             users._idToUser = {
@@ -274,7 +271,7 @@ describe('users.js', () => {
 
             assert.deepEqual(users._idToUser, {});
             assert.deepEqual(users._nameToUser, {
-                aaa: getUserObject(undefined, 'AAA'),
+                aaa: testUtils.getUserObject(undefined, 'AAA'),
             });
         });
 
@@ -282,10 +279,10 @@ describe('users.js', () => {
             users._ensureUserExists(111, 'AAA');
 
             assert.deepEqual(users._idToUser, {
-                111: getUserObject(111, 'AAA'),
+                111: testUtils.getUserObject(111, 'AAA'),
             });
             assert.deepEqual(users._nameToUser, {
-                aaa: getUserObject(111, 'AAA'),
+                aaa: testUtils.getUserObject(111, 'AAA'),
             });
         });
 
@@ -314,14 +311,14 @@ describe('users.js', () => {
     it('getTopFollowedBySummary', () => {
         const userFilter = chartFilter.getUserFilter();
         users._idToUser = {
-            1: getUserObject(1, 'a', [777], [11, 22, 33]),
-            11: getUserObject(11, 'aa', [123], [1]),
-            22: getUserObject(22, 'bb', undefined, [1]),
-            33: getUserObject(33, 'cc', [123], [1]),
-            123: getUserObject(123, 'abc', [], [11, 33]),
-            777: getUserObject(777, 'ggg', [1]),
-            888: getUserObject(888, 'hhh'),
-            999: getUserObject(999)
+            1: testUtils.getUserObject(1, 'a', [777], [11, 22, 33]),
+            11: testUtils.getUserObject(11, 'aa', [123], [1]),
+            22: testUtils.getUserObject(22, 'bb', undefined, [1]),
+            33: testUtils.getUserObject(33, 'cc', [123], [1]),
+            123: testUtils.getUserObject(123, 'abc', [], [11, 33]),
+            777: testUtils.getUserObject(777, 'ggg', [1]),
+            888: testUtils.getUserObject(888, 'hhh'),
+            999: testUtils.getUserObject(999)
         }
 
         env.channelID = 123;
@@ -351,13 +348,13 @@ describe('users.js', () => {
 
     it('_getFollowedBySummary', () => {
         users._idToUser = {
-            1: getUserObject(1, 'a', [777], [11, 22, 33]),
-            11: getUserObject(11, 'aa', [123], [1]),
-            22: getUserObject(22, 'bb', undefined, [1]),
-            33: getUserObject(33, 'cc', [123], [1]),
-            123: getUserObject(123, 'abc', [], [11, 33]),
-            777: getUserObject(777, 'ggg', [1]),
-            888: getUserObject(888, 'hhh'),
+            1: testUtils.getUserObject(1, 'a', [777], [11, 22, 33]),
+            11: testUtils.getUserObject(11, 'aa', [123], [1]),
+            22: testUtils.getUserObject(22, 'bb', undefined, [1]),
+            33: testUtils.getUserObject(33, 'cc', [123], [1]),
+            123: testUtils.getUserObject(123, 'abc', [], [11, 33]),
+            777: testUtils.getUserObject(777, 'ggg', [1]),
+            888: testUtils.getUserObject(888, 'hhh'),
         }
 
         env.channelID = 123;

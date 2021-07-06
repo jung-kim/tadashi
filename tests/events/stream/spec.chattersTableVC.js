@@ -8,7 +8,7 @@ const testUtils = require('../../testUtils');
 
 describe('chattersTableVC', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('_loadChattersTable', () => {

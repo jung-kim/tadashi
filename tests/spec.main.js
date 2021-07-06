@@ -13,12 +13,13 @@ const { domSignals, eventSignals } = require('../js/helpers/signals');
 const users = require('../js/singletons/users');
 const constants = require('../js/helpers/constants');
 const env = require('../js/env');
+const testUtils = require('./testUtils');
 
 describe('main.js', () => {
     beforeEach(() => {
         window.location = undefined;
         main.activityStatusDom = {};
-        reset();
+        testUtils.reset();
     });
 
     it('initialize', () => {
@@ -289,7 +290,7 @@ describe('main.js', () => {
         });
 
         it('user exists and not following is not fetched', () => {
-            const user = getUserObject(1, 'abc');
+            const user = testUtils.getUserObject(1, 'abc');
             env.channelID = 111;
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
@@ -297,7 +298,7 @@ describe('main.js', () => {
         });
 
         it('user exists and follows', () => {
-            const user = getUserObject(1, 'abc', [111]);
+            const user = testUtils.getUserObject(1, 'abc', [111]);
             user.addFollowing(111);
             env.channelID = 111;
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
@@ -306,7 +307,7 @@ describe('main.js', () => {
         });
 
         it('user exists and not following', () => {
-            const user = getUserObject(1, 'abc', [222]);
+            const user = testUtils.getUserObject(1, 'abc', [222]);
             user.addFollowing(222);
             env.channelID = 111;
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
@@ -421,7 +422,7 @@ describe('main.js', () => {
     it('getInfoCss', () => {
         const name = 'abc';
         const id = 123;
-        const userObj = getUserObject(id, name)
+        const userObj = testUtils.getUserObject(id, name)
         sinon.stub(users, 'getUserByName').returns(userObj);
 
         assert.equal(main.getInfoCss(name), 'not-subscribed');

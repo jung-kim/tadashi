@@ -10,10 +10,11 @@ const auth = require('../../../js/simpletons/auth');
 const twitchClient = require('../../../js/singletons/twitchClient');
 const env = require('../../../js/env');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
+const testUtils = require('../../testUtils');
 
 describe('navOptionVC', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
         navOptionVC.lastSearchedChannel = undefined;
         navOptionVC.channelInputAutoComplete = undefined;
     });

@@ -6,11 +6,12 @@ const sinon = require('sinon');
 const auth = require('../../js/simpletons/auth');
 const env = require('../../js/env');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
+const testUtils = require('../testUtils');
 
 describe('auth.js', () => {
     beforeEach(() => {
         env.CLIENT_SECRET = undefined;
-        reset();
+        testUtils.reset();
     });
 
     describe('_initialize', () => {
@@ -123,7 +124,6 @@ describe('auth.js', () => {
     describe('authenticate', async () => {
         beforeEach(() => {
             auth.logout();
-            reset();
         });
         beforeEach(() => { env.CLIENT_SECRET = undefined; });
 

@@ -4,10 +4,11 @@ const sinon = require('sinon');
 
 const DateTime = require('../../../../js/events/stream/components/DateTime');
 const moment = require('../../../..//js/helpers/moment');
+const testUtils = require('../../../testUtils');
 
 describe('DateTime.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
 

@@ -5,11 +5,12 @@ const subsByTiersVC = require('../../../../js/events/stream/charts/subsByTiersVC
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const users = require('../../../../js/singletons/users');
 const env = require('../../../../js/env');
+const testUtils = require('../../../testUtils');
 
 
 describe('subsByTiers.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
         document.getElementById.withArgs('chart-subs-by-tiers').returns({});
         subsByTiersVC.reset();
     });

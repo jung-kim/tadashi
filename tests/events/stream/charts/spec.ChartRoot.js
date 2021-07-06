@@ -6,10 +6,11 @@ const chartFilter = require('../../../../js/events/shared/chartFilter');
 const constants = require('../../../../js/helpers/constants');
 const ChartRoot = require('../../../../js/events/stream/charts/ChartRoot');
 const env = require('../../../../js/env');
+const testUtils = require('../../../testUtils');
 
 describe('ChartRoot.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('_getParameters()', () => {

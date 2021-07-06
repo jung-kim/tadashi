@@ -8,7 +8,6 @@ const fs = require('fs');
 const tmi = require('tmi.js');
 const moment = require('../js/helpers/moment');
 const api = require('../js/simpletons/api');
-const fetchMock = require('fetch-mock');
 _ = require('lodash');
 require('node-localstorage/register');
 
@@ -97,16 +96,6 @@ window = {
     addEventListener: sinon.stub().withArgs(sinon.match.any).returns({}),
 }
 
-const auth = require('../js/simpletons/auth');
-const DataBucket = require('../js/simpletons/dataCache/models/DataBucket');
-const constants = require('../js/helpers/constants');
-const DataNode = require('../js/simpletons/dataCache/models/DataNode');
-const User = require('../js/singletons/users/User');
-const filter = require('../js/events/shared/chartFilter').getUserFilter();
-const userIDFetcher = require('../js/singletons/users/userIDFetcher');
-const users = require('../js/singletons/users');
-const env = require('../js/env');
-
 Handlebars.registerHelper('userFollowsCSS', () => {
     // do nothing
 });
@@ -117,66 +106,8 @@ Handlebars.registerHelper('getInfoCss', () => {
 
 Awesomplete = sinon.stub();
 
-// global test rest func
-reset = () => {
-    sinon.verifyAndRestore();
-    document.getElementById.reset();
-    document.getElementsByClassName.reset();
-    auth.logout();
-    localStorage.clear();
-    fetchMock.reset();
-    filter.changeSearchString();
-    flatpickr.reset();
-    eventSignals.dispatch.reset();
-    domSignals.dispatch.reset();
-    userIDFetcher._isRunning = undefined;
-    users.reset();
-    env.channel = undefined;
-    env.channelID = undefined;
-
-    // stub out boostrap functions 
-    BSN = {
-        Collapse: sinon.stub(),
-        Popover: sinon.stub(),
-        Dropdown: sinon.stub(),
-        Alert: sinon.stub(),
-    }
-}
-
 Twitch = {
     Embed: sinon.stub(),
 };
-
-getTestDataBucket = (count, name) => {
-    const adjustedCount = count || 1;
-
-    return new DataBucket({
-        [constants.TYPE_CHAT]: new DataNode(adjustedCount, { [name || 'a']: adjustedCount }),
-        [constants.TYPE_RESUB]: new DataNode(adjustedCount, { [name || 'b']: adjustedCount }),
-        [constants.TYPE_CHEER]: new DataNode(adjustedCount, { [name || 'c']: adjustedCount }),
-        [constants.TYPE_SUB]: new DataNode(adjustedCount, { [name || 'd']: adjustedCount }),
-        [constants.TYPE_BAN]: new DataNode(adjustedCount, { [name || 'e']: adjustedCount }),
-        [constants.TYPE_ANONGIFT]: new DataNode(adjustedCount, { [name || 'f']: adjustedCount }),
-        [constants.TYPE_SUBGIFT]: new DataNode(adjustedCount, { [name || 'g']: adjustedCount }),
-        [constants.TYPE_SUBMYSTERY]: new DataNode(adjustedCount, { [name || 'h']: adjustedCount }),
-        [constants.TYPE_TIMEOUT]: new DataNode(adjustedCount, { [name || 'i']: adjustedCount }),
-    });
-}
-
-getUserObject = (userID, name, following, followedBy, subscribedTo) => {
-    const user = new User(userID, name);
-
-    if (following) {
-        user._following = new Set(following)
-    }
-    if (followedBy) {
-        user._followedBy = new Set(followedBy)
-    }
-    if (subscribedTo) {
-        user._subscribedTo = subscribedTo;
-    }
-
-    return user;
-}
 
 /*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

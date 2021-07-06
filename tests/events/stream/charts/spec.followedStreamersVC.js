@@ -5,21 +5,22 @@ const followedStreamersVC = require('../../../../js/events/stream/charts/followe
 const chartFilter = require('../../../../js/events/shared/chartFilter');
 const users = require('../../../../js/singletons/users');
 const env = require('../../../../js/env');
+const testUtils = require('../../../testUtils');
 
 
 describe('followedStreamersVC.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
         document.getElementById.withArgs('pie-followed-streamers').returns({});
         followedStreamersVC.reset();
     });
 
     it('_update', () => {
         users._idToUser = {
-            1: getUserObject(1, 'a'),
-            2: getUserObject(1, 'b'),
-            3: getUserObject(1, 'c'),
-            4: getUserObject(1, 'd'),
+            1: testUtils.getUserObject(1, 'a'),
+            2: testUtils.getUserObject(1, 'b'),
+            3: testUtils.getUserObject(1, 'c'),
+            4: testUtils.getUserObject(1, 'd'),
         }
 
         env.channelID = 123;

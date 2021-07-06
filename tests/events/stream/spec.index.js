@@ -9,9 +9,10 @@ const navOptionVC = require('../../../js/events/stream/navOptionVC');
 const twitchEmbededVC = require('../../../js/events/stream/twitchEmbededVC');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const chartFilter = require('../../../js/events/shared/chartFilter');
+const testUtils = require('../../testUtils');
 
 describe('stream/index.js', () => {
-    beforeEach(() => { reset() });
+    beforeEach(() => { testUtils.reset() });
 
     it('stream.load', () => {
         const chattersTableInit = sinon.stub(chattersTableVC, 'initialize');

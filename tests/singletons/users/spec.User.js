@@ -1,16 +1,17 @@
 const { assert } = require('chai');
 const env = require('../../../js/env');
 const User = require('../../../js/singletons/users/User');
+const testUtils = require('../../testUtils');
 
 describe('User.js', () => {
     it('new()', () => {
-        const u1 = getUserObject(123, 'abc');
+        const u1 = testUtils.getUserObject(123, 'abc');
         assert.equal(u1._id, 123);
         assert.equal(u1._userName, 'abc');
         assert.isUndefined(u1._following);
         assert.isUndefined(u1._followedBy);
 
-        const u2 = getUserObject(undefined, 'abc', [1], [2]);
+        const u2 = testUtils.getUserObject(undefined, 'abc', [1], [2]);
         assert.isUndefined(u2._id);
         assert.equal(u2._userName, 'abc');
         assert.deepEqual(u2._following, new Set([1]));
@@ -19,7 +20,7 @@ describe('User.js', () => {
 
     describe('addFollowing()', () => {
         it('default', () => {
-            const u1 = getUserObject(123, 'abc');
+            const u1 = testUtils.getUserObject(123, 'abc');
             assert.isUndefined(u1._following);
 
             u1.addFollowing(1);
@@ -37,7 +38,7 @@ describe('User.js', () => {
         });
 
         it('undefined', () => {
-            const u1 = getUserObject(123, 'abc');
+            const u1 = testUtils.getUserObject(123, 'abc');
 
             u1.addFollowing();
 
@@ -47,7 +48,7 @@ describe('User.js', () => {
 
     describe('addFollowedBy()', () => {
         it('default', () => {
-            const u1 = getUserObject(123, 'abc');
+            const u1 = testUtils.getUserObject(123, 'abc');
             assert.isUndefined(u1._followedBy);
 
             u1.addFollowedBy(1);
@@ -65,7 +66,7 @@ describe('User.js', () => {
         });
 
         it('undefined', () => {
-            const u1 = getUserObject(123, 'abc');
+            const u1 = testUtils.getUserObject(123, 'abc');
 
             u1.addFollowedBy();
 
@@ -74,7 +75,7 @@ describe('User.js', () => {
     });
 
     it('isFollowing()', () => {
-        const u1 = getUserObject(123, 'abc');
+        const u1 = testUtils.getUserObject(123, 'abc');
 
         assert.isUndefined(u1.isFollowing(1));
 
@@ -84,7 +85,7 @@ describe('User.js', () => {
     });
 
     it('isFollowedBy()', () => {
-        const u1 = getUserObject(123, 'abc');
+        const u1 = testUtils.getUserObject(123, 'abc');
 
         assert.isUndefined(u1.isFollowedBy(1));
 
@@ -94,7 +95,7 @@ describe('User.js', () => {
     });
 
     it('getFollowingCounts', () => {
-        const u1 = getUserObject(123, 'abc');
+        const u1 = testUtils.getUserObject(123, 'abc');
 
         assert.isUndefined(u1.getFollowingCounts());
 
@@ -107,7 +108,7 @@ describe('User.js', () => {
     });
 
     it('getFollowedByCounts', () => {
-        const u1 = getUserObject(123, 'abc');
+        const u1 = testUtils.getUserObject(123, 'abc');
 
         assert.isUndefined(u1.getFollowedByCounts());
 
@@ -120,7 +121,7 @@ describe('User.js', () => {
     });
 
     it('getUserName', () => {
-        const u1 = getUserObject(123, 'abc');
+        const u1 = testUtils.getUserObject(123, 'abc');
         assert.equal(u1.getUserName(), 'abc');
     });
 
@@ -206,19 +207,19 @@ describe('User.js', () => {
 
     describe('getInfo', () => {
         it('without sub', () => {
-            const user = getUserObject(111, 'abc');
+            const user = testUtils.getUserObject(111, 'abc');
             env.channelID = 123;
             assert.deepEqual(user.getInfo(), { following: undefined, is_subscribed: false });
         });
 
         it('with none gifted sub', () => {
-            const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: false } });
+            const user = testUtils.getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: false } });
             env.channelID = 123;
             assert.deepEqual(user.getInfo(), { following: true, is_subscribed: true, tier: '1000', plan_name: 'a-plan' });
         });
 
         it('with gifted sub', () => {
-            const user = getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: true, gifter_name: 'a-gifter' } });
+            const user = testUtils.getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: true, gifter_name: 'a-gifter' } });
             env.channelID = 123;
             assert.deepEqual(user.getInfo(), { following: true, is_subscribed: true, tier: '1000', plan_name: 'a-plan', gifter_name: 'a-gifter' });
         });
@@ -226,13 +227,13 @@ describe('User.js', () => {
 
     describe('getInfoCss', () => {
         it('not subscribed', () => {
-            const user = getUserObject(111, 'abc');
+            const user = testUtils.getUserObject(111, 'abc');
             env.channelID = 123;
             assert.equal(user.getInfoCss(), 'not-subscribed');
         });
 
         it('subscribed', () => {
-            const user = getUserObject(111, 'abc');
+            const user = testUtils.getUserObject(111, 'abc');
             user.addSubscribedTo({ broadcaster_id: 123 })
             env.channelID = 123;
             assert.equal(user.getInfoCss(), 'subscribed');

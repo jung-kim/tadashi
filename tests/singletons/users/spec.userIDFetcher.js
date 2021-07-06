@@ -5,10 +5,11 @@ const auth = require('../../../js/simpletons/auth');
 const api = require('../../../js/simpletons/api');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
 const { eventSignals } = require('../../../js/helpers/signals');
+const testUtils = require('../../testUtils');
 
 describe('userIDFetcher.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     beforeEach(() => {

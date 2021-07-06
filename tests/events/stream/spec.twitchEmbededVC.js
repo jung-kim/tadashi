@@ -4,9 +4,10 @@ const sinon = require('sinon');
 const env = require('../../../js/env');
 
 const twitchEmbededVC = require('../../../js/events/stream/twitchEmbededVC');
+const testUtils = require('../../testUtils');
 
 describe('twitchEmbededVC', () => {
-    beforeEach(() => { reset() });
+    beforeEach(() => { testUtils.reset() });
 
     describe('domeEventFunction', () => {
         const toggleEmbededTwitch = sinon.stub(twitchEmbededVC, 'toggleEmbededTwitch');

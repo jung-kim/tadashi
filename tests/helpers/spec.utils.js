@@ -9,7 +9,7 @@ const events = require('../../js/models/events');
 
 describe('Utils.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     describe('getTimeBucket', () => {

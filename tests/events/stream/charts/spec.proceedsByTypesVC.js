@@ -4,6 +4,7 @@ const { assert } = require('chai');
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 const proceedsByTypesVC = require('../../../../js/events/stream/charts/proceedsByTypesVC');
+const testUtils = require('../../../testUtils');
 
 describe('proceedsByTypesVC.js', () => {
     beforeEach(() => {
@@ -21,7 +22,7 @@ describe('proceedsByTypesVC.js', () => {
         });
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020 + 60, undefined).
-            returns(getTestDataBucket(10))
+            returns(testUtils.getTestDataBucket(10))
         document.getElementById.withArgs(proceedsByTypesVC._chartDomSelector).returns({});
         proceedsByTypesVC.reset();
         await proceedsByTypesVC._update();

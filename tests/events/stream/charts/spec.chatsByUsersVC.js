@@ -4,11 +4,12 @@ const { assert } = require('chai');
 const chatsByUsersVC = require('../../../../js/events/stream/charts/chatsByUsersVC');
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
+const testUtils = require('../../../testUtils');
 
 
 describe('chatsByUsersVC.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('_update', async () => {
@@ -21,9 +22,9 @@ describe('chatsByUsersVC.js', () => {
             startBucket: 1577901600,
         });
 
-        const datBucket = getTestDataBucket(2, 'a').
-            merge(undefined, getTestDataBucket(2, 'c')).
-            merge(undefined, getTestDataBucket(1, 'b'))
+        const datBucket = testUtils.getTestDataBucket(2, 'a').
+            merge(undefined, testUtils.getTestDataBucket(2, 'c')).
+            merge(undefined, testUtils.getTestDataBucket(1, 'b'))
 
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020 + 60, undefined).
@@ -45,18 +46,18 @@ describe('chatsByUsersVC.js', () => {
             startBucket: 1577901600,
         });
 
-        datBucket.merge(undefined, getTestDataBucket(1, 'c')).
-            merge(undefined, getTestDataBucket(5, 'd')).
-            merge(undefined, getTestDataBucket(9, 'e')).
-            merge(undefined, getTestDataBucket(1, 'f')).
-            merge(undefined, getTestDataBucket(10, 'g')).
-            merge(undefined, getTestDataBucket(7, 'h')).
-            merge(undefined, getTestDataBucket(4, 'i')).
-            merge(undefined, getTestDataBucket(4, 'j')).
-            merge(undefined, getTestDataBucket(8, 'k')).
-            merge(undefined, getTestDataBucket(2, 'l')).
-            merge(undefined, getTestDataBucket(7, 'm')).
-            merge(undefined, getTestDataBucket(7, 'o'));
+        datBucket.merge(undefined, testUtils.getTestDataBucket(1, 'c')).
+            merge(undefined, testUtils.getTestDataBucket(5, 'd')).
+            merge(undefined, testUtils.getTestDataBucket(9, 'e')).
+            merge(undefined, testUtils.getTestDataBucket(1, 'f')).
+            merge(undefined, testUtils.getTestDataBucket(10, 'g')).
+            merge(undefined, testUtils.getTestDataBucket(7, 'h')).
+            merge(undefined, testUtils.getTestDataBucket(4, 'i')).
+            merge(undefined, testUtils.getTestDataBucket(4, 'j')).
+            merge(undefined, testUtils.getTestDataBucket(8, 'k')).
+            merge(undefined, testUtils.getTestDataBucket(2, 'l')).
+            merge(undefined, testUtils.getTestDataBucket(7, 'm')).
+            merge(undefined, testUtils.getTestDataBucket(7, 'o'));
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020 + 60, undefined).
             returns(datBucket);

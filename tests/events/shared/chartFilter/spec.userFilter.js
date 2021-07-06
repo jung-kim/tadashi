@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const filter = require("../../../../js/events/shared/chartFilter").getUserFilter();
 const users = require("../../../../js/singletons/users");
 const env = require("../../../../js/env");
+const testUtils = require("../../../testUtils");
 
 describe('userFilter.js', () => {
     beforeEach(() => {
@@ -31,17 +32,17 @@ describe('userFilter.js', () => {
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a'));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(testUtils.getUserObject(1, 'a'));
         env.channelID = 22;
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(testUtils.getUserObject(1, 'a', [22, 33]));
         env.channelID = 22;
         assert.isTrue(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [], [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(testUtils.getUserObject(1, 'a', [], [22, 33]));
         env.channelID = 44;
         assert.isFalse(filter.isApplicable('a'));
     });
@@ -52,17 +53,17 @@ describe('userFilter.js', () => {
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a'));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(testUtils.getUserObject(1, 'a'));
         env.channelID = 22;
         assert.isUndefined(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(testUtils.getUserObject(1, 'a', [22, 33]));
         env.channelID = 22;
         assert.isFalse(filter.isApplicable('a'));
 
         sinon.verifyAndRestore();
-        sinon.stub(users, 'getUserByName').withArgs('a').returns(getUserObject(1, 'a', [], [22, 33]));
+        sinon.stub(users, 'getUserByName').withArgs('a').returns(testUtils.getUserObject(1, 'a', [], [22, 33]));
         env.channelID = 44;
         assert.isTrue(filter.isApplicable('a'));
     });
@@ -102,39 +103,39 @@ describe('userFilter.js', () => {
     it('filterUsers', () => {
         filter.changeSearchString();
         assert.deepEqual(filter.filterUsers([
-            getUserObject(undefined, 'aa'),
-            getUserObject(undefined, 'ab'),
-            getUserObject(11, 'bb'),
+            testUtils.getUserObject(undefined, 'aa'),
+            testUtils.getUserObject(undefined, 'ab'),
+            testUtils.getUserObject(11, 'bb'),
         ]), [
-            getUserObject(undefined, 'aa'),
-            getUserObject(undefined, 'ab'),
-            getUserObject(11, 'bb'),
+            testUtils.getUserObject(undefined, 'aa'),
+            testUtils.getUserObject(undefined, 'ab'),
+            testUtils.getUserObject(11, 'bb'),
         ]);
 
         filter.changeSearchString('a');
         assert.deepEqual(filter.filterUsers([
-            getUserObject(undefined, 'aa'),
-            getUserObject(undefined, 'ab'),
-            getUserObject(11, 'bb'),
+            testUtils.getUserObject(undefined, 'aa'),
+            testUtils.getUserObject(undefined, 'ab'),
+            testUtils.getUserObject(11, 'bb'),
         ]), [
-            getUserObject(undefined, 'aa'),
-            getUserObject(undefined, 'ab'),
+            testUtils.getUserObject(undefined, 'aa'),
+            testUtils.getUserObject(undefined, 'ab'),
         ]);
 
         filter.changeSearchString('bb');
         assert.deepEqual(filter.filterUsers([
-            getUserObject(undefined, 'aa'),
-            getUserObject(undefined, 'ab'),
-            getUserObject(11, 'bb'),
+            testUtils.getUserObject(undefined, 'aa'),
+            testUtils.getUserObject(undefined, 'ab'),
+            testUtils.getUserObject(11, 'bb'),
         ]), [
-            getUserObject(11, 'bb'),
+            testUtils.getUserObject(11, 'bb'),
         ]);
 
         filter.changeSearchString('bbb');
         assert.deepEqual(filter.filterUsers([
-            getUserObject(undefined, 'aa'),
-            getUserObject(undefined, 'ab'),
-            getUserObject(11, 'bb'),
+            testUtils.getUserObject(undefined, 'aa'),
+            testUtils.getUserObject(undefined, 'ab'),
+            testUtils.getUserObject(11, 'bb'),
         ]), []);
     });
 });

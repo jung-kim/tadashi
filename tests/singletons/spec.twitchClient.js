@@ -9,13 +9,14 @@ const twitchClient = require("../../js/singletons/twitchClient");
 const api = require("../../js/simpletons/api");
 const dataCache = require('../../js/simpletons/dataCache');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
+const testUtils = require('../testUtils');
 
 const fakeClient = twitchClient._client;
 
 describe('twitchClient.js', () => {
     beforeEach(() => {
         twitchClient._disable();
-        reset();
+        testUtils.reset();
         twitchClient._client = fakeClient;
         twitchClient._initPromise = undefined;
     });

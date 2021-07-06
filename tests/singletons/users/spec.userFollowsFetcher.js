@@ -6,6 +6,7 @@ const auth = require('../../../js/simpletons/auth');
 const api = require('../../../js/simpletons/api');
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
+const testUtils = require('../../testUtils');
 
 
 describe('userFollowsFetcher.js', () => {
@@ -13,7 +14,7 @@ describe('userFollowsFetcher.js', () => {
         fetchMock.reset();
         auth._setAuthToken('testAuth');
         userFollowsFetcher._paginations = {};
-        reset();
+        testUtils.reset();
     });
 
     beforeEach(() => {

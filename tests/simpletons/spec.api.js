@@ -15,16 +15,11 @@ describe('api.js', () => {
     const testBody = { "test": "test" };
 
     beforeEach(() => {
-        api.reset();
         fetchMock.reset();
         testUtils.setFakeNow();
-        env.CLIENT_ID = 'CLIENT-ID';
-    });
-
-    beforeEach(() => {
         testUtils.unsetFakeNow();
         env.CLIENT_ID = '';
-        reset();
+        testUtils.reset();
     });
 
     describe('_makeTwitchAPIQuery', () => {

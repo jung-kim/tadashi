@@ -13,7 +13,7 @@ const userFilter = chartFilter.getUserFilter();
 
 describe('DataChannel.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('add()', () => {
@@ -185,29 +185,29 @@ describe('DataChannel.js', () => {
     it('_getFiveMinRange', () => {
         const dataChannel = new DataChannel();
         const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-            return getTestDataBucket();
+            return testUtils.getTestDataBucket();
         })
-        dataChannel._cache[constants.BUCKET_FIVE][300] = getTestDataBucket(10);
+        dataChannel._cache[constants.BUCKET_FIVE][300] = testUtils.getTestDataBucket(10);
 
         const res = dataChannel.get(300, 660);
 
         sinon.assert.calledOnce(_getAt);
-        assert.deepEqual(res, getTestDataBucket(11));
+        assert.deepEqual(res, testUtils.getTestDataBucket(11));
     });
 
     it('_getHourRange', () => {
         const dataChannel = new DataChannel();
         const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-            return getTestDataBucket();
+            return testUtils.getTestDataBucket();
         })
-        dataChannel._cache[constants.BUCKET_FIVE][300] = getTestDataBucket(10);
-        dataChannel._cache[constants.BUCKET_FIVE][3600] = getTestDataBucket(10);
-        dataChannel._cache[constants.BUCKET_HOUR][0] = getTestDataBucket(10);
+        dataChannel._cache[constants.BUCKET_FIVE][300] = testUtils.getTestDataBucket(10);
+        dataChannel._cache[constants.BUCKET_FIVE][3600] = testUtils.getTestDataBucket(10);
+        dataChannel._cache[constants.BUCKET_HOUR][0] = testUtils.getTestDataBucket(10);
 
         const res = dataChannel.get(0, 3960);
 
         sinon.assert.calledOnce(_getAt);
-        assert.deepEqual(res, getTestDataBucket(21));
+        assert.deepEqual(res, testUtils.getTestDataBucket(21));
     });
 
     describe('get', () => {
@@ -217,23 +217,23 @@ describe('DataChannel.js', () => {
             // below cache should not be utilized
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt');
-            const _getAt1 = _getAt.withArgs(300).returns(getTestDataBucket());
+            const _getAt1 = _getAt.withArgs(300).returns(testUtils.getTestDataBucket());
 
             const res = dataChannel.get(300, 360, userFilter);
 
             sinon.assert.calledOnce(_getAt);
             sinon.assert.calledOnce(_getAt1);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(1));
+            assert.deepEqual(res, testUtils.getTestDataBucket(1));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             });
@@ -247,17 +247,17 @@ describe('DataChannel.js', () => {
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket(1);
+                return testUtils.getTestDataBucket(1);
             });
 
             const res = dataChannel.get(300, 600, userFilter);
 
             sinon.assert.callCount(_getAt, 5);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(5));
+            assert.deepEqual(res, testUtils.getTestDataBucket(5));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(5)
+                    300: testUtils.getTestDataBucket(5)
                 },
                 [constants.BUCKET_HOUR]: {},
             });
@@ -267,7 +267,7 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             }
@@ -278,10 +278,10 @@ describe('DataChannel.js', () => {
 
             sinon.assert.notCalled(_getAt);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(99));
+            assert.deepEqual(res, testUtils.getTestDataBucket(99));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99),
+                    300: testUtils.getTestDataBucket(99),
                 },
                 [constants.BUCKET_HOUR]: {},
             });
@@ -291,23 +291,23 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket();
+                return testUtils.getTestDataBucket();
             });
 
             const res = dataChannel.get(240, 720, userFilter);
 
             sinon.assert.calledThrice(_getAt);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(102));
+            assert.deepEqual(res, testUtils.getTestDataBucket(102));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             });
@@ -318,26 +318,26 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
                 },
                 [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket();
+                return testUtils.getTestDataBucket();
             });
 
             const res = dataChannel.get(240, 1320, userFilter);
 
             sinon.assert.callCount(_getAt, 8);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(218));
+            assert.deepEqual(res, testUtils.getTestDataBucket(218));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    600: getTestDataBucket(5),
-                    900: getTestDataBucket(10)
+                    300: testUtils.getTestDataBucket(200),
+                    600: testUtils.getTestDataBucket(5),
+                    900: testUtils.getTestDataBucket(10)
                 },
                 [constants.BUCKET_HOUR]: {},
             });
@@ -347,38 +347,38 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
                 },
                 [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket(1)
+                return testUtils.getTestDataBucket(1)
             });
 
             const res = dataChannel.get(0, 3600, userFilter);
 
             sinon.assert.callCount(_getAt, 50);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(260));
+            assert.deepEqual(res, testUtils.getTestDataBucket(260));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    0: getTestDataBucket(5),
-                    300: getTestDataBucket(200),
-                    600: getTestDataBucket(5),
-                    900: getTestDataBucket(10),
-                    1200: getTestDataBucket(5),
-                    1500: getTestDataBucket(5),
-                    1800: getTestDataBucket(5),
-                    2100: getTestDataBucket(5),
-                    2400: getTestDataBucket(5),
-                    2700: getTestDataBucket(5),
-                    3000: getTestDataBucket(5),
-                    3300: getTestDataBucket(5),
+                    0: testUtils.getTestDataBucket(5),
+                    300: testUtils.getTestDataBucket(200),
+                    600: testUtils.getTestDataBucket(5),
+                    900: testUtils.getTestDataBucket(10),
+                    1200: testUtils.getTestDataBucket(5),
+                    1500: testUtils.getTestDataBucket(5),
+                    1800: testUtils.getTestDataBucket(5),
+                    2100: testUtils.getTestDataBucket(5),
+                    2400: testUtils.getTestDataBucket(5),
+                    2700: testUtils.getTestDataBucket(5),
+                    3000: testUtils.getTestDataBucket(5),
+                    3300: testUtils.getTestDataBucket(5),
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(260),
+                    0: testUtils.getTestDataBucket(260),
                 },
             });
         });
@@ -387,30 +387,30 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(65),
+                    0: testUtils.getTestDataBucket(65),
                 },
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket()
+                return testUtils.getTestDataBucket()
             });
 
             const res = dataChannel.get(0, 3600, userFilter);
 
             sinon.assert.callCount(_getAt, 0);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(65));
+            assert.deepEqual(res, testUtils.getTestDataBucket(65));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(65),
+                    0: testUtils.getTestDataBucket(65),
                 },
             });
         });
@@ -419,33 +419,33 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
-                    3900: getTestDataBucket(11),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
+                    3900: testUtils.getTestDataBucket(11),
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(65),
+                    0: testUtils.getTestDataBucket(65),
                 },
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket()
+                return testUtils.getTestDataBucket()
             });
 
             const res = dataChannel.get(0, 4020, userFilter);
 
             sinon.assert.callCount(_getAt, 7);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(72));
+            assert.deepEqual(res, testUtils.getTestDataBucket(72));
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
-                    3600: getTestDataBucket(5),
-                    3900: getTestDataBucket(11),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
+                    3600: testUtils.getTestDataBucket(5),
+                    3900: testUtils.getTestDataBucket(11),
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(65),
+                    0: testUtils.getTestDataBucket(65),
                 },
             });
         });
@@ -455,45 +455,45 @@ describe('DataChannel.js', () => {
             const dataChannel = new DataChannel();
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
-                    3900: getTestDataBucket(11),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
+                    3900: testUtils.getTestDataBucket(11),
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(65),
+                    0: testUtils.getTestDataBucket(65),
                 },
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket()
+                return testUtils.getTestDataBucket()
             });
 
             const res = dataChannel.get(0, 7620, userFilter);
 
             sinon.assert.callCount(_getAt, 62);
             sinon.assert.calledOnce(_validateCache);
-            assert.deepEqual(res, getTestDataBucket(138),);
+            assert.deepEqual(res, testUtils.getTestDataBucket(138),);
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(200),
-                    900: getTestDataBucket(10),
-                    3600: getTestDataBucket(5),
-                    3900: getTestDataBucket(11),
-                    4200: getTestDataBucket(5),
-                    4500: getTestDataBucket(5),
-                    4800: getTestDataBucket(5),
-                    5100: getTestDataBucket(5),
-                    5400: getTestDataBucket(5),
-                    5700: getTestDataBucket(5),
-                    6000: getTestDataBucket(5),
-                    6300: getTestDataBucket(5),
-                    6600: getTestDataBucket(5),
-                    6900: getTestDataBucket(5),
-                    7200: getTestDataBucket(5),
+                    300: testUtils.getTestDataBucket(200),
+                    900: testUtils.getTestDataBucket(10),
+                    3600: testUtils.getTestDataBucket(5),
+                    3900: testUtils.getTestDataBucket(11),
+                    4200: testUtils.getTestDataBucket(5),
+                    4500: testUtils.getTestDataBucket(5),
+                    4800: testUtils.getTestDataBucket(5),
+                    5100: testUtils.getTestDataBucket(5),
+                    5400: testUtils.getTestDataBucket(5),
+                    5700: testUtils.getTestDataBucket(5),
+                    6000: testUtils.getTestDataBucket(5),
+                    6300: testUtils.getTestDataBucket(5),
+                    6600: testUtils.getTestDataBucket(5),
+                    6900: testUtils.getTestDataBucket(5),
+                    7200: testUtils.getTestDataBucket(5),
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(65),
-                    3600: getTestDataBucket(66),
+                    0: testUtils.getTestDataBucket(65),
+                    3600: testUtils.getTestDataBucket(66),
                 },
             });
         });
@@ -503,15 +503,15 @@ describe('DataChannel.js', () => {
             // below cache should not be utilized
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt');
-            const _getAt1 = _getAt.withArgs(300).returns(getTestDataBucket(1));
-            const _getAt2 = _getAt.withArgs(360).returns(getTestDataBucket(1));
-            const _getAt3 = _getAt.withArgs(420).returns(getTestDataBucket(1));
+            const _getAt1 = _getAt.withArgs(300).returns(testUtils.getTestDataBucket(1));
+            const _getAt2 = _getAt.withArgs(360).returns(testUtils.getTestDataBucket(1));
+            const _getAt3 = _getAt.withArgs(420).returns(testUtils.getTestDataBucket(1));
 
             userFilter.changeSearchString('a');
             const res = dataChannel.get(300, 480, userFilter);
@@ -527,7 +527,7 @@ describe('DataChannel.js', () => {
             });
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             });
@@ -538,13 +538,13 @@ describe('DataChannel.js', () => {
             // below cache should not be utilized
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket();
+                return testUtils.getTestDataBucket();
             });
 
             userFilter.changeSearchString('a');
@@ -558,7 +558,7 @@ describe('DataChannel.js', () => {
             });
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {},
             });
@@ -569,15 +569,15 @@ describe('DataChannel.js', () => {
             // below cache should not be utilized
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(10)
+                    0: testUtils.getTestDataBucket(10)
                 },
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket();
+                return testUtils.getTestDataBucket();
             });
 
             userFilter.changeSearchString('a');
@@ -591,10 +591,10 @@ describe('DataChannel.js', () => {
             });
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99)
+                    300: testUtils.getTestDataBucket(99)
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(10)
+                    0: testUtils.getTestDataBucket(10)
                 },
             });
         });
@@ -604,16 +604,16 @@ describe('DataChannel.js', () => {
             // below cache should not be utilized
             dataChannel._cache = {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99),
-                    3600: getTestDataBucket(5)
+                    300: testUtils.getTestDataBucket(99),
+                    3600: testUtils.getTestDataBucket(5)
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(10)
+                    0: testUtils.getTestDataBucket(10)
                 },
             }
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt').callsFake(() => {
-                return getTestDataBucket();
+                return testUtils.getTestDataBucket();
             });
 
             userFilter.changeSearchString('c');
@@ -627,11 +627,11 @@ describe('DataChannel.js', () => {
             });
             assert.deepEqual(dataChannel._cache, {
                 [constants.BUCKET_FIVE]: {
-                    300: getTestDataBucket(99),
-                    3600: getTestDataBucket(5)
+                    300: testUtils.getTestDataBucket(99),
+                    3600: testUtils.getTestDataBucket(5)
                 },
                 [constants.BUCKET_HOUR]: {
-                    0: getTestDataBucket(10)
+                    0: testUtils.getTestDataBucket(10)
                 },
             });
         });

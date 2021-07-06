@@ -3,10 +3,11 @@ const { assert } = require('chai');
 
 const Chatters = require('../../../../js/events/stream/components/Chatters');
 const users = require('../../../../js/singletons/users');
+const testUtils = require('../../../testUtils');
 
 describe('Chatters.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('constructor', () => {
@@ -110,7 +111,7 @@ describe('Chatters.js', () => {
             document.getElementsByClassName.withArgs('user-info').returns([
                 { id: 'chatters-subs-abc', firstElementChild: 'child1' }
             ]);
-            sinon.stub(users, 'getUserByName').withArgs('abc').returns(getUserObject(123, 'abc'));
+            sinon.stub(users, 'getUserByName').withArgs('abc').returns(testUtils.getUserObject(123, 'abc'));
 
             chatter._updateChattersList();
 

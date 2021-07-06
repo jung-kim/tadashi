@@ -5,6 +5,7 @@ const api = require('../../../js/simpletons/api');
 const auth = require('../../../js/simpletons/auth');
 const channelSubscribedFetcher = require('../../../js/singletons/users/channelSubscribedFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
+const testUtils = require('../../testUtils');
 
 const firstResponse = {
     "data": [
@@ -56,7 +57,7 @@ describe('channelSubscribedFetcher.js', () => {
     beforeEach(() => {
         channelSubscribedFetcher._paginations = {};
         channelSubscribedFetcher._isRunning = undefined;
-        reset();
+        testUtils.reset();
     });
 
     describe('_fetch', () => {

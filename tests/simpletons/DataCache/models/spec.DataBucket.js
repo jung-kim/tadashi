@@ -12,7 +12,7 @@ const userFilter = chartFilter.getUserFilter();
 
 describe('DataBucket.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('add()', () => {

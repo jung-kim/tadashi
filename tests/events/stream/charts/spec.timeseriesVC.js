@@ -6,14 +6,13 @@ const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 const timeseriesVC = require('../../../../js/events/stream/charts/timeseriesVC');
 const chartFilter = require('../../../../js/events/shared/chartFilter');
+const testUtils = require('../../../testUtils');
 
 describe('timeseriesVC.js', () => {
     beforeEach(() => {
         document.getElementById.withArgs(timeseriesVC._chartDomSelector).returns({});
         timeseriesVC.reset();
-    });
-    beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('_update', async () => {
@@ -27,21 +26,21 @@ describe('timeseriesVC.js', () => {
         });
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577901660, chartFilter).
-            returns(getTestDataBucket(1, 'a')).
+            returns(testUtils.getTestDataBucket(1, 'a')).
             withArgs('abc', 1577901660, 1577901720, chartFilter).
-            returns(getTestDataBucket(2, 'b')).
+            returns(testUtils.getTestDataBucket(2, 'b')).
             withArgs('abc', 1577901720, 1577901780, chartFilter).
-            returns(getTestDataBucket(3, 'c')).
+            returns(testUtils.getTestDataBucket(3, 'c')).
             withArgs('abc', 1577901780, 1577901840, chartFilter).
-            returns(getTestDataBucket(4, 'e')).
+            returns(testUtils.getTestDataBucket(4, 'e')).
             withArgs('abc', 1577901840, 1577901900, chartFilter).
-            returns(getTestDataBucket(5, 'e')).
+            returns(testUtils.getTestDataBucket(5, 'e')).
             withArgs('abc', 1577901900, 1577901960, chartFilter).
-            returns(getTestDataBucket(6, 'c')).
+            returns(testUtils.getTestDataBucket(6, 'c')).
             withArgs('abc', 1577901960, 1577902020, chartFilter).
-            returns(getTestDataBucket(7, 'c')).
+            returns(testUtils.getTestDataBucket(7, 'c')).
             withArgs('abc', 1577902020, 1577902080, chartFilter).
-            returns(getTestDataBucket(16, 'b'));
+            returns(testUtils.getTestDataBucket(16, 'b'));
 
         await timeseriesVC._update();
 
@@ -162,13 +161,13 @@ describe('timeseriesVC.js', () => {
         });
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577901660, chartFilter).
-            returns(getTestDataBucket(1, 'a')).
+            returns(testUtils.getTestDataBucket(1, 'a')).
             withArgs('abc', 1577901660, 1577901720, chartFilter).
-            returns(getTestDataBucket(2, 'b')).
+            returns(testUtils.getTestDataBucket(2, 'b')).
             withArgs('abc', 1577901720, 1577901780, chartFilter).
-            returns(getTestDataBucket(3, 'c')).
+            returns(testUtils.getTestDataBucket(3, 'c')).
             withArgs('abc', 1577901780, 1577901840, chartFilter).
-            returns(getTestDataBucket(4, 'e'));
+            returns(testUtils.getTestDataBucket(4, 'e'));
 
         await timeseriesVC._update();
 

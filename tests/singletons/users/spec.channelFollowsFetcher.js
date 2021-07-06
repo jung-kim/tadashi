@@ -5,12 +5,13 @@ const auth = require('../../../js/simpletons/auth');
 const channelFollowsFetcher = require('../../../js/singletons/users/channelFollowsFetcher');
 const api = require('../../../js/simpletons/api');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
+const testUtils = require('../../testUtils');
 
 describe('channelFollowsFetcher.js', () => {
     beforeEach(() => {
         channelFollowsFetcher._paginations = {};
         eventSignals.dispatch.reset();
-        reset();
+        testUtils.reset();
     });
 
     describe('_fetch', () => {

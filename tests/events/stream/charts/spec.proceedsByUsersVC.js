@@ -4,10 +4,11 @@ const { assert } = require('chai');
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 const proceedsByUsersVC = require('../../../../js/events/stream/charts/proceedsByUsersVC');
+const testUtils = require('../../../testUtils');
 
 describe('proceedsByUsersVC.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     it('_update()', async () => {
@@ -19,18 +20,18 @@ describe('proceedsByUsersVC.js', () => {
             searchValue: undefined,
             startBucket: 1577901600,
         });
-        const dataBucket = getTestDataBucket(1, 'a').
-            merge(undefined, getTestDataBucket(3, 'b')).
-            merge(undefined, getTestDataBucket(6, 'c')).
-            merge(undefined, getTestDataBucket(6, 'd')).
-            merge(undefined, getTestDataBucket(5, 'e')).
-            merge(undefined, getTestDataBucket(9, 'f')).
-            merge(undefined, getTestDataBucket(8, 'g')).
-            merge(undefined, getTestDataBucket(2, 'h')).
-            merge(undefined, getTestDataBucket(1, 'i')).
-            merge(undefined, getTestDataBucket(1, 'j')).
-            merge(undefined, getTestDataBucket(3, 'k')).
-            merge(undefined, getTestDataBucket(5, 'l'))
+        const dataBucket = testUtils.getTestDataBucket(1, 'a').
+            merge(undefined, testUtils.getTestDataBucket(3, 'b')).
+            merge(undefined, testUtils.getTestDataBucket(6, 'c')).
+            merge(undefined, testUtils.getTestDataBucket(6, 'd')).
+            merge(undefined, testUtils.getTestDataBucket(5, 'e')).
+            merge(undefined, testUtils.getTestDataBucket(9, 'f')).
+            merge(undefined, testUtils.getTestDataBucket(8, 'g')).
+            merge(undefined, testUtils.getTestDataBucket(2, 'h')).
+            merge(undefined, testUtils.getTestDataBucket(1, 'i')).
+            merge(undefined, testUtils.getTestDataBucket(1, 'j')).
+            merge(undefined, testUtils.getTestDataBucket(3, 'k')).
+            merge(undefined, testUtils.getTestDataBucket(5, 'l'))
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020 + 60, undefined).
             returns(dataBucket);
@@ -67,18 +68,18 @@ describe('proceedsByUsersVC.js', () => {
 
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020, undefined).
-            returns(getTestDataBucket(1, 'a').
-                merge(undefined, getTestDataBucket(3, 'b')).
-                merge(undefined, getTestDataBucket(6, 'c')).
-                merge(undefined, getTestDataBucket(6, 'd')).
-                merge(undefined, getTestDataBucket(5, 'e')).
-                merge(undefined, getTestDataBucket(9, 'f')).
-                merge(undefined, getTestDataBucket(8, 'g')).
-                merge(undefined, getTestDataBucket(2, 'h')).
-                merge(undefined, getTestDataBucket(1, 'i')).
-                merge(undefined, getTestDataBucket(1, 'j')).
-                merge(undefined, getTestDataBucket(3, 'k')).
-                merge(undefined, getTestDataBucket(5, 'l')));
+            returns(testUtils.getTestDataBucket(1, 'a').
+                merge(undefined, testUtils.getTestDataBucket(3, 'b')).
+                merge(undefined, testUtils.getTestDataBucket(6, 'c')).
+                merge(undefined, testUtils.getTestDataBucket(6, 'd')).
+                merge(undefined, testUtils.getTestDataBucket(5, 'e')).
+                merge(undefined, testUtils.getTestDataBucket(9, 'f')).
+                merge(undefined, testUtils.getTestDataBucket(8, 'g')).
+                merge(undefined, testUtils.getTestDataBucket(2, 'h')).
+                merge(undefined, testUtils.getTestDataBucket(1, 'i')).
+                merge(undefined, testUtils.getTestDataBucket(1, 'j')).
+                merge(undefined, testUtils.getTestDataBucket(3, 'k')).
+                merge(undefined, testUtils.getTestDataBucket(5, 'l')));
 
         assert.deepEqual(proceedsByUsersVC._afterLabel('a'), [
             "  re-subscription: 1",
