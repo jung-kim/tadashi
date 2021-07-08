@@ -66,6 +66,8 @@ class DataCache {
      * @returns {undefined}
      */
     add(channel, raw) {
+        channel = channel.charAt(0) === '#' ? channel.substring(1) : channel;
+
         if (!this._isValidRaw(raw)) {
             return;
         }

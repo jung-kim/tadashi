@@ -83,38 +83,43 @@ class TwitchClient {
         });
 
         this._client.on("anongiftpaidupgrade", (channel, username, userstate) => {
-            this._processChatMessage(channel, events.AnonGift, userstate);
+            this._processChatMessage(channel, new events.AnonGift(userstate));
         });
         this._client.on("ban", (channel, username, reason, userstate) => {
             // {reason} is deprecated
-            this._processChatMessage(channel, events.Ban, userstate);
+            this._processChatMessage(channel, new events.Ban(userstate));
         });
         this._client.on('chat', (channel, userstate, message, self) => {
-            this._processChatMessage(channel, events.Chat, userstate);
+            this._processChatMessage(channel, new events.Chat(userstate));
         });
         this._client.on("cheer", (channel, userstate, message) => {
-            this._processChatMessage(channel, events.Cheer, userstate);
+            this._processChatMessage(channel, new events.Cheer(userstate));
         });
         this._client.on("timeout", (channel, userstate, message) => {
-            this._processChatMessage(channel, events.Timeout, userstate);
+            this._processChatMessage(channel, new events.Timeout(userstate));
         });
 
         this._client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
-            this._processChatMessage(channel, events.MysterySubGift, userstate, methods, numbOfSubs);
+            this._processChatMessage(channel, new events.MysterySubGift(userstate, methods, numbOfSubs));
         });
         this._client.on("resub", (channel, username, months, message, userstate, methods) => {
-            this._processChatMessage(channel, events.ReSub, userstate, methods, months);
+            this._processChatMessage(channel, new events.ReSub(userstate, methods, months));
         });
         this._client.on("subscription", (channel, username, methods, message, userstate) => {
-            this._processChatMessage(channel, events.Sub, userstate, methods);
+            this._processChatMessage(channel, new events.Sub(userstate, methods));
         });
         this._client.on("subgift", (channel, username, numbOfSubs, recipient, methods, userstate) => {
-            this._processChatMessage(channel, events.SubGift, userstate, methods, numbOfSubs);
+            this._processChatMessage(channel, new events.SubGift(userstate, methods, numbOfSubs));
         });
 
         await this._client.connect();
         this.ping();
         this._initPromise = undefined;
+    }
+
+    _processChatMessage(channel, raw) {
+        this.ping();
+        dataCache.add(channel, raw);
     }
 
     async changeChannel(channel, id) {
@@ -140,13 +145,6 @@ class TwitchClient {
                 channel: env.channel,
             }
         });
-    }
-
-    _processChatMessage(channel, clazz, arg1, arg2, arg3, arg4) {
-        this.ping();
-        const raw = new clazz(arg1, arg2, arg3, arg4);
-
-        dataCache.add(channel.charAt(0) === '#' ? channel.substring(1) : channel, raw);
     }
 
     _disable() {
