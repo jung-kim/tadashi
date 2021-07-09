@@ -27,7 +27,7 @@ describe('dataCache/index.js', () => {
         dataCache.add('aaa', {});
         assert.deepEqual(Object.keys(dataCache._data), []);
 
-        dataCache.add('aaa', new Chat({
+        dataCache.add('#aaa', new Chat({
             displayName: 'aaa',
             timestamp: 1000,
         }));

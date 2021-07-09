@@ -10,6 +10,7 @@ const api = require("../../js/simpletons/api");
 const dataCache = require('../../js/simpletons/dataCache');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 const testUtils = require('../testUtils');
+const events = require('../../js/models/events');
 
 const fakeClient = twitchClient._client;
 
@@ -178,23 +179,14 @@ describe('twitchClient.js', () => {
         });
     });
 
-    describe('_processChatMessage', () => {
-        class test {
-            constructor(a, b, c) {
-                this.a = a;
-                this.b = b;
-                this.c = c;
-            }
-        }
+    it('_processChatMessage', () => {
+        const ping = sinon.stub(twitchClient, 'ping');
+        const dataCacheAdd = sinon.stub(dataCache, 'add').withArgs('abc', new events.Chat({}));
 
-        it('enabled', () => {
-            twitchClient._enable();
-            const cacheAddStub = sinon.stub(dataCache, 'add').withArgs('abc', new test(1, 2, 3));
-            let ping = sinon.stub(twitchClient, 'ping');
-            twitchClient._processChatMessage('#abc', test, 1, 2, 3);
-            sinon.assert.calledOnce(ping);
-            sinon.assert.calledOnce(cacheAddStub);
-        });
+        twitchClient._processChatMessage('abc', new events.Chat({}));
+
+        sinon.assert.calledOnce(ping);
+        sinon.assert.calledOnce(dataCacheAdd);
     });
 
     it('disable/enable', () => {
