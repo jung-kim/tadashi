@@ -1,12 +1,10 @@
 const env = require('../env');
 const statusCodes = require('http-status-codes').StatusCodes;
-const eventSignals = require('../helpers/signals').eventSignals;
+const pLimit = require('p-limit');
 const pako = require('pako');
 
 const TIWTCH_NAME_REGEX = /[0-9a-zA-Z][\w]{3,23}/;
 const RATELIMIT_REMAINING = 'Ratelimit-Remaining';
-const RATELIMIT_RESET = 'Ratelimit-Reset';
-const MAX_AWAIT_DURATION_SEC = 15;
 const DEFAULT_REQ_OPT = Object.freeze({
     headers: {
         'Client-ID': env.CLIENT_ID,
@@ -15,80 +13,24 @@ const DEFAULT_REQ_OPT = Object.freeze({
 });
 
 const MAX_ATTEMPT = 5;
+const MAX_PARALLEL = 10;
+const DEFAULT_ALLOWANCE = 5;
+const DEFAULT_ALLOWANCE_RESET_SEC = 3000;
+const MAX_AWAIT_SEC = 15000;
 
 class API {
     constructor() {
         this.reset();
-        this._allowance = 1;
+        this._pLimit = pLimit(MAX_PARALLEL);
+        this._allowance = DEFAULT_ALLOWANCE;
+        this._resetTimeout = undefined;
     }
 
     reset() {
         this.waitForReset = null;
     }
 
-    /**
-     * returns time to sleep until throttling is resolved.
-     * 
-     * @param {object} response object from fetch
-     * @returns {number} time to await for in seconds
-     */
-    _getThrottledSleepDuration(response) {
-        const resetAt = parseInt(response.headers.get(RATELIMIT_RESET));
-        if (isNaN(resetAt)) {
-            return MAX_AWAIT_DURATION_SEC;
-        }
-
-        if (resetAt > MAX_AWAIT_DURATION_SEC) {
-            console.warn(`reset at is larger than max : ${resetAt}`);
-        }
-
-        return Math.min(resetAt, MAX_AWAIT_DURATION_SEC);
-    }
-
-    /**
-     * make an api call, extract twitch api throttle headers and set promise to await for
-     * next calls.
-     * 
-     * Will thro error if query fails, including being throttled.
-     * 
-     * @param {string} url to fetch
-     * @param {object} authObj options to pass into fetch
-     * @returns {object} result of api request
-     */
-    async _makeTwitchAPIQuery(url, authObj) {
-        if (this.waitForReset) {
-            await this.waitForReset;
-            eventSignals.dispatch({ event: 'api.unthrottled' });
-            this.waitForReset = null;
-        }
-        const response = await fetch(url, authObj || DEFAULT_REQ_OPT);
-        const remaining = parseInt(response.headers.get(RATELIMIT_REMAINING) || 10);
-
-        // check for too many requests and if reset has not been triggered already
-        if ((remaining === 0 || response.status === statusCodes.TOO_MANY_REQUESTS) && !this.waitForReset) {
-            const sleepDuration = this._getThrottledSleepDuration(response);
-
-            console.warn(`too many requests! sleeping for ${sleepDuration}`);
-
-            this.waitForReset = new Promise(resolve => {
-                setTimeout(resolve, (sleepDuration * 1000) + 5)
-            });
-            throw { status: response.status, msg: 'too many requests' };
-        }
-
-        if (!response.ok) {
-            console.warn(`query failed!`);
-            throw { status: response.status, msg: 'query failed' };
-        }
-
-        if (response.headers.get('Content-Type').indexOf('gzip') > -1) {
-            return JSON.parse(pako.ungzip(await response.arrayBuffer(), { to: 'string' }));
-        }
-
-        return await response.json();
-    }
-
-    async __makeTwitchAPIQuery(url, authObj, attempt) {
+    async _makeTwitchAPIQuery(url, authObj, attempt) {
         // check for if api throttle is needed
         if (this._allowance <= 0) {
             if (attempt > MAX_ATTEMPT) {
@@ -100,20 +42,40 @@ class API {
             // await and retry
             const effectiveTimeout = Math.pow(5, attempt + 1) + Math.floor(Math.random() * 50);
             await new Promise(resolve => setTimeout(resolve, effectiveTimeout));
-            return this.__makeTwitchAPIQuery(url, authObj, attempt + 1);
+            return this._makeTwitchAPIQuery(url, authObj, attempt + 1);
         }
 
+        // fetch
         const response = await fetch(url, authObj || DEFAULT_REQ_OPT);
-        this._allowance = parseInt(response.headers.get(RATELIMIT_REMAINING) || 0);
 
+        // update allowance
+        this._allowance = parseInt(response.headers.get(RATELIMIT_REMAINING));
+        if (this._allowance || response.status === statusCodes.TOO_MANY_REQUESTS) {
+            this._allowance = 0;
+        }
+
+        // check if allowance is 0, then set reset timeout to rest allowance
+        if (!this._resetTimeout && this._allowance == 0) {
+            const resetAt = parseInt(response.headers.get(RATELIMIT_RESET));
+            const nextReset = isNaN(resetAt) ? DEFAULT_ALLOWANCE_RESET_SEC : Math.min(resetAt, MAX_AWAIT_SEC);
+
+            this._resetTimeout = setTimeout(() => {
+                this._allowance = DEFAULT_ALLOWANCE;
+                this._resetTimeout = undefined;
+            }, nextReset);
+        }
+
+        // throw if fetch failed
         if (!response.ok) {
             console.warn(`query failed!`);
             throw { status: response.status, msg: 'query failed' };
         }
 
+        // ungzip if gziped response
         if (response.headers.get('Content-Type').indexOf('gzip') > -1) {
             return JSON.parse(pako.ungzip(await response.arrayBuffer(), { to: 'string' }));
         }
+
         return await response.json();
     }
 
@@ -127,7 +89,7 @@ class API {
     async queryTwitchApi(path, authObj) {
         const url = `${env.TWITCH_ENDPOINT}/${path}`;
 
-        return this._makeTwitchAPIQuery(url, authObj);
+        return this._pLimit(this._makeTwitchAPIQuery(url, authObj));
     }
 
     /**
