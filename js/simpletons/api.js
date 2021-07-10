@@ -14,9 +14,12 @@ const DEFAULT_REQ_OPT = Object.freeze({
     }
 });
 
+const MAX_ATTEMPT = 5;
+
 class API {
     constructor() {
         this.reset();
+        this._allowance = 1;
     }
 
     reset() {
@@ -82,6 +85,35 @@ class API {
             return JSON.parse(pako.ungzip(await response.arrayBuffer(), { to: 'string' }));
         }
 
+        return await response.json();
+    }
+
+    async __makeTwitchAPIQuery(url, authObj, attempt) {
+        // check for if api throttle is needed
+        if (this._allowance <= 0) {
+            if (attempt > MAX_ATTEMPT) {
+                console.warn(`query retry limit reached! url="${url}"`);
+                // api retry attempt is exahusted, throw exception.                
+                throw "api limit reached";
+            }
+
+            // await and retry
+            const effectiveTimeout = Math.pow(5, attempt + 1) + Math.floor(Math.random() * 50);
+            await new Promise(resolve => setTimeout(resolve, effectiveTimeout));
+            return this.__makeTwitchAPIQuery(url, authObj, attempt + 1);
+        }
+
+        const response = await fetch(url, authObj || DEFAULT_REQ_OPT);
+        this._allowance = parseInt(response.headers.get(RATELIMIT_REMAINING) || 0);
+
+        if (!response.ok) {
+            console.warn(`query failed!`);
+            throw { status: response.status, msg: 'query failed' };
+        }
+
+        if (response.headers.get('Content-Type').indexOf('gzip') > -1) {
+            return JSON.parse(pako.ungzip(await response.arrayBuffer(), { to: 'string' }));
+        }
         return await response.json();
     }
 
