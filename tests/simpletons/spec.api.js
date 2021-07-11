@@ -9,10 +9,13 @@ const api = require('../../js/simpletons/api');
 const env = require('../../js/env');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 
+const _pLimitBackup = api._pLimit;
+
 describe('api.js', () => {
     const testPath = "test"
     const testRoutePath = `path:/${testPath}`;
     const testBody = { "test": "test" };
+    let clock;
 
     beforeEach(() => {
         fetchMock.reset();
@@ -20,6 +23,12 @@ describe('api.js', () => {
         testUtils.unsetFakeNow();
         env.CLIENT_ID = '';
         testUtils.reset();
+        clock = sinon.useFakeTimers();
+    });
+
+    afterEach(() => {
+        api._pLimit = _pLimitBackup;
+        clock.restore(0);
     });
 
     describe('_makeTwitchAPIQuery', () => {
@@ -28,107 +37,6 @@ describe('api.js', () => {
             Accept: 'application/vnd.twitchtv.v5+json',
         }
 
-        it('block on waitForReset', async () => {
-            api.waitForReset = new Promise((resolve) => {
-                setTimeout(resolve, 500);
-            });
-            fetchMock.getOnce(testRoutePath, {
-                status: statusCodes.OK,
-                body: testBody,
-            }, {
-                overwriteRoutes: true,
-            });
-
-            const start = Date.now();
-            assert.deepEqual(await api._makeTwitchAPIQuery(testPath), testBody);
-            const diff = Date.now() - start;
-
-            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({ event: 'api.unthrottled' }));
-
-            assert.deepEqual(fetchMock.lastOptions().headers, defaultAuth)
-            assert.isTrue(diff >= 500);
-            assert.isNull(api.waitForReset);
-        });
-
-        it('response not ok', async () => {
-            fetchMock.getOnce(testRoutePath, {
-                status: statusCodes.INTERNAL_SERVER_ERROR,
-                body: testBody,
-            }, {
-                overwriteRoutes: true,
-            });
-
-            try {
-                await api._makeTwitchAPIQuery(testPath);
-            } catch (err) {
-                assert.deepEqual(err, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'query failed' })
-            }
-
-            assert.deepEqual(fetchMock.lastOptions().headers, defaultAuth)
-            assert.isNull(api.waitForReset);
-        });
-
-        it('response gziped', async () => {
-            fetchMock.getOnce(testRoutePath, {
-                status: statusCodes.OK,
-                headers: {
-                    'Content-Type': 'gzip'
-                },
-                body: '',
-            }, {
-                overwriteRoutes: true,
-            });
-            sinon.stub(pako, 'ungzip').withArgs(sinon.match.any, { to: 'string' }).returns(JSON.stringify(testBody));
-
-            assert.deepEqual(await api._makeTwitchAPIQuery(testPath), testBody);
-
-            assert.deepEqual(fetchMock.lastOptions().headers, defaultAuth)
-            assert.isNull(api.waitForReset);
-        });
-
-        it('remaining is 0', async () => {
-            fetchMock.getOnce(testRoutePath, {
-                status: statusCodes.OK,
-                headers: {
-                    'Ratelimit-Remaining': 0,
-                    'Ratelimit-Reset': testUtils.fakeNow,
-                },
-                body: testBody,
-            }, {
-                overwriteRoutes: true,
-            });
-
-            try {
-                assert.deepEqual(await api._makeTwitchAPIQuery(testPath), testBody);
-            } catch (err) {
-                assert.deepEqual(err, { status: statusCodes.OK, msg: 'too many requests' });
-            }
-
-            assert.deepEqual(fetchMock.lastOptions().headers, defaultAuth)
-            assert.isNotNull(api.waitForReset);
-        });
-
-        it('response status is too many requests', async () => {
-            fetchMock.getOnce(testRoutePath, {
-                status: statusCodes.TOO_MANY_REQUESTS,
-                headers: {
-                    'Ratelimit-Remaining': 10,
-                    'Ratelimit-Reset': testUtils.fakeNow,
-                },
-                body: testBody,
-            }, {
-                overwriteRoutes: true,
-            });
-
-            try {
-                assert.deepEqual(await api._makeTwitchAPIQuery(testPath), testBody);
-            } catch (err) {
-                assert.deepEqual(err, { status: statusCodes.TOO_MANY_REQUESTS, msg: 'too many requests' });
-            }
-
-            assert.deepEqual(fetchMock.lastOptions().headers, defaultAuth)
-            assert.isNotNull(api.waitForReset);
-        });
     });
 
     it('queryTmiApi', async () => {
@@ -147,50 +55,39 @@ describe('api.js', () => {
     });
 
     it('queryTwitchApi', async () => {
-        const _makeTwitchAPIQuery = sinon.stub(api, '_makeTwitchAPIQuery').
-            withArgs(`${env.TWITCH_ENDPOINT}/abc/edf`, 'an-auth');
+        api._pLimit = require('p-limit')(2);
 
-        await api.queryTwitchApi('abc/edf', 'an-auth');
+        let startedCounter = 0;
+        let finishedCounter = 0;
+        sinon.stub(api, '_makeTwitchAPIQuery')
+            .callsFake(async (...args) => {
+                assert.equal('http://127.0.0.1:5556/abc/edf', args[0])
+                assert.equal('an-auth', args[1])
 
-        sinon.assert.calledOnce(_makeTwitchAPIQuery);
-    });
-
-    describe('_getThrottledSleepDuration', () => {
-        it('error case', () => {
-            const sleepDuration = api._getThrottledSleepDuration({
-                headers: {
-                    get: (key) => {
-                        assert.equal(key, 'Ratelimit-Reset');
-                        return 'abc';
-                    }
-                }
+                startedCounter++;
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                finishedCounter++;
             });
-            assert.equal(sleepDuration, 15);
-        });
 
-        it('value is too large', () => {
-            const sleepDuration = api._getThrottledSleepDuration({
-                headers: {
-                    get: (key) => {
-                        assert.equal(key, 'Ratelimit-Reset');
-                        return '9999';
-                    }
-                }
-            });
-            assert.equal(sleepDuration, 15);
-        });
+        const call1 = api.queryTwitchApi('abc/edf', 'an-auth');
+        const call2 = api.queryTwitchApi('abc/edf', 'an-auth');
+        const call3 = api.queryTwitchApi('abc/edf', 'an-auth');
 
-        it('value is appropriate', () => {
-            const sleepDuration = api._getThrottledSleepDuration({
-                headers: {
-                    get: (key) => {
-                        assert.equal(key, 'Ratelimit-Reset');
-                        return '9';
-                    }
-                }
-            });
-            assert.equal(sleepDuration, 9);
-        });
+        assert.equal(startedCounter, 2);
+        assert.equal(finishedCounter, 0);
+
+        clock.tick(6000);
+        await call1;
+        await call2;
+
+        assert.equal(startedCounter, 3);
+        assert.equal(finishedCounter, 2);
+
+        clock.tick(6000);
+        await call3;
+
+        assert.equal(startedCounter, 3);
+        assert.equal(finishedCounter, 3);
     });
 
     describe('getChannelSearch', () => {

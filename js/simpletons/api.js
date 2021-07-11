@@ -89,7 +89,7 @@ class API {
     async queryTwitchApi(path, authObj) {
         const url = `${env.TWITCH_ENDPOINT}/${path}`;
 
-        return this._pLimit(this._makeTwitchAPIQuery(url, authObj));
+        return this._pLimit(this._makeTwitchAPIQuery.bind(this, url, authObj));
     }
 
     /**
