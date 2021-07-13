@@ -9,8 +9,6 @@ const api = require('../../js/simpletons/api');
 const env = require('../../js/env');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 
-const _pLimitBackup = api._pLimit;
-
 describe('api.js', () => {
     const testPath = "test"
     const testRoutePath = `path:/${testPath}`;
@@ -27,7 +25,6 @@ describe('api.js', () => {
     });
 
     afterEach(() => {
-        api._pLimit = _pLimitBackup;
         clock.restore(0);
     });
 
@@ -54,12 +51,36 @@ describe('api.js', () => {
         assert.deepEqual(resp, { h: "hello" });
     });
 
+    describe('_queryTwitchApi', async () => {
+        it('zero allowance, not at max attempt should do retry 5 times', async () => {
+            api._allowance = 0;
+
+            const _getEffectiveTimeout = sinon.stub(api, '_getEffectiveTimeout').
+                returns(Promise.resolve());
+
+            try {
+                await api._queryTwitchApi('a/b/c', 'an-auth');
+                assert.fail('should have thrown');
+            } catch (e) {
+                assert.equal(e, 'api limit reached');
+            }
+
+            sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(0));
+            sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(1));
+            sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(2));
+            sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(3));
+            sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(4));
+        });
+
+
+    });
+
     it('queryTwitchApi', async () => {
         api._pLimit = require('p-limit')(2);
 
         let startedCounter = 0;
         let finishedCounter = 0;
-        sinon.stub(api, '_makeTwitchAPIQuery')
+        sinon.stub(api, '_queryTwitchApi')
             .callsFake(async (...args) => {
                 assert.equal('http://127.0.0.1:5556/abc/edf', args[0])
                 assert.equal('an-auth', args[1])

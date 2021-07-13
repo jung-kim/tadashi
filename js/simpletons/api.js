@@ -21,28 +21,31 @@ const MAX_AWAIT_SEC = 15000;
 class API {
     constructor() {
         this.reset();
+    }
+
+    reset() {
         this._pLimit = pLimit(MAX_PARALLEL);
         this._allowance = DEFAULT_ALLOWANCE;
         this._resetTimeout = undefined;
     }
 
-    reset() {
-        this.waitForReset = null;
+    _getEffectiveTimeout(attempt) {
+        const effectiveTimeout = Math.pow(5, (attempt || 0) + 1) + Math.floor(Math.random() * 50);
+        return new Promise(resolve => setTimeout(resolve, effectiveTimeout));
     }
 
-    async _makeTwitchAPIQuery(url, authObj, attempt) {
+    async _queryTwitchApi(url, authObj, attempt) {
         // check for if api throttle is needed
         if (this._allowance <= 0) {
-            if (attempt > MAX_ATTEMPT) {
+            if (attempt >= MAX_ATTEMPT) {
                 console.warn(`query retry limit reached! url="${url}"`);
                 // api retry attempt is exahusted, throw exception.                
                 throw "api limit reached";
             }
 
             // await and retry
-            const effectiveTimeout = Math.pow(5, attempt + 1) + Math.floor(Math.random() * 50);
-            await new Promise(resolve => setTimeout(resolve, effectiveTimeout));
-            return this._makeTwitchAPIQuery(url, authObj, attempt + 1);
+            await this._getEffectiveTimeout(attempt);
+            return this._queryTwitchApi(url, authObj, (attempt || 0) + 1);
         }
 
         // fetch
@@ -89,7 +92,7 @@ class API {
     async queryTwitchApi(path, authObj) {
         const url = `${env.TWITCH_ENDPOINT}/${path}`;
 
-        return this._pLimit(this._makeTwitchAPIQuery.bind(this, url, authObj));
+        return this._pLimit(this._queryTwitchApi.bind(this, url, authObj));
     }
 
     /**
