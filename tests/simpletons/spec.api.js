@@ -7,12 +7,15 @@ const pako = require('pako');
 const testUtils = require('../testUtils');
 const api = require('../../js/simpletons/api');
 const env = require('../../js/env');
-const eventSignals = require('../../js/helpers/signals').eventSignals;
 
 describe('api.js', () => {
-    const testPath = "test"
-    const testRoutePath = `path:/${testPath}`;
+    const testPath = "/test"
     const testBody = { "test": "test" };
+    const testAuth = 'an-auth';
+    const defaultAuth = {
+        'Client-ID': env.CLIENT_ID,
+        Accept: 'application/vnd.twitchtv.v5+json',
+    }
     let clock;
 
     beforeEach(() => {
@@ -28,13 +31,6 @@ describe('api.js', () => {
         clock.restore(0);
     });
 
-    describe('_makeTwitchAPIQuery', () => {
-        const defaultAuth = {
-            'Client-ID': env.CLIENT_ID,
-            Accept: 'application/vnd.twitchtv.v5+json',
-        }
-
-    });
 
     it('queryTmiApi', async () => {
         const path = "/somewhere/over/ther/rainbow";
@@ -65,14 +61,67 @@ describe('api.js', () => {
                 assert.equal(e, 'api limit reached');
             }
 
-            sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(0));
+            sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(undefined));
             sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(1));
             sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(2));
             sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(3));
             sinon.assert.calledOnce(_getEffectiveTimeout.withArgs(4));
         });
 
+        it('normal happy fetch', async () => {
+            fetchMock.getOnce((url, option) => {
+                return url === testPath && option === testAuth;
+            }, {
+                status: statusCodes.OK,
+                headers: {
+                    'Ratelimit-Remaining': 10,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
 
+            const res = await api._queryTwitchApi(testPath, testAuth);
+
+            assert.equal(api._allowance, 10);
+            assert.deepEqual(res, testBody)
+        });
+
+        it('normal happy fetch with default auth', async () => {
+            fetchMock.getOnce((url, option) => {
+                assert.deepEqual(option, { headers: defaultAuth })
+                return url === testPath;
+            }, {
+                status: statusCodes.OK,
+                headers: {
+                    'Ratelimit-Remaining': 15,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+
+            const res = await api._queryTwitchApi(testPath);
+
+            assert.equal(api._allowance, 15);
+            assert.deepEqual(res, testBody)
+        });
+
+        it('fetch, no more allowance should set resetAt', async () => {
+
+        });
+
+        it('fetch no more allowance but resetAt already set', async () => {
+
+        });
+
+        it('failed fetch', async () => {
+
+        });
+
+        it('gziped response', async () => {
+
+        });
     });
 
     it('queryTwitchApi', async () => {

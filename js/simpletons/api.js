@@ -3,6 +3,7 @@ const statusCodes = require('http-status-codes').StatusCodes;
 const pLimit = require('p-limit');
 const pako = require('pako');
 
+const RATELIMIT_RESET = 'Ratelimit-Reset';
 const TIWTCH_NAME_REGEX = /[0-9a-zA-Z][\w]{3,23}/;
 const RATELIMIT_REMAINING = 'Ratelimit-Remaining';
 const DEFAULT_REQ_OPT = Object.freeze({
@@ -53,7 +54,7 @@ class API {
 
         // update allowance
         this._allowance = parseInt(response.headers.get(RATELIMIT_REMAINING));
-        if (this._allowance || response.status === statusCodes.TOO_MANY_REQUESTS) {
+        if (!this._allowance || response.status === statusCodes.TOO_MANY_REQUESTS) {
             this._allowance = 0;
         }
 
