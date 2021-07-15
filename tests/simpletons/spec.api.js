@@ -31,6 +31,21 @@ describe('api.js', () => {
         clock.restore(0);
     });
 
+    describe('_getEffectiveTimeout', function () {
+        this.timeout(500);
+        it('with default attempt', async () => {
+            const timeout = api._getEffectiveTimeout();
+            clock.tick(55);
+            await timeout;
+        });
+
+        it('with an argument', async () => {
+            const timeout = api._getEffectiveTimeout(4);
+            clock.tick(3175);
+            await timeout;
+        });
+    });
+
 
     it('queryTmiApi', async () => {
         const path = "/somewhere/over/ther/rainbow";
@@ -84,7 +99,7 @@ describe('api.js', () => {
             const res = await api._queryTwitchApi(testPath, testAuth);
 
             assert.equal(api._allowance, 10);
-            assert.deepEqual(res, testBody)
+            assert.deepEqual(res, testBody);
         });
 
         it('normal happy fetch with default auth', async () => {
@@ -104,15 +119,88 @@ describe('api.js', () => {
             const res = await api._queryTwitchApi(testPath);
 
             assert.equal(api._allowance, 15);
-            assert.deepEqual(res, testBody)
+            assert.deepEqual(res, testBody);
         });
 
         it('fetch, no more allowance should set resetAt', async () => {
+            fetchMock.getOnce((url, option) => {
+                assert.deepEqual(option, { headers: defaultAuth })
+                return url === testPath;
+            }, {
+                status: statusCodes.OK,
+                headers: {
+                    'Ratelimit-Remaining': 0,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
 
+            const res1 = await api._queryTwitchApi(testPath);
+            fetchMock.getOnce((url, option) => {
+                assert.deepEqual(option, { headers: defaultAuth })
+                return url === testPath;
+            }, {
+                status: statusCodes.OK,
+                headers: {
+                    'Ratelimit-Remaining': 11,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+            assert.isNotNull(api._resetTimeout);
+
+            clock.tick(3001);
+            const res2 = await api._queryTwitchApi(testPath);
+            assert.isUndefined(api._resetTimeout);
+
+            assert.equal(api._allowance, 11);
+            assert.deepEqual(res1, testBody);
+            assert.deepEqual(res2, testBody);
         });
 
         it('fetch no more allowance but resetAt already set', async () => {
+            api._resetTimeout = Promise.resolve();
+            fetchMock.getOnce((url, option) => {
+                assert.deepEqual(option, { headers: defaultAuth })
+                return url === testPath;
+            }, {
+                status: statusCodes.OK,
+                headers: {
+                    'Ratelimit-Remaining': 0,
+                    'Ratelimit-Reset': 10000,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
 
+            const res1 = await api._queryTwitchApi(testPath);
+            fetchMock.getOnce((url, option) => {
+                assert.deepEqual(option, { headers: defaultAuth })
+                return url === testPath;
+            }, {
+                status: statusCodes.OK,
+                headers: {
+                    'Ratelimit-Remaining': 11,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+            assert.isNotNull(api._resetTimeout);
+
+            // simulate _resetTimeout already is fired
+            api._allowance = 10;
+            api._resetTimeout = undefined;
+
+            const res2 = await api._queryTwitchApi(testPath);
+            assert.isUndefined(api._resetTimeout);
+
+            assert.equal(api._allowance, 11);
+            assert.deepEqual(res1, testBody);
+            assert.deepEqual(res2, testBody);
         });
 
         it('failed fetch', async () => {
