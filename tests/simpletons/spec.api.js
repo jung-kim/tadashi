@@ -204,10 +204,51 @@ describe('api.js', () => {
         });
 
         it('failed fetch', async () => {
+            fetchMock.getOnce((url, option) => {
+                assert.deepEqual(option, { headers: defaultAuth });
+                return url === testPath;
+            }, {
+                status: statusCodes.INTERNAL_SERVER_ERROR,
+                headers: {
+                    'Ratelimit-Remaining': 18,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
 
+            try {
+                await api._queryTwitchApi(testPath);
+                assert.fail('should not have succeeded');
+            } catch (e) {
+                assert.deepEqual(e, { status: statusCodes.INTERNAL_SERVER_ERROR, msg: 'query failed' });
+            }
+
+            assert.equal(api._allowance, 18);
         });
 
         it('gziped response', async () => {
+            fetchMock.getOnce((url, option) => {
+                assert.deepEqual(option, { headers: defaultAuth });
+                return url === testPath;
+            }, {
+                status: statusCodes.OK,
+                headers: {
+                    'Content-Type': 'gzip',
+                    'Ratelimit-Remaining': 13,
+                },
+                body: testBody,
+            }, {
+                overwriteRoutes: true,
+            });
+
+            sinon.stub(pako, 'ungzip').withArgs(sinon.match.any, { to: 'string' }).returns(JSON.stringify(testBody));
+
+            const result = await api._queryTwitchApi(testPath);
+
+            assert.deepEqual(result, testBody)
+
+            assert.equal(api._allowance, 13);
 
         });
     });
