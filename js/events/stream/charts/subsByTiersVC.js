@@ -69,8 +69,7 @@ class SubsByTiersVC extends ChartRoot {
 
 
     async _update() {
-        const userFilter = chartFilter.getUserFilter();
-        const subscribeByTiers = users.getSubscriptionsByTiers(userFilter);
+        const subscribeByTiers = users.getSubscriptionsByTiers(chartFilter.getSearchValue());
 
         const labels = this._getRootLabels();
         const datasets = this._getDataset();
