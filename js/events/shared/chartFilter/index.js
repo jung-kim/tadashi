@@ -80,6 +80,10 @@ class ChartFilter {
         return this._searchValue;
     }
 
+    isSearchFilterValid() {
+        return Boolean(this._searchValue);
+    }
+
     // modifies interval level without triggering the events
     setIntervalLevel(interval) {
         this._intervalLevel = interval;
