@@ -65,6 +65,16 @@ class Users {
         return this._viewers;
     }
 
+    getUsers(userFilter) {
+        const users = Object.values(this._idToUser);
+
+        if (!userFilter || !userFilter.isValid()) {
+            return users;
+        }
+
+        return userFilter.filterUsers(users);
+    }
+
     getAllusers() {
         Object.values(this._idToUser);
     }

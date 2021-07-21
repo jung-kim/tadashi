@@ -168,7 +168,7 @@ class User {
             return this.isFollowingCurrent();
         } else if (searchString === notFollowingFlag) {
             return !this.isFollowingCurrent();
-        } else if (searchString.indexOf(':') !== 0 && searchString) {
+        } else if (searchString.indexOf(':') !== 0 && this.isValid()) {
             // filtering for string like
             return this._userName.toLowerCase().indexOf(searchString) > -1;
         } else {

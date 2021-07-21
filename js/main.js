@@ -178,7 +178,6 @@ window.minuteEventDispatcher = () => {
     eventSignals.dispatch({
         event: 'main.minute',
         channel: env.channel,
-        filter: chartFilter,
     });
 
     window.setMinTopTimeoutEvent();

@@ -32,7 +32,7 @@ class TwitchClient {
     _eventSignalFunc(payload) {
         switch (payload.event) {
             case 'main.minute':
-                if (!payload.filter.isSearchFilterValid()) {
+                if (!payload.filter.isValid()) {
                     this.updateViewersCache();
                 }
                 break;
