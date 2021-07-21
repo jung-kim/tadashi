@@ -75,7 +75,8 @@ class FollowedStreamersVC extends ChartRoot {
     }
 
     _update() {
-        const followedBySummary = users.getTopFollowedBySummary(chartFilter.getSearchValue());
+        const userFilter = chartFilter.getUserFilter();
+        const followedBySummary = users.getTopFollowedBySummary(userFilter);
 
         const labels = this._getRootLabels();
         const datasets = this._getDataset();

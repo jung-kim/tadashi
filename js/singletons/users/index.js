@@ -75,18 +75,6 @@ class Users {
         return userFilter.filterUsers(users);
     }
 
-    getAllusers() {
-        Object.values(this._idToUser);
-    }
-
-    getFilteredUsers(searchString) {
-        if (!searchString) {
-            return this.getAllusers();
-        }
-
-        return this.getAllusers().map(user => user.isApplicable(searchString));
-    }
-
     /**
      * When a pair of id and name arrives, ensure user exists.
      * id is optional and maybe called again later with id to update object with the id.
@@ -281,11 +269,11 @@ class Users {
     /**
      * get top N followed by summary
      * 
-     * @param {string} searchString  search string to filter users with
+     * @param {UserFilter} filter filter to be applied on user lists
      * @returns {Array.<Object>} array of followed by summary objects
      */
-    getTopFollowedBySummary(searchString) {
-        return this.getFilteredUsers(searchString).
+    getTopFollowedBySummary(filter) {
+        return filter.filterUsers(Object.values(this._idToUser)).
             sort((left, right) => {
                 const followedByCount = (right.getFollowedByCounts() || 0) - (left.getFollowedByCounts() || 0);
                 if (followedByCount === 0) {
@@ -300,11 +288,11 @@ class Users {
     /**
      * return subscription by tiers separated out by gifted or non gifted.
      * 
-     * @param {string} searchString search string to filter users with
+     * @param {userFilter} filter to filter out users
      * @returns {Object} count of gifted and non gifted subs grouped by tiers
      */
-    getSubscriptionsByTiers(searchString) {
-        return this.getFilteredUsers(searchString).
+    getSubscriptionsByTiers(filter) {
+        return filter.filterUsers(Object.values(this._idToUser)).
             filter(user => user.getSubscribedToCurrent()).
             reduce((res, curr) => {
                 const subscribedTo = curr.getSubscribedToCurrent();

@@ -22,7 +22,7 @@ class Chatters {
 
     update(allChatters) {
         // @todo search
-        this.allChatters = users.getFilteredUsers(chartFilter.getSearchValue());
+        this.allChatters = chartFilter.getUserFilter().filterUsers(allChatters);
         this._validatePageNumber();
 
         if (this.allChatters.length <= NUM_PER_PAGE) {

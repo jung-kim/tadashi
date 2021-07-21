@@ -41,10 +41,10 @@ class ChartFilter {
         }
 
         if ('searchValue' in payload) {
-            if (!this._searchValue === payload.searchValue) {
-                this._searchValue = payload.searchValue;
+            if (!filter.isSameSearchString(payload.searchValue)) {
+                filter.changeSearchString(payload.searchValue);
+                changed.filter = filter;
             }
-            changed.searchValue = this._searchValue;
         }
 
         if (payload.intervalLevel && payload.intervalLevel !== this._intervalLevel) {
@@ -74,10 +74,6 @@ class ChartFilter {
 
     getIntervalLevel() {
         return this._intervalLevel;
-    }
-
-    getSearchValue() {
-        return this._searchValue;
     }
 
     // modifies interval level without triggering the events

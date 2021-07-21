@@ -1,8 +1,5 @@
 const env = require("../../env");
 
-const followingFlag = ':following';
-const notFollowingFlag = ':notfollowing';
-
 // Represents a user object
 class User {
     constructor(id, name) {
@@ -156,25 +153,6 @@ class User {
     getInfoCss() {
         const subObj = this.getSubscribedTo(env.channelID);
         return subObj ? 'subscribed' : 'not-subscribed';
-    }
-
-    /**
-     * returns if a user is selected based on the searchString.
-     * @param {string} searchString 
-     * @returns 
-     */
-    isApplicable(searchString) {
-        if (searchString === followingFlag) {
-            return this.isFollowingCurrent();
-        } else if (searchString === notFollowingFlag) {
-            return !this.isFollowingCurrent();
-        } else if (searchString.indexOf(':') !== 0 && this.isValid()) {
-            // filtering for string like
-            return this._userName.toLowerCase().indexOf(searchString) > -1;
-        } else {
-            // not a valid filter, returning true 
-            return true;
-        }
     }
 }
 
