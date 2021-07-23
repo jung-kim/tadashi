@@ -3,7 +3,7 @@ const twitchClient = require('../../singletons/twitchClient');
 const auth = require('../../simpletons/auth');
 const api = require('../../simpletons/api');
 const constants = require('../../helpers/constants');
-const chartFilter = require('../shared/chartFilter');
+const filter = require('../../shared/filter');
 const env = require('../../env');
 
 class NavOptionVC {
@@ -118,16 +118,16 @@ class NavOptionVC {
         const label = event.srcElement.innerHTML;
         switch (label) {
             case '1 minute':
-                chartFilter.update({ intervalLevel: constants.BUCKET_MIN });
+                filter.setIntervalLevel(constants.BUCKET_MIN);
                 break;
             case '5 minutes':
-                chartFilter.update({ intervalLevel: constants.BUCKET_FIVE });
+                filter.setIntervalLevel(constants.BUCKET_FIVE);
                 break;
             case '1 hour':
-                chartFilter.update({ intervalLevel: constants.BUCKET_HOUR });
+                filter.setIntervalLevel(constants.BUCKET_HOUR);
                 break;
             case '1 day':
-                chartFilter.update({ intervalLevel: constants.BUCKET_DAY });
+                filter.setIntervalLevel(constants.BUCKET_DAY);
                 break;
         }
         document.getElementById('interval-selector-btn').innerText = label;

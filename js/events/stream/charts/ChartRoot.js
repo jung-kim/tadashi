@@ -1,8 +1,9 @@
 const eventSignals = require('../../../helpers/signals').eventSignals;
-const chartFilter = require('../../shared/chartFilter');
+const filter = require('../../../shared/filter');
 const utils = require('../../../helpers/utils');
 const constants = require('../../../helpers/constants');
 const env = require('../../../env');
+const users = require('../../../singletons/users');
 const _ = require('lodash');
 
 const MAX_DATAPOINT_LIMIT = 250;
@@ -74,10 +75,10 @@ class ChartRoot {
      * @returns {object} various parameters
      */
     _getParameters() {
-        const start = chartFilter.getStartTime().unix();
-        const end = chartFilter.getEndTime().unix();
+        const start = filter.getStartTime().unix();
+        const end = filter.getEndTime().unix();
 
-        let interval = chartFilter.getIntervalLevel();
+        let interval = filter.getIntervalLevel();
         let startBucket = utils.getTimeBucket(start, interval);
         let endBucket = utils.getTimeBucket(end, interval);
         let length = Math.floor((endBucket - startBucket) / interval) + 1;
@@ -88,7 +89,7 @@ class ChartRoot {
             length = Math.floor((endBucket - startBucket) / interval) + 1;
         }
 
-        chartFilter.setIntervalLevel(interval);
+        filter.setIntervalLevel(interval);
         startBucket = utils.getTimeBucket(start, interval);
         endBucket = utils.getTimeBucket(end, interval);
 
@@ -97,7 +98,7 @@ class ChartRoot {
             startBucket: startBucket,
             endBucket: endBucket,
             channel: env.channel,
-            filter: chartFilter.getUserFilter(),
+            usersObject: users,
             length: length,
         }
     }

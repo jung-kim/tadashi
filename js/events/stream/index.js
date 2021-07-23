@@ -3,7 +3,7 @@ const chattersTableVC = require('./chattersTableVC');
 const twitchEmbededVC = require('./twitchEmbededVC');
 const navOptionVC = require('./navOptionVC');
 const dateTimeRangeVC = require('./dateTimeRangeVC');
-const chartFilter = require('../shared/chartFilter');
+const filter = require('../../shared/filter');
 
 const _eventSignalsFunc = (payload) => {
     switch (payload.event) {
@@ -28,10 +28,6 @@ const _eventSignalsFunc = (payload) => {
             if (payload.changed && payload.changed.channel) {
                 navOptionVC.populateStreamInfo();
             }
-            break;
-        case 'filter.interval.change':
-            document.getElementById('interval-selector-btn').innerText = payload.label;
-            chartFilter.update({ intervalLevel: payload.intervalLevel });
             break;
         case 'main.minute':
             navOptionVC.populateStreamInfo();

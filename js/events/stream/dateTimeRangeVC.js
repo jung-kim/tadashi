@@ -1,7 +1,7 @@
 const utils = require('../../helpers/utils');
 const DateTime = require('./components/DateTime');
 
-const chartFilter = require('../shared/chartFilter');
+const filter = require('../../shared/filter');
 
 class DateTimeRangeVC {
     constructor() {
@@ -58,8 +58,8 @@ class DateTimeRangeVC {
         }
 
         this._setIsLive();
-
-        chartFilter.update({ start: start, end: end });
+        filter.setStart(start);
+        filter.setEnd(end);
     }
 
     minProgressed() {

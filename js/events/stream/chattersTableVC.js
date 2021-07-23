@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
-const chartFilter = require('../shared/chartFilter');
 const users = require('../../singletons/users');
 const Chatters = require('./components/Chatters');
+const filter = require('../../shared/filter');
 
 const VIEWER_TYPES = ["broadcaster", "vips", "moderators", "staff", "admins", "global_mods", "viewers"];
 const RIGHT_PAGINATE_POSTFIX = '-page-right';
@@ -14,7 +14,7 @@ class ChattersTableVC {
     constructor() {
         this.loadChattersTable = _.debounce(this._loadChattersTable.bind(this));
         this.onChattersSearchKeyUp = _.debounce(() => {
-            chartFilter.update({ searchValue: document.getElementById(`chatters-search`).value });
+            filter.setSearchString(document.getElementById(`chatters-search`).value);
         }, 1000);
         require('../../helpers/signals').domSignals.add(this._domSignalsEvent.bind(this));
     }

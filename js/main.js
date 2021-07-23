@@ -7,7 +7,6 @@ const moment = require('./helpers/moment');
 const twitchClient = require('./singletons/twitchClient');
 const auth = require('./simpletons/auth');
 const users = require('./singletons/users');
-const chartFilter = require('./events/shared/chartFilter');
 const env = require('./env');
 
 const ACTIVE = 'cir-active';
@@ -178,7 +177,6 @@ window.minuteEventDispatcher = () => {
     eventSignals.dispatch({
         event: 'main.minute',
         channel: env.channel,
-        filter: chartFilter.getUserFilter(),
     });
 
     window.setMinTopTimeoutEvent();

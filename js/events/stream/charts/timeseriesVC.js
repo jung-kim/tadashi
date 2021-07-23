@@ -1,5 +1,5 @@
 
-const chartFilter = require('../../shared/chartFilter');
+const filter = require('../../../shared/filter');
 const moment = require('../../../helpers/moment');
 const constants = require('../../../helpers/constants');
 const ChartRoot = require('./ChartRoot');
@@ -54,7 +54,7 @@ class TimeseriesVC extends ChartRoot {
         }
         const chartDatasetsMsgType = this._getDataset()[tooltipItem.datasetIndex];
         if (tooltipItem.yLabel === 0
-            || !chartFilter.getUserFilter().isValid()
+            || !filter.getSearchString()
             || !chartDatasetsMsgType.users
             || !chartDatasetsMsgType.users[tooltipItem.dataIndex]) {
             return;
@@ -83,7 +83,7 @@ class TimeseriesVC extends ChartRoot {
     }
 
     _scaleTicksFontStyle(context) {
-        switch (chartFilter.getIntervalLevel()) {
+        switch (filter.getIntervalLevel()) {
             case constants.BUCKET_DAY:
                 return context.tick.value.days() === 1 ? 'bold' : undefined;
             case constants.BUCKET_HOUR:
@@ -103,7 +103,7 @@ class TimeseriesVC extends ChartRoot {
             return value.format("M/D");
         }
 
-        switch (chartFilter.getIntervalLevel()) {
+        switch (filter.getIntervalLevel()) {
             case constants.BUCKET_DAY:
                 return value.format("M/D");
             default:
