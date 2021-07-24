@@ -86,12 +86,12 @@ class DataCache {
      * @param {string} channel name
      * @param {number} startBucket start timestamp in seconds
      * @param {number} endBucket end timestamp in seconds
-     * @param {UserFilter} filter object
+     * @param {User} usersObject instead of `require('users')`, passing in
      * @returns {DataBucket} result
      */
-    get(channel, startBucket, endBucket, filter) {
+    get(channel, startBucket, endBucket, usersObject) {
         this._ensureChannelExists(channel);
-        return this._data[channel].get(startBucket, endBucket, filter);
+        return this._data[channel].get(startBucket, endBucket, usersObject);
     }
 }
 

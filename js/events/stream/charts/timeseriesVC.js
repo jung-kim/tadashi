@@ -15,7 +15,7 @@ class TimeseriesVC extends ChartRoot {
     }
 
     async _update() {
-        const { interval, startBucket, channel, filter, length } = await this._getParameters();
+        const { interval, startBucket, channel, usersObject, length } = await this._getParameters();
         const labels = this._getRootLabels();
         const datasets = this._getDataset();
 
@@ -23,7 +23,7 @@ class TimeseriesVC extends ChartRoot {
             const at = startBucket + (i * interval);
             labels[i] = moment.unix(at);
 
-            const dataAt = dataCache.get(channel, at, at + interval, filter);
+            const dataAt = dataCache.get(channel, at, at + interval, usersObject);
 
             // cache is at time -> type -> data
             // timeseries charts expects type -> time -> data

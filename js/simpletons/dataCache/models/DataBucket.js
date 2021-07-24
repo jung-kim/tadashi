@@ -54,13 +54,13 @@ class DataBucket {
 
     /**
      * 
-     * @param {UserFilter} filter object to filter events with
+     * @param {User} usersObject 
      * @param {DataBucket} dataBucket to merge with
      * @returns {DataBucet} merge target data bucket data to current data
      */
-    merge(filter, dataBucket) {
+    merge(usersObject, dataBucket) {
         Object.keys(dataBucket).forEach(key => {
-            this[key].merge(filter, dataBucket[key]);
+            this[key].merge(usersObject, dataBucket[key]);
         });
         return this;
     }

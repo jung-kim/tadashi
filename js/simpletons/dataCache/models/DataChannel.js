@@ -114,22 +114,22 @@ class DataChannel {
      * 
      * @param {number} startBucket in seconds, normalized to 1 minute.
      * @param {number} endBucket in seconds, nomalized to 1 minute.
-     * @param {UserFilter} filter object
+     * @param {User} usersObject object
      * @returns {DataBucket} copied aggregated data bucket between startBucket ~ endBucket
      */
-    get(startBucket, endBucket, filter) {
+    get(startBucket, endBucket, usersObject) {
         this._validateCache();
 
         const result = new DataBucket();
         for (let current = startBucket; current < endBucket;) {
             if ((current % constants.BUCKET_HOUR) === 0 && current + constants.BUCKET_HOUR <= endBucket) {
-                result.merge(filter, this._getHourRange(current));
+                result.merge(usersObject, this._getHourRange(current));
                 current += constants.BUCKET_HOUR;
             } else if ((current % constants.BUCKET_FIVE) === 0 && current + constants.BUCKET_FIVE <= endBucket) {
-                result.merge(filter, this._getFiveMinRange(current));
+                result.merge(usersObject, this._getFiveMinRange(current));
                 current += constants.BUCKET_FIVE;
             } else {
-                result.merge(filter, this._getAt(current));
+                result.merge(usersObject, this._getAt(current));
                 current += constants.BUCKET_MIN;
             }
         }

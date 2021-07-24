@@ -36,9 +36,9 @@ class ProceedsByUsersVC extends ChartRoot {
     }
 
     async _update() {
-        const { channel, filter, startBucket, endBucket } = await this._getParameters();
+        const { channel, usersObject, startBucket, endBucket } = await this._getParameters();
         // endBucket + 60 since endbucket is exclusive
-        const dataBucket = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN, filter);
+        const dataBucket = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN, usersObject);
 
         const total = this._proceedsTypesToProcess.reduce((prev, type) => {
             return prev ? prev.merge(undefined, dataBucket[type]) : dataBucket[type].getCopy();
