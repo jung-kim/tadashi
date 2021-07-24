@@ -1,8 +1,8 @@
 const ChartRoot = require('./ChartRoot');
 
 const chartSubsByTiersHelperContent = `<p>Subscription counts grouped by tiers and gifts.</p>`
-const chartFilter = require('../../shared/chartFilter');
 const users = require('../../../singletons/users');
+const filter = require('../../../shared/filter');
 
 class SubsByTiersVC extends ChartRoot {
     constructor() {
@@ -69,8 +69,7 @@ class SubsByTiersVC extends ChartRoot {
 
 
     async _update() {
-        const userFilter = chartFilter.getUserFilter();
-        const subscribeByTiers = users.getSubscriptionsByTiers(userFilter);
+        const subscribeByTiers = users.getSubscriptionsByTiers(filter.getSearchString());
 
         const labels = this._getRootLabels();
         const datasets = this._getDataset();

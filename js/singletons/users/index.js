@@ -7,6 +7,9 @@ const userFollowsFetcher = require('./userFollowsFetcher');
 const channelSubscribedFetcher = require('./channelSubscribedFetcher');
 const constants = require('../../helpers/constants');
 
+const followingFlag = ':following';
+const notFollowingFlag = ':notfollowing';
+
 class Users {
     constructor() {
         this.reset();
@@ -61,8 +64,15 @@ class Users {
         return this._nameToUser[name];
     }
 
-    getViewers() {
-        return this._viewers;
+    getViewers(searchString) {
+        if (!searchString) {
+            return this._viewers;
+        }
+        const toReturn = {}
+        for (const [key, chatters] of Object.entries(this._viewers) || {}) {
+            toReturn[key] = chatters.filter(u = u.isApplicable(searchString));
+        }
+        return toReturn;
     }
 
     getUsers(userFilter) {
@@ -267,13 +277,26 @@ class Users {
     }
 
     /**
+     * return all collected users so far.
+     * 
+     * @returns {Array.<User>} all users
+     */
+    getAllUsers() {
+        return Object.values(this._idToUser);
+    }
+
+    getFilteredUser(searchString) {
+        return this.getAllUsers().filter(u => u.isApplicable(searchString));
+    }
+
+    /**
      * get top N followed by summary
      * 
      * @param {UserFilter} filter filter to be applied on user lists
      * @returns {Array.<Object>} array of followed by summary objects
      */
-    getTopFollowedBySummary(filter) {
-        return filter.filterUsers(Object.values(this._idToUser)).
+    getTopFollowedBySummary(searchString) {
+        return this.getFilteredUser(searchString).
             sort((left, right) => {
                 const followedByCount = (right.getFollowedByCounts() || 0) - (left.getFollowedByCounts() || 0);
                 if (followedByCount === 0) {
@@ -291,8 +314,8 @@ class Users {
      * @param {userFilter} filter to filter out users
      * @returns {Object} count of gifted and non gifted subs grouped by tiers
      */
-    getSubscriptionsByTiers(filter) {
-        return filter.filterUsers(Object.values(this._idToUser)).
+    getSubscriptionsByTiers(searchString) {
+        return this.getFilteredUser(searchString).
             filter(user => user.getSubscribedToCurrent()).
             reduce((res, curr) => {
                 const subscribedTo = curr.getSubscribedToCurrent();
@@ -343,6 +366,27 @@ class Users {
                 return accumulator;
             }, { userID: userID, unknown: 0, following: 0, admiring: 0 });
     }
+
+    /**
+     * returns if a user is selected based on the searchString.
+     * @param {string} searchString 
+     * @returns {boolean} weather if this user is applicable or not
+     */
+    isApplicable(searchString) {
+        if (searchString === followingFlag) {
+            return this.isFollowingCurrent();
+        } else if (searchString === notFollowingFlag) {
+            return !this.isFollowingCurrent();
+        } else if (searchString && searchString.indexOf(':') !== 0) {
+            // filtering for string like
+            return this._userName.toLowerCase().indexOf(searchString) > -1;
+        } else {
+            // not a valid filter, returning true 
+            return true;
+        }
+    }
+
+
 }
 
 const users = new Users();

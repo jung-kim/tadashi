@@ -1,6 +1,6 @@
-const chartFilter = require('../../shared/chartFilter');
 const ChartRoot = require('./ChartRoot');
 const users = require('../../../singletons/users');
+const filter = require('../../../shared/filter');
 
 const chartFollowedStreamersHelperContent = `<p>Top 10 followed streamers by viewers</br>
 Includes data from both current viewers and the viewers who have left as well during the data capture period.</br> 
@@ -75,8 +75,7 @@ class FollowedStreamersVC extends ChartRoot {
     }
 
     _update() {
-        const userFilter = chartFilter.getUserFilter();
-        const followedBySummary = users.getTopFollowedBySummary(userFilter);
+        const followedBySummary = users.getTopFollowedBySummary(filter.getSearchString());
 
         const labels = this._getRootLabels();
         const datasets = this._getDataset();

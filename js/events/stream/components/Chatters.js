@@ -1,5 +1,3 @@
-const chartFilter = require('../../shared/chartFilter');
-
 const NUM_PER_PAGE = 250;
 
 const chattersGroupHBS = templates[`./hbs/stream/components/chatters-group.hbs`];
@@ -22,7 +20,7 @@ class Chatters {
 
     update(allChatters) {
         // @todo search
-        this.allChatters = chartFilter.getUserFilter().filterUsers(allChatters);
+        this.allChatters = allChatters;
         this._validatePageNumber();
 
         if (this.allChatters.length <= NUM_PER_PAGE) {

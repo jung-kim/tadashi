@@ -42,12 +42,12 @@ class ChattersTableVC {
     _loadChattersTable() {
         this._chatters = this._chatters || {};
 
-        for (const [key, allChatters] of Object.entries(users.getViewers()) || {}) {
+        for (const [key, chatters] of Object.entries(users.getViewers()) || {}) {
             if (!this._chatters[key]) {
                 this._chatters[key] = new Chatters(key);
             }
 
-            this._chatters[key].update(allChatters)
+            this._chatters[key].update(chatters)
         }
     }
 
