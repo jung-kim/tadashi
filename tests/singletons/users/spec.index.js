@@ -5,12 +5,12 @@ const constants = require('../../../js/helpers/constants');
 const users = require("../../../js/singletons/users");
 const userFollowsFetcher = require('../../../js/singletons/users/userFollowsFetcher');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
-const chartFilter = require('../../../js/events/shared/chartFilter');
 const channelSubscribedFetcher = require('../../../js/singletons/users/channelSubscribedFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const User = require('../../../js/singletons/users/User');
 const env = require('../../../js/env');
 const testUtils = require('../../testUtils');
+const filter = require('../../../js/shared/filter');
 
 
 describe('users.js', () => {
@@ -224,43 +224,6 @@ describe('users.js', () => {
             users._eventSignalFunc({ event: 'fetch.channel.subscribed.resp', data: { a: 123 } });
             sinon.assert.calledOnce(processChannelSubscribedResp);
 
-        });
-    });
-
-    describe('getUsers', () => {
-        const userA = testUtils.getUserObject(111, 'a');
-        const userB = testUtils.getUserObject(222, 'a');
-        const userC = testUtils.getUserObject(333, 'a');
-
-        beforeEach(() => {
-            users._idToUser = {
-                111: userA,
-                222: userB,
-                333: userC,
-            }
-        });
-
-        it('with null filter', () => {
-            assert.deepEqual(users.getUsers(), [userA, userB, userC]);
-        });
-
-        it('with invalid filter', () => {
-            const userFilter = chartFilter.getUserFilter();
-            userFilter.changeSearchString('');
-
-            assert.deepEqual(users.getUsers(userFilter), [userA, userB, userC]);
-        });
-
-        it('with valid filter', () => {
-            const userFilter = chartFilter.getUserFilter();
-            userFilter.changeSearchString('a');
-
-            const filterUsers = sinon.stub(userFilter, 'filterUsers').
-                withArgs([userA, userB, userC]).
-                returns([userA]);
-
-            assert.deepEqual(users.getUsers(userFilter), [userA]);
-            sinon.assert.calledOnce(filterUsers);
         });
     });
 

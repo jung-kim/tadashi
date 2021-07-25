@@ -5,7 +5,6 @@ const Chat = require('../../../js/models/events/Chat');
 const dataCache = require("../../../js/simpletons/dataCache");
 const { blankDataBucket } = require('../../../js/simpletons/dataCache/models/blanks');
 const DataChannel = require('../../../js/simpletons/dataCache/models/DataChannel');
-const filter = require('../../../js/events/shared/chartFilter').getUserFilter();
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 

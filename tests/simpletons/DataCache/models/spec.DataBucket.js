@@ -7,8 +7,8 @@ const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
 const Ban = require('../../../../js/models/events/Ban');
 const constants = require('../../../../js/helpers/constants');
-const chartFilter = require('../../../../js/events/shared/chartFilter');
-const userFilter = chartFilter.getUserFilter();
+const users = require('../../../../js/singletons/users');
+const filter = require('../../../../js/shared/filter');
 
 describe('DataBucket.js', () => {
     beforeEach(() => {
@@ -156,7 +156,6 @@ describe('DataBucket.js', () => {
 
     describe('merge', () => {
         it('no filter', () => {
-            userFilter.changeSearchString();
             const node1 = new DataNode();
             node1.add({ displayName: 'a' });
 
@@ -189,7 +188,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_TIMEOUT]: node2,
             });
 
-            dataBucket1.merge(userFilter, dataBucket2);
+            dataBucket1.merge(users, dataBucket2);
 
             assert.deepEqual(dataBucket1, {
                 0: {
@@ -272,7 +271,7 @@ describe('DataBucket.js', () => {
         });
 
         it('with filter', () => {
-            userFilter.changeSearchString('aa');
+            filter.setSearchString('aa')
             const node1 = new DataNode();
             node1.add({ displayName: 'a' });
 
@@ -305,7 +304,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_TIMEOUT]: node2,
             });
 
-            dataBucket1.merge(userFilter, dataBucket2);
+            dataBucket1.merge(users, dataBucket2);
 
             assert.deepEqual(dataBucket1, {
                 0: {

@@ -5,8 +5,8 @@ const moment = require('../../../../js/helpers/moment');
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 const timeseriesVC = require('../../../../js/events/stream/charts/timeseriesVC');
-const chartFilter = require('../../../../js/events/shared/chartFilter');
 const testUtils = require('../../../testUtils');
+const users = require('../../../../js/singletons/users');
 
 describe('timeseriesVC.js', () => {
     beforeEach(() => {
@@ -22,24 +22,24 @@ describe('timeseriesVC.js', () => {
             interval: constants.BUCKET_MIN,
             length: 8,
             startBucket: 1577901600,
-            filter: chartFilter
+            userObject: users,
         });
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577901660, chartFilter).
+            withArgs('abc', 1577901600, 1577901660, users).
             returns(testUtils.getTestDataBucket(1, 'a')).
-            withArgs('abc', 1577901660, 1577901720, chartFilter).
+            withArgs('abc', 1577901660, 1577901720, users).
             returns(testUtils.getTestDataBucket(2, 'b')).
-            withArgs('abc', 1577901720, 1577901780, chartFilter).
+            withArgs('abc', 1577901720, 1577901780, users).
             returns(testUtils.getTestDataBucket(3, 'c')).
-            withArgs('abc', 1577901780, 1577901840, chartFilter).
+            withArgs('abc', 1577901780, 1577901840, users).
             returns(testUtils.getTestDataBucket(4, 'e')).
-            withArgs('abc', 1577901840, 1577901900, chartFilter).
+            withArgs('abc', 1577901840, 1577901900, users).
             returns(testUtils.getTestDataBucket(5, 'e')).
-            withArgs('abc', 1577901900, 1577901960, chartFilter).
+            withArgs('abc', 1577901900, 1577901960, users).
             returns(testUtils.getTestDataBucket(6, 'c')).
-            withArgs('abc', 1577901960, 1577902020, chartFilter).
+            withArgs('abc', 1577901960, 1577902020, users).
             returns(testUtils.getTestDataBucket(7, 'c')).
-            withArgs('abc', 1577902020, 1577902080, chartFilter).
+            withArgs('abc', 1577902020, 1577902080, users).
             returns(testUtils.getTestDataBucket(16, 'b'));
 
         await timeseriesVC._update();
@@ -156,17 +156,17 @@ describe('timeseriesVC.js', () => {
             endBucket: 1577901780,
             interval: constants.BUCKET_MIN,
             length: 4,
-            filter: chartFilter,
+            userObject: users,
             startBucket: 1577901600,
         });
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577901660, chartFilter).
+            withArgs('abc', 1577901600, 1577901660, users).
             returns(testUtils.getTestDataBucket(1, 'a')).
-            withArgs('abc', 1577901660, 1577901720, chartFilter).
+            withArgs('abc', 1577901660, 1577901720, users).
             returns(testUtils.getTestDataBucket(2, 'b')).
-            withArgs('abc', 1577901720, 1577901780, chartFilter).
+            withArgs('abc', 1577901720, 1577901780, users).
             returns(testUtils.getTestDataBucket(3, 'c')).
-            withArgs('abc', 1577901780, 1577901840, chartFilter).
+            withArgs('abc', 1577901780, 1577901840, users).
             returns(testUtils.getTestDataBucket(4, 'e'));
 
         await timeseriesVC._update();
@@ -272,10 +272,10 @@ describe('timeseriesVC.js', () => {
 
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 0 }));
 
-        chartFilter.getUserFilter().changeSearchString();
+        sinon.stub(filter, 'getSearchString').returns(undefined);
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 1 }));
 
-        chartFilter.getUserFilter().changeSearchString('aa');
+        sinon.stub(filter, 'getSearchString').returns('aa');
         sinon.stub(timeseriesVC, '_getDataset').returns({
             1: { users: [{}, {}, {}, { 'aaa': 4, 'caaa': 5 }, {}] }
         });
@@ -308,45 +308,45 @@ describe('timeseriesVC.js', () => {
     });
 
     it('_scaleTicksFontStyle', () => {
-        sinon.stub(chartFilter, 'getIntervalLevel').returns('something wrong');
+        sinon.stub(filter, 'getIntervalLevel').returns('something wrong');
         assert.isUndefined(timeseriesVC._scaleTicksFontStyle());
 
         sinon.verifyAndRestore();
-        sinon.stub(chartFilter, 'getIntervalLevel').returns(constants.BUCKET_DAY);
+        sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_DAY);
         assert.equal(timeseriesVC._scaleTicksFontStyle({ tick: { value: { days: () => 1 } } }), 'bold');
         assert.isUndefined(timeseriesVC._scaleTicksFontStyle({ tick: { value: { days: () => 2 } } }));
 
 
         sinon.verifyAndRestore();
-        sinon.stub(chartFilter, 'getIntervalLevel').returns(constants.BUCKET_HOUR);
+        sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_HOUR);
         assert.equal(timeseriesVC._scaleTicksFontStyle({ tick: { value: { hours: () => 0 } } }), 'bold');
         assert.isUndefined(timeseriesVC._scaleTicksFontStyle({ tick: { value: { hours: () => 2 } } }));
 
 
         sinon.verifyAndRestore();
-        sinon.stub(chartFilter, 'getIntervalLevel').returns(constants.BUCKET_FIVE);
+        sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_FIVE);
         assert.equal(timeseriesVC._scaleTicksFontStyle({ tick: { value: { minutes: () => 0 } } }), 'bold');
         assert.isUndefined(timeseriesVC._scaleTicksFontStyle({ tick: { value: { minutes: () => 2 } } }));
 
 
         sinon.verifyAndRestore();
-        sinon.stub(chartFilter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
+        sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
         assert.equal(timeseriesVC._scaleTicksFontStyle({ tick: { value: { minutes: () => 10 } } }), 'bold');
         assert.isUndefined(timeseriesVC._scaleTicksFontStyle({ tick: { value: { minutes: () => 2 } } }));
     });
 
     it('_scaleTicksCallback', () => {
-        sinon.stub(chartFilter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
+        sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
         sinon.stub(timeseriesVC, '_getRootLabels').returns([moment('2021-01-01 00:00')]);
         assert.equal(timeseriesVC._scaleTicksCallback(0), '1/1');
 
         sinon.verifyAndRestore();
-        sinon.stub(chartFilter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
+        sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
         sinon.stub(timeseriesVC, '_getRootLabels').returns([moment('2021-01-01 10:00')]);
         assert.equal(timeseriesVC._scaleTicksCallback(0), '10:00');
 
         sinon.verifyAndRestore();
-        sinon.stub(chartFilter, 'getIntervalLevel').returns(constants.BUCKET_DAY);
+        sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_DAY);
         sinon.stub(timeseriesVC, '_getRootLabels').returns([moment('2021-01-01 10:00')]);
         assert.equal(timeseriesVC._scaleTicksCallback(0), '1/1');
     });

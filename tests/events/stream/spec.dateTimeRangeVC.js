@@ -5,9 +5,9 @@ const sinon = require('sinon');
 const dateTimeRangeVC = require('../../../js/events/stream/dateTimeRangeVC');
 const moment = require('../../../js/helpers/moment');
 const utils = require('../../../js/helpers/utils');
-const chartFilter = require('../../../js/events/shared/chartFilter');
 const DateTime = require('../../../js/events/stream/components/DateTime');
 const testUtils = require('../../testUtils');
+const filter = require('../../../js/shared/filter');
 
 describe('DateTimeRange.js', () => {
     beforeEach(() => {
@@ -177,10 +177,8 @@ describe('DateTimeRange.js', () => {
             const _setIsLive = sinon.stub(dateTimeRangeVC, '_setIsLive');
             const start = { unix: () => 5 };
             const end = { unix: () => 10 };
-            const update = sinon.stub(chartFilter, 'update').withArgs({
-                start: start,
-                end: end,
-            });
+            const updateStart = sinon.stub(filter, 'setStart').withArgs(start);
+            const updateEnd = sinon.stub(filter, 'setEnd').withArgs(end);
             dateTimeRangeVC.start = new DateTime('abc1');
             dateTimeRangeVC.end = new DateTime('abc2');
             sinon.stub(dateTimeRangeVC.start, 'get').returns(start);
@@ -188,7 +186,8 @@ describe('DateTimeRange.js', () => {
 
             dateTimeRangeVC.setDate();
 
-            sinon.assert.calledOnce(update);
+            sinon.assert.calledOnce(updateStart);
+            sinon.assert.calledOnce(updateEnd);
             sinon.assert.calledOnce(_setIsLive);
         });
     });

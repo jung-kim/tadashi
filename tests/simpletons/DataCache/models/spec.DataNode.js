@@ -1,6 +1,5 @@
 const { assert } = require('chai');
-const chartFilter = require('../../../../js/events/shared/chartFilter');
-const filter = chartFilter.getUserFilter();
+const filter = require('../../../../js/shared/filter');
 
 const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
 
@@ -9,7 +8,7 @@ describe('DataNode.js', () => {
     describe('merge()', () => {
         it('empty filter', () => {
             const node1 = new DataNode(5, { 'aa': 3, 'a': 2 });
-            filter.changeSearchString();
+            filter.setSearchString();
             assert(node1.merge(), node1);
 
             assert.deepEqual(node1, { _sum: 5, _users: { 'aa': 3, 'a': 2 } });
@@ -24,7 +23,7 @@ describe('DataNode.js', () => {
         it('with filter', () => {
             const node1 = new DataNode(5, { 'aa': 3, 'a': 2 });
             const node2 = new DataNode(9, { 'aa': 4, 'bb': 3, 'a': 2 });
-            filter.changeSearchString('a');
+            filter.setSearchString('a');
 
             assert.deepEqual(node1.merge(filter, node2), { _sum: 11, _users: { 'aa': 7, 'a': 4 } });
             assert.deepEqual(node1, { _sum: 11, _users: { 'aa': 7, 'a': 4 } });

@@ -2,7 +2,6 @@ const sinon = require('sinon');
 const { assert } = require('chai');
 
 const subsByTiersVC = require('../../../../js/events/stream/charts/subsByTiersVC');
-const chartFilter = require('../../../../js/events/shared/chartFilter');
 const users = require('../../../../js/singletons/users');
 const env = require('../../../../js/env');
 const testUtils = require('../../../testUtils');
@@ -105,7 +104,7 @@ describe('subsByTiers.js', () => {
 
     it('_update', async () => {
         env.channelID = 111;
-        sinon.stub(users, 'getSubscriptionsByTiers').withArgs(chartFilter.getUserFilter()).
+        sinon.stub(users, 'getSubscriptionsByTiers').withArgs().
             returns({
                 1000: {
                     gifted: 0,

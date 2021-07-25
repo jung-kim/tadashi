@@ -76,15 +76,6 @@ class Users {
         return toReturn;
     }
 
-    getUsers(userFilter) {
-        const users = Object.values(this._idToUser);
-
-        if (!userFilter || !userFilter.isValid()) {
-            return users;
-        }
-
-        return userFilter.filterUsers(users);
-    }
 
     /**
      * When a pair of id and name arrives, ensure user exists.
@@ -311,7 +302,6 @@ class Users {
     /**
      * return subscription by tiers separated out by gifted or non gifted.
      * 
-     * @param {userFilter} filter to filter out users
      * @returns {Object} count of gifted and non gifted subs grouped by tiers
      */
     getSubscriptionsByTiers() {

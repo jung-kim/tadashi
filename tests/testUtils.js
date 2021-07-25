@@ -10,10 +10,10 @@ const users = require('../js/singletons/users');
 const User = require('../js/singletons/users/User');
 const auth = require('../js/simpletons/auth');
 const fetchMock = require('fetch-mock');
-const filter = require('../js/events/shared/chartFilter/userFilter');
 const { eventSignals, domSignals } = require('../js/helpers/signals');
 const userIDFetcher = require('../js/singletons/users/userIDFetcher');
 const env = require('../js/env');
+const filter = require('../js/shared/filter');
 
 /*eslint-disable no-bitwise */
 const hashCode = s => Math.abs(s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0))
@@ -93,7 +93,7 @@ module.exports = {
         auth.logout();
         localStorage.clear();
         fetchMock.reset();
-        filter.changeSearchString();
+        filter.reset();
         flatpickr.reset();
         eventSignals.dispatch.reset();
         domSignals.dispatch.reset();

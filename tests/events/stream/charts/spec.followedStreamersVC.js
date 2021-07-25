@@ -2,7 +2,6 @@ const { assert } = require('chai');
 const sinon = require('sinon');
 
 const followedStreamersVC = require('../../../../js/events/stream/charts/followedStreamersVC');
-const chartFilter = require('../../../../js/events/shared/chartFilter');
 const users = require('../../../../js/singletons/users');
 const env = require('../../../../js/env');
 const testUtils = require('../../../testUtils');
@@ -25,7 +24,6 @@ describe('followedStreamersVC.js', () => {
 
         env.channelID = 123;
         sinon.stub(users, 'getTopFollowedBySummary').
-            withArgs(chartFilter.getUserFilter()).
             returns([])
 
 
@@ -39,7 +37,6 @@ describe('followedStreamersVC.js', () => {
 
         env.channelID = 123;
         sinon.stub(users, 'getTopFollowedBySummary').
-            withArgs(chartFilter.getUserFilter()).
             returns([{
                 userID: 1,
                 unknown: 0,
@@ -58,7 +55,6 @@ describe('followedStreamersVC.js', () => {
 
         env.channelID = 123;
         sinon.stub(users, 'getTopFollowedBySummary').
-            withArgs(chartFilter.getUserFilter()).
             returns([{
                 userID: 1,
                 unknown: 0,

@@ -2,7 +2,6 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
 
-const chartFilter = require('../../../js/events/shared/chartFilter');
 const navOptionVC = require('../../../js/events/stream/navOptionVC');
 const constants = require('../../../js/helpers/constants');
 const api = require('../../../js/simpletons/api');
@@ -11,6 +10,7 @@ const twitchClient = require('../../../js/singletons/twitchClient');
 const env = require('../../../js/env');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const testUtils = require('../../testUtils');
+const filter = require('../../../js/shared/filter');
 
 describe('navOptionVC', () => {
     beforeEach(() => {
@@ -267,7 +267,7 @@ describe('navOptionVC', () => {
         it('1min', () => {
             const btn = {};
             document.getElementById.withArgs('interval-selector-btn').returns(btn);
-            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_MIN });
+            const update = sinon.stub(filter, 'setIntervalLevel').withArgs(constants.BUCKET_MIN);
 
             navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '1 minute' } });
 
@@ -277,7 +277,7 @@ describe('navOptionVC', () => {
         it('5min', () => {
             const btn = {};
             document.getElementById.withArgs('interval-selector-btn').returns(btn);
-            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_FIVE });
+            const update = sinon.stub(filter, 'setIntervalLevel').withArgs(constants.BUCKET_FIVE);
 
             navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '5 minutes' } });
 
@@ -287,7 +287,7 @@ describe('navOptionVC', () => {
         it('1hour', () => {
             const btn = {};
             document.getElementById.withArgs('interval-selector-btn').returns(btn);
-            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_HOUR });
+            const update = sinon.stub(filter, 'setIntervalLevel').withArgs(constants.BUCKET_HOUR);
 
             navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '1 hour' } });
 
@@ -297,7 +297,7 @@ describe('navOptionVC', () => {
         it('1day', () => {
             const btn = {};
             document.getElementById.withArgs('interval-selector-btn').returns(btn);
-            const update = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: constants.BUCKET_DAY });
+            const update = sinon.stub(filter, 'setIntervalLevel').withArgs(constants.BUCKET_DAY);
 
             navOptionVC._intervalClickEvent({ srcElement: { innerHTML: '1 day' } });
 

@@ -75,8 +75,8 @@ class ChartRoot {
      * @returns {object} various parameters
      */
     _getParameters() {
-        const start = filter.getStartTime().unix();
-        const end = filter.getEndTime().unix();
+        const start = filter.getStart().unix();
+        const end = filter.getEnd().unix();
 
         let interval = filter.getIntervalLevel();
         let startBucket = utils.getTimeBucket(start, interval);

@@ -5,7 +5,7 @@ const _ = require('lodash');
 const events = require('../models/events');
 const eventSignals = require('../helpers/signals').eventSignals;
 const constants = require('../helpers/constants');
-const env = require('../env');
+const filter = require('../shared/filter');
 
 const auth = require('../simpletons/auth');
 const api = require('../simpletons/api');
@@ -32,7 +32,7 @@ class TwitchClient {
     _eventSignalFunc(payload) {
         switch (payload.event) {
             case 'main.minute':
-                if (!env._filter._searchString) {
+                if (!filter.getSearchString()) {
                     this.updateViewersCache();
                 }
                 break;

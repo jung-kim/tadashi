@@ -7,7 +7,6 @@ const main = require('../js/main');
 const auth = require('../js/simpletons/auth');
 const twitchClient = require('../js/singletons/twitchClient');
 const moment = require('../js/helpers/moment');
-const chartFilter = require('../js/events/shared/chartFilter');
 const utils = require('../js/helpers/utils');
 const { domSignals, eventSignals } = require('../js/helpers/signals');
 const users = require('../js/singletons/users');
@@ -232,7 +231,6 @@ describe('main.js', () => {
 
     it('minuteEventDispatcher', () => {
         env.channel = 'abc';
-        sinon.stub(chartFilter, 'getUserFilter').returns('a filter');
         const setMinTopTimeoutEvent = sinon.stub(window, 'setMinTopTimeoutEvent');
 
         window.minuteEventDispatcher();
@@ -240,7 +238,6 @@ describe('main.js', () => {
         sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
             event: 'main.minute',
             channel: 'abc',
-            filter: 'a filter',
         }));
         sinon.assert.calledOnce(setMinTopTimeoutEvent);
     });

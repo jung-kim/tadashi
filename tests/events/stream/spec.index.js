@@ -8,7 +8,7 @@ const dateTimeRangeVC = require('../../../js/events/stream/dateTimeRangeVC');
 const navOptionVC = require('../../../js/events/stream/navOptionVC');
 const twitchEmbededVC = require('../../../js/events/stream/twitchEmbededVC');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
-const chartFilter = require('../../../js/events/shared/chartFilter');
+const filter = require('../../../js/shared/filter');
 const testUtils = require('../../testUtils');
 
 describe('stream/index.js', () => {
@@ -80,12 +80,12 @@ describe('stream/index.js', () => {
     it('filter.interval.change', () => {
         const btn = {}
         document.getElementById.withArgs('interval-selector-btn').returns(btn);
-        const populateStreamInfo = sinon.stub(chartFilter, 'update').withArgs({ intervalLevel: 60 });
+        const intervalUpdate = sinon.stub(filter, 'setIntervalLevel').withArgs(60);
 
         _eventSignalsFunc({ intervalLevel: 60, label: 'ab', event: 'filter.interval.change' });
 
         assert.equal(btn.innerText, 'ab')
-        sinon.assert.calledOnce(populateStreamInfo);
+        sinon.assert.calledOnce(intervalUpdate);
     });
 
     it('main.minute', () => {
