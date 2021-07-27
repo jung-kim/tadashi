@@ -48,7 +48,7 @@ class DataNode {
     merge(usersObject, targetDataNode) {
         if (targetDataNode) {
             Object.keys(targetDataNode._users).forEach(key => {
-                if (usersObject.getUserByName(key).isApplicable()) {
+                if (!usersObject || usersObject.getUserByName(key).isApplicable()) {
                     this._users[key] = (this._users[key] || 0) + targetDataNode._users[key];
                     this._sum += targetDataNode._users[key];
                 }

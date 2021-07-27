@@ -10,6 +10,7 @@ const filter = require('../shared/filter');
 const auth = require('../simpletons/auth');
 const api = require('../simpletons/api');
 const dataCache = require('../simpletons/dataCache');
+const env = require('../env');
 
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';

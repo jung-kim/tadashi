@@ -5,6 +5,7 @@ const chatsByUsersVC = require('../../../../js/events/stream/charts/chatsByUsers
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 const testUtils = require('../../../testUtils');
+const users = require('../../../../js/singletons/users');
 
 
 describe('chatsByUsersVC.js', () => {
@@ -44,6 +45,7 @@ describe('chatsByUsersVC.js', () => {
             length: 8,
             searchValue: undefined,
             startBucket: 1577901600,
+            userObject: users,
         });
 
         datBucket.merge(undefined, testUtils.getTestDataBucket(1, 'c')).

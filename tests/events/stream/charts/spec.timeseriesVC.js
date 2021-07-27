@@ -7,6 +7,7 @@ const dataCache = require('../../../../js/simpletons/dataCache');
 const timeseriesVC = require('../../../../js/events/stream/charts/timeseriesVC');
 const testUtils = require('../../../testUtils');
 const users = require('../../../../js/singletons/users');
+const filter = require('../../../../js/shared/filter');
 
 describe('timeseriesVC.js', () => {
     beforeEach(() => {

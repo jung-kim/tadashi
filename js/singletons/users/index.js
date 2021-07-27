@@ -8,9 +8,6 @@ const channelSubscribedFetcher = require('./channelSubscribedFetcher');
 const constants = require('../../helpers/constants');
 const filter = require('../../shared/filter');
 
-const followingFlag = ':following';
-const notFollowingFlag = ':notfollowing';
-
 class Users {
     constructor() {
         this.reset();
@@ -356,25 +353,6 @@ class Users {
                 return accumulator;
             }, { userID: userID, unknown: 0, following: 0, admiring: 0 });
     }
-
-    /**
-     * returns if a user is selected based on the searchString.
-     * @returns {boolean} weather if this user is applicable or not
-     */
-    isApplicable() {
-        if (filter.getSearchString() === followingFlag) {
-            return this.isFollowingCurrent();
-        } else if (filter.getSearchString() === notFollowingFlag) {
-            return !this.isFollowingCurrent();
-        } else if (filter.getSearchString() && filter.getSearchString().indexOf(':') !== 0) {
-            // filtering for string like
-            return this._userName.toLowerCase().indexOf(filter.getSearchString()) > -1;
-        } else {
-            // not a valid filter, returning true 
-            return true;
-        }
-    }
-
 
 }
 

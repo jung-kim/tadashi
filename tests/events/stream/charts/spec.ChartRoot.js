@@ -17,7 +17,6 @@ describe('ChartRoot.js', () => {
     it('_getParameters()', () => {
         const chartRoot = new ChartRoot({});
         env.channel = 'abc';
-
         sinon.stub(filter, 'getStart').returns(moment('2020-01-01 10:00'));
         sinon.stub(filter, 'getEnd').returns(moment('2020-01-01 10:07'));
         sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
@@ -32,6 +31,8 @@ describe('ChartRoot.js', () => {
         });
         assert.equal((1577902020 - 1577901600) % constants.BUCKET_MIN, 0);
 
+        testUtils.reset();
+        env.channel = 'abc';
         sinon.stub(filter, 'getStart').returns(moment('2020-01-01 10:00'));
         sinon.stub(filter, 'getEnd').returns(moment('2020-01-01 10:07'));
         sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_FIVE);
@@ -46,6 +47,8 @@ describe('ChartRoot.js', () => {
         });
         assert.equal((1577901900 - 1577901600) % constants.BUCKET_FIVE, 0);
 
+        testUtils.reset();
+        env.channel = 'abc';
         sinon.stub(filter, 'getStart').returns(moment('2020-01-01 10:00'));
         sinon.stub(filter, 'getEnd').returns(moment('2020-01-02 10:07'));
         sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_MIN);
@@ -60,9 +63,11 @@ describe('ChartRoot.js', () => {
         });
         assert.equal((1577988000 - 1577901600) % constants.BUCKET_HOUR, 0);
 
+        testUtils.reset();
+        env.channel = 'abc';
         // hopefully no body will do searchs like this one....
         sinon.stub(filter, 'getStart').returns(moment('2020-01-01 10:00'));
-        sinon.stub(filter, 'getEnd').returns(moment('2026-01-01 10:07'));
+        sinon.stub(filter, 'getEnd').returns(moment('2026-01-02 10:07'));
         sinon.stub(filter, 'getIntervalLevel').returns(constants.BUCKET_DAY);
 
         assert.deepEqual(chartRoot._getParameters(), {

@@ -399,6 +399,7 @@ describe('twitchClient.js', () => {
 
         it('client is connected and channel is valid and last ping is suscessful', () => {
             twitchClient._lastPingSuccess = true;
+            console.log(82342, twitchClient._client)
             sinon.stub(twitchClient._client, '_isConnected').returns(true);
             twitchClient._client.channels = ['aaa'];
             assert.isTrue(twitchClient.isConnected());
