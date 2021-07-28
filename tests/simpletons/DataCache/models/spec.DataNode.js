@@ -2,6 +2,7 @@ const { assert } = require('chai');
 const filter = require('../../../../js/shared/filter');
 
 const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
+const users = require('../../../../js/singletons/users');
 
 describe('DataNode.js', () => {
 
@@ -11,11 +12,14 @@ describe('DataNode.js', () => {
             filter.setSearchString();
             assert(node1.merge(), node1);
 
+            users._ensureUserExists(11, 'aa');
+            users._ensureUserExists(1, 'a');
+
             assert.deepEqual(node1, { _sum: 5, _users: { 'aa': 3, 'a': 2 } });
             const node2 = new DataNode(7, { 'aa': 4, 'bb': 3 });
             assert.deepEqual(node2, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
 
-            assert.deepEqual(node1.merge(filter, node2), { _sum: 12, _users: { 'aa': 7, 'a': 2, 'bb': 3 } });
+            assert.deepEqual(node1.merge(users, node2), { _sum: 12, _users: { 'aa': 7, 'a': 2, 'bb': 3 } });
             assert.deepEqual(node1, { _sum: 12, _users: { 'aa': 7, 'a': 2, 'bb': 3 } });
             assert.deepEqual(node2, { _sum: 7, _users: { 'aa': 4, 'bb': 3 } });
         });
@@ -25,7 +29,11 @@ describe('DataNode.js', () => {
             const node2 = new DataNode(9, { 'aa': 4, 'bb': 3, 'a': 2 });
             filter.setSearchString('a');
 
-            assert.deepEqual(node1.merge(filter, node2), { _sum: 11, _users: { 'aa': 7, 'a': 4 } });
+            users._ensureUserExists(11, 'aa');
+            users._ensureUserExists(1, 'a');
+            users._ensureUserExists(22, 'bb');
+
+            assert.deepEqual(node1.merge(users, node2), { _sum: 11, _users: { 'aa': 7, 'a': 4 } });
             assert.deepEqual(node1, { _sum: 11, _users: { 'aa': 7, 'a': 4 } });
             assert.deepEqual(node2, { _sum: 9, _users: { 'aa': 4, 'bb': 3, 'a': 2 } });
         });

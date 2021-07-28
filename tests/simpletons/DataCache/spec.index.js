@@ -6,6 +6,7 @@ const dataCache = require("../../../js/simpletons/dataCache");
 const { blankDataBucket } = require('../../../js/simpletons/dataCache/models/blanks');
 const DataChannel = require('../../../js/simpletons/dataCache/models/DataChannel');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
+const filter = require('../../../js/shared/filter');
 
 
 describe('dataCache/index.js', () => {

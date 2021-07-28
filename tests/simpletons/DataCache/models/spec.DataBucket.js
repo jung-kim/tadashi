@@ -163,6 +163,8 @@ describe('DataBucket.js', () => {
             node2.add({ displayName: 'a' });
             node2.add({ displayName: 'aa' });
 
+            users._ensureUserExists(1, 'a');
+            users._ensureUserExists(11, 'aa');
 
             const dataBucket1 = new DataBucket({
                 [constants.TYPE_CHAT]: node1,
@@ -279,6 +281,8 @@ describe('DataBucket.js', () => {
             node2.add({ displayName: 'a' });
             node2.add({ displayName: 'aa' });
 
+            users._ensureUserExists(1, 'a');
+            users._ensureUserExists(11, 'aa');
 
             const dataBucket1 = new DataBucket({
                 [constants.TYPE_CHAT]: node1,
