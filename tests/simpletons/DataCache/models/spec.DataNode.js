@@ -14,6 +14,7 @@ describe('DataNode.js', () => {
 
             users._ensureUserExists(11, 'aa');
             users._ensureUserExists(1, 'a');
+            users._ensureUserExists(22, 'bb');
 
             assert.deepEqual(node1, { _sum: 5, _users: { 'aa': 3, 'a': 2 } });
             const node2 = new DataNode(7, { 'aa': 4, 'bb': 3 });
@@ -41,6 +42,9 @@ describe('DataNode.js', () => {
 
     it('add() for cheers', () => {
         const node = new DataNode();
+
+        users._ensureUserExists(1, 'a');
+        users._ensureUserExists(3, 'c')
 
         node.add({ displayName: 'a', bits: 100 });
         assert.equal(node._sum, 1);

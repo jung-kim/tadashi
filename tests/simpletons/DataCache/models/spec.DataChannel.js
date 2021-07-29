@@ -617,7 +617,7 @@ describe('DataChannel.js', () => {
             });
 
             filter.setSearchString('c');
-            const res = dataChannel.get(0, 3960, filter);
+            const res = dataChannel.get(0, 3960, users);
 
             sinon.assert.calledOnce(_getAt);
             sinon.assert.calledOnce(_validateCache);

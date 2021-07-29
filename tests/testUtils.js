@@ -115,6 +115,16 @@ module.exports = {
     getTestDataBucket(count, name) {
         const adjustedCount = count || 1;
 
+        users._ensureUserExists(1, 'a');
+        users._ensureUserExists(2, 'b');
+        users._ensureUserExists(3, 'c');
+        users._ensureUserExists(4, 'd');
+        users._ensureUserExists(5, 'e');
+        users._ensureUserExists(6, 'f');
+        users._ensureUserExists(7, 'g');
+        users._ensureUserExists(8, 'h');
+        users._ensureUserExists(9, 'i');
+
         return new DataBucket({
             [constants.TYPE_CHAT]: new DataNode(adjustedCount, { [name || 'a']: adjustedCount }),
             [constants.TYPE_RESUB]: new DataNode(adjustedCount, { [name || 'b']: adjustedCount }),
