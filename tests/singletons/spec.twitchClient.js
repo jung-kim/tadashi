@@ -11,6 +11,7 @@ const dataCache = require('../../js/simpletons/dataCache');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 const testUtils = require('../testUtils');
 const events = require('../../js/models/events');
+const filter = require('../../js/shared/filter');
 
 const fakeClient = twitchClient._client;
 
@@ -326,25 +327,21 @@ describe('twitchClient.js', () => {
     });
 
     describe('_eventSignalFunc', () => {
-        describe('main.minute', () => {
-            it('valid filter', () => {
+        describe('filter.change', () => {
+            it('changed search string', () => {
                 const updateViewersCache = sinon.stub(twitchClient, 'updateViewersCache');
                 twitchClient._eventSignalFunc({
-                    event: 'main.minute',
-                    filter: {
-                        isValid: () => false
-                    }
+                    event: 'filter.change',
+                    changed: { searchString: '111' }
                 });
                 sinon.assert.calledOnce(updateViewersCache);
             });
 
-            it('invalid filter', () => {
+            it('not changed search string', () => {
                 const updateViewersCache = sinon.stub(twitchClient, 'updateViewersCache');
                 twitchClient._eventSignalFunc({
-                    event: 'main.minute',
-                    filter: {
-                        isValid: () => true
-                    }
+                    event: 'filter.change',
+                    changed: { intervalLevel: constants.BUCKET_MIN }
                 });
                 sinon.assert.notCalled(updateViewersCache);
             });

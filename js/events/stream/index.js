@@ -3,7 +3,6 @@ const chattersTableVC = require('./chattersTableVC');
 const twitchEmbededVC = require('./twitchEmbededVC');
 const navOptionVC = require('./navOptionVC');
 const dateTimeRangeVC = require('./dateTimeRangeVC');
-const filter = require('../../shared/filter');
 
 const _eventSignalsFunc = (payload) => {
     switch (payload.event) {

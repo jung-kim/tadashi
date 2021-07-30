@@ -32,8 +32,8 @@ class TwitchClient {
 
     _eventSignalFunc(payload) {
         switch (payload.event) {
-            case 'main.minute':
-                if (!filter.getSearchString()) {
+            case 'filter.change':
+                if (payload.changed.searchString) {
                     this.updateViewersCache();
                 }
                 break;

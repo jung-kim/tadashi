@@ -23,7 +23,7 @@ describe('timeseriesVC.js', () => {
             interval: constants.BUCKET_MIN,
             length: 8,
             startBucket: 1577901600,
-            userObject: users,
+            usersObject: users,
         });
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577901660, users).
@@ -157,7 +157,7 @@ describe('timeseriesVC.js', () => {
             endBucket: 1577901780,
             interval: constants.BUCKET_MIN,
             length: 4,
-            userObject: users,
+            usersObject: users,
             startBucket: 1577901600,
         });
         sinon.stub(dataCache, 'get').
@@ -273,10 +273,10 @@ describe('timeseriesVC.js', () => {
 
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 0 }));
 
-        sinon.stub(filter, 'getSearchString').returns(undefined);
+        filter.setSearchString();
         assert.isUndefined(timeseriesVC._toolTipAfterLabel({ yLabel: 1 }));
 
-        sinon.stub(filter, 'getSearchString').returns('aa');
+        filter.setSearchString('aa');
         sinon.stub(timeseriesVC, '_getDataset').returns({
             1: { users: [{}, {}, {}, { 'aaa': 4, 'caaa': 5 }, {}] }
         });

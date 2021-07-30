@@ -28,6 +28,7 @@ class TimeseriesVC extends ChartRoot {
             // cache is at time -> type -> data
             // timeseries charts expects type -> time -> data
             for (let type = 0; type < constants.NUM_TYPES; type++) {
+                console.log(82342, datasets[type])
                 datasets[type].data[i] = dataAt[type]._sum;
                 datasets[type].users[i] = dataAt[type]._users;
             }

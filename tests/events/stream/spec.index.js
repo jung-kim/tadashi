@@ -77,17 +77,6 @@ describe('stream/index.js', () => {
         });
     });
 
-    it('filter.interval.change', () => {
-        const btn = {}
-        document.getElementById.withArgs('interval-selector-btn').returns(btn);
-        const intervalUpdate = sinon.stub(filter, 'setIntervalLevel').withArgs(60);
-
-        _eventSignalsFunc({ intervalLevel: 60, label: 'ab', event: 'filter.interval.change' });
-
-        assert.equal(btn.innerText, 'ab')
-        sinon.assert.calledOnce(intervalUpdate);
-    });
-
     it('main.minute', () => {
         const populateStreamInfo = sinon.stub(navOptionVC, 'populateStreamInfo');
 
