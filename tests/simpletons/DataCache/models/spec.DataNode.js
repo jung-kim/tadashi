@@ -3,8 +3,12 @@ const filter = require('../../../../js/shared/filter');
 
 const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
 const users = require('../../../../js/singletons/users');
+const testUtils = require('../../../testUtils');
 
 describe('DataNode.js', () => {
+    beforeEach(() => {
+        testUtils.reset();
+    });
 
     describe('merge()', () => {
         it('empty filter', () => {
