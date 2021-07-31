@@ -1,6 +1,7 @@
 const env = require('../env');
 const constants = require('../helpers/constants');
 const moment = require('../helpers/moment');
+const { eventSignals } = require('../helpers/signals');
 
 class Filter {
     constructor() {
@@ -15,76 +16,68 @@ class Filter {
         env._filter._intervalLevel = constants.BUCKET_MIN;
     }
 
-    setStart(start, isTrigger) {
+    setStart(start) {
         if (!start || start.unix() === env._filter._start.unix()) {
             return;
         }
 
         env._filter._start = start;
 
-        if (isTrigger) {
-            eventSignals.dispatch({
-                event: "filter.change",
-                changed: { start: start },
-            });
-        }
+        eventSignals.dispatch({
+            event: 'filter.change',
+            changed: { start: start },
+        });
     }
 
     getStart() {
         return env._filter._start;
     }
 
-    setEnd(end, isTrigger) {
+    setEnd(end) {
         if (!end || end.unix() === env._filter._end.unix()) {
             return;
         }
 
         env._filter._end = end;
 
-        if (isTrigger) {
-            eventSignals.dispatch({
-                event: "filter.change",
-                changed: { end: end },
-            });
-        }
+        eventSignals.dispatch({
+            event: 'filter.change',
+            changed: { end: end },
+        });
     }
 
     getEnd() {
         return env._filter._end;
     }
 
-    setSearchString(searchString, isTrigger) {
+    setSearchString(searchString) {
         if (!searchString || searchString === env._filter._searchString) {
             return;
         }
 
         env._filter._searchString = searchString;
 
-        if (isTrigger) {
-            eventSignals.dispatch({
-                event: "filter.change",
-                changed: { searchString: searchString },
-            });
-        }
+        eventSignals.dispatch({
+            event: 'filter.change',
+            changed: { searchString: searchString },
+        });
     }
 
     getSearchString() {
         return env._filter._searchString;
     }
 
-    setIntervalLevel(intervalLevel, isTrigger) {
+    setIntervalLevel(intervalLevel) {
         if (!intervalLevel || intervalLevel === env._filter._intervalLevel) {
             return;
         }
 
         env._filter._intervalLevel = intervalLevel;
 
-        if (isTrigger) {
-            eventSignals.dispatch({
-                event: "filter.change",
-                changed: { intervalLevel: intervalLevel },
-            });
-        }
+        eventSignals.dispatch({
+            event: 'filter.change',
+            changed: { intervalLevel: intervalLevel },
+        });
     }
 
     getIntervalLevel() {
