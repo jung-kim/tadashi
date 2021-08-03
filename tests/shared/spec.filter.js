@@ -6,6 +6,7 @@ const moment = require('../../js/helpers/moment');
 const testUtils = require('../testUtils');
 const env = require('../../js/env');
 const sinon = require('sinon');
+const constants = require('../../js/helpers/constants');
 
 
 describe('filter.js', () => {
@@ -66,5 +67,55 @@ describe('filter.js', () => {
         filter.setEnd(time);
 
         assert.equal(filter.getEnd(), time);
+    });
+
+
+
+    describe('setSearchString', () => {
+        it('null', () => {
+            filter.setSearchString(null);
+
+            sinon.assert.notCalled(eventSignals.dispatch.withArgs());
+        });
+
+        it('default', () => {
+            filter.setSearchString('abc');
+
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
+                event: 'filter.change',
+                changed: { searchString: 'abc' },
+            }));
+            assert.deepEqual(env._filter._searchString, 'abc');
+        });
+    });
+
+    it('getSearchString', () => {
+        filter.setSearchString('aaa');
+
+        assert.equal(filter.getSearchString(), 'aaa');
+    });
+
+    describe('setIntervalLevel', () => {
+        it('null', () => {
+            filter.setIntervalLevel(null);
+
+            sinon.assert.notCalled(eventSignals.dispatch.withArgs());
+        });
+
+        it('default', () => {
+            filter.setIntervalLevel(constants.BUCKET_FIVE);
+
+            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
+                event: 'filter.change',
+                changed: { intervalLevel: constants.BUCKET_FIVE },
+            }));
+            assert.deepEqual(env._filter._intervalLevel, constants.BUCKET_FIVE);
+        });
+    });
+
+    it('getIntervalLevel', () => {
+        filter.setIntervalLevel(constants.BUCKET_MIN);
+
+        assert.equal(filter.getIntervalLevel(), constants.BUCKET_MIN);
     });
 });
