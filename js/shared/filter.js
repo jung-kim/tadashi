@@ -55,11 +55,12 @@ class Filter {
             return;
         }
 
-        env._filter._searchString = searchString;
+        const cleanedSearchString = searchString.trim().toLowerCase();
+        env._filter._searchString = cleanedSearchString;
 
         eventSignals.dispatch({
             event: 'filter.change',
-            changed: { searchString: searchString },
+            changed: { searchString: cleanedSearchString },
         });
     }
 

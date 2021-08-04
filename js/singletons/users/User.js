@@ -166,9 +166,9 @@ class User {
      */
     isApplicable() {
         if (filter.getSearchString() === followingFlag) {
-            return this.isFollowingCurrent();
+            return Boolean(this.isFollowingCurrent());
         } else if (filter.getSearchString() === notFollowingFlag) {
-            return !this.isFollowingCurrent();
+            return !Boolean(this.isFollowingCurrent());
         } else if (filter.getSearchString() && filter.getSearchString().indexOf(':') !== 0) {
             // filtering for string like
             return this._userName.toLowerCase().indexOf(filter.getSearchString()) > -1;

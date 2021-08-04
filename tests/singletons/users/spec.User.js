@@ -1,5 +1,7 @@
 const { assert } = require('chai');
 const env = require('../../../js/env');
+const constants = require('../../../js/helpers/constants');
+const filter = require('../../../js/shared/filter');
 const User = require('../../../js/singletons/users/User');
 const testUtils = require('../../testUtils');
 
@@ -237,6 +239,50 @@ describe('User.js', () => {
             user.addSubscribedTo({ broadcaster_id: 123 })
             env.channelID = 123;
             assert.equal(user.getInfoCss(), 'subscribed');
+        });
+    });
+
+    describe('isApplicable', () => {
+        it('is following', () => {
+            filter.setSearchString(':following');
+            env.channelID = 333
+
+            const user1 = testUtils.getUserObject(111, 'aaa');
+            assert.equal(user1.isApplicable(), false);
+
+            const user2 = testUtils.getUserObject(111, 'bbb', [333]);
+            assert.equal(user2.isApplicable(), true);
+        });
+
+        it('is not following', () => {
+            filter.setSearchString(':notFollowing');
+            env.channelID = 333
+
+            const user1 = testUtils.getUserObject(111, 'aaa');
+            assert.equal(user1.isApplicable(), true);
+
+            const user2 = testUtils.getUserObject(111, 'bbb', [333]);
+            assert.equal(user2.isApplicable(), false);
+        });
+
+        it('string like', () => {
+            filter.setSearchString('aa');
+
+            const user1 = testUtils.getUserObject(111, 'aaa');
+            assert.equal(user1.isApplicable(), true);
+
+            const user2 = testUtils.getUserObject(111, 'bbb', [333]);
+            assert.equal(user2.isApplicable(), false);
+        });
+
+        it('default', () => {
+            filter.setSearchString(':wrongfilter');
+
+            const user1 = testUtils.getUserObject(111, 'aaa');
+            assert.equal(user1.isApplicable(), true);
+
+            const user2 = testUtils.getUserObject(111, 'bbb', [333]);
+            assert.equal(user2.isApplicable(), true);
         });
     });
 });
