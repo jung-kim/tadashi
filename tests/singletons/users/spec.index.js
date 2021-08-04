@@ -167,11 +167,28 @@ describe('users.js', () => {
         });
     });
 
-    it('getViewers', () => {
-        users._viewers = 111
-        assert.equal(users.getViewers(), 111);
-    });
+    describe('getViewers', () => {
+        it('default', () => {
+            users._viewers = {
+                'vip': [testUtils.getUserObject(111, 'aaa')],
+                'viewers': [testUtils.getUserObject(222, 'bbb'), testUtils.getUserObject(11, 'aa')],
+            };
+            assert.deepEqual(users.getViewers(), users._viewers);
+        });
 
+        it('with filter', () => {
+            filter.setSearchString('aa');
+            users._viewers = {
+                'vip': [testUtils.getUserObject(111, 'aaa')],
+                'viewers': [testUtils.getUserObject(222, 'bbb'), testUtils.getUserObject(11, 'aa')],
+            };
+
+            assert.deepEqual(users.getViewers(), {
+                'vip': [testUtils.getUserObject(111, 'aaa')],
+                'viewers': [testUtils.getUserObject(11, 'aa')],
+            });
+        });
+    });
     describe('_eventSignalFunc', () => {
         it('chatters.data.update', () => {
             const processChattersData = sinon.stub(users, 'processChattersData').withArgs(["abc"], 123);

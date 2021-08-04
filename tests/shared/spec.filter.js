@@ -79,7 +79,7 @@ describe('filter.js', () => {
         });
 
         it('default', () => {
-            filter.setSearchString('abc');
+            filter.setSearchString(' aBc ');
 
             sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
                 event: 'filter.change',

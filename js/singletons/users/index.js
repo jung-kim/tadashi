@@ -68,7 +68,7 @@ class Users {
         }
         const toReturn = {}
         for (const [key, chatters] of Object.entries(this._viewers) || {}) {
-            toReturn[key] = chatters.filter(u = u.isApplicable());
+            toReturn[key] = chatters.filter(u => u.isApplicable());
         }
         return toReturn;
     }
@@ -303,7 +303,6 @@ class Users {
      */
     getSubscriptionsByTiers() {
         return this.getFilteredUser().
-            filter(user => user.getSubscribedToCurrent()).
             reduce((res, curr) => {
                 const subscribedTo = curr.getSubscribedToCurrent();
                 if (subscribedTo) {
