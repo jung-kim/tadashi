@@ -17,7 +17,7 @@ class Filter {
     }
 
     setStart(start) {
-        if (!start || start.unix() === env._filter._start.unix()) {
+        if (!moment.isMoment(start) || start.unix() === this.getStart().unix()) {
             return;
         }
 
@@ -34,7 +34,7 @@ class Filter {
     }
 
     setEnd(end) {
-        if (!end || end.unix() === env._filter._end.unix()) {
+        if (!moment.isMoment(end) || end.unix() === this.getEnd().unix()) {
             return;
         }
 
@@ -51,7 +51,7 @@ class Filter {
     }
 
     setSearchString(searchString) {
-        if (!searchString || searchString === env._filter._searchString) {
+        if (!searchString || searchString === this.getSearchString()) {
             return;
         }
 
@@ -69,7 +69,7 @@ class Filter {
     }
 
     setIntervalLevel(intervalLevel) {
-        if (!intervalLevel || intervalLevel === env._filter._intervalLevel) {
+        if (!intervalLevel || intervalLevel === this.getIntervalLevel()) {
             return;
         }
 
@@ -83,6 +83,30 @@ class Filter {
 
     getIntervalLevel() {
         return env._filter._intervalLevel;
+    }
+
+    setChannelInfo(channel, channelId, isIgnoreSignal) {
+        if (this.getChannelId() === channelId && this.getChannel() === channel) {
+            return;
+        }
+
+        env._filter._channel = channel;
+        env._filter._channelId = channelId;
+
+        if (!isIgnoreSignal) {
+            eventSignals.dispatch({
+                event: 'filter.change',
+                changed: { channelId: channelId, channel: channel },
+            });
+        }
+    }
+
+    getChannelId() {
+        return env._filter._channel;
+    }
+
+    getChannel() {
+        return env._filter._channelId;
     }
 }
 
