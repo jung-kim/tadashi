@@ -10,7 +10,6 @@ const filter = require('../shared/filter');
 const auth = require('../simpletons/auth');
 const api = require('../simpletons/api');
 const dataCache = require('../simpletons/dataCache');
-const env = require('../env');
 
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';
@@ -60,9 +59,11 @@ class TwitchClient {
 
         if (!filter.getChannelId() || !filter.getChannel()) {
             if (auth.isBroadcaster()) {
-                filter.setChannelInfo(auth.getLogin(), auth.getID(), false);
+                console.log(888222)
+                filter.setChannelInfo(auth.getLogin(), auth.getID(), true);
             } else {
-                filter.setChannelInfo(DEFAULT_CHANNEL, DEFAULT_CHANNEL_ID, false);
+                console.log(87727288222)
+                filter.setChannelInfo(DEFAULT_CHANNEL, DEFAULT_CHANNEL_ID, true);
             }
         }
 
@@ -135,14 +136,6 @@ class TwitchClient {
 
         await this._client.join(filter.getChannel());
         filter.setChannelInfo(channel, id);
-
-        eventSignals.dispatch({
-            event: 'channel.input.update',
-            data: {
-                id: filter.getChannelId(),
-                channel: filter.getChannel(),
-            }
-        });
     }
 
     _disable() {

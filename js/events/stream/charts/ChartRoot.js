@@ -32,9 +32,6 @@ class ChartRoot {
      */
     _eventSignalsFunc(payload) {
         switch (payload.event) {
-            case 'channel.input.update':
-                this.reset();
-                break;
             case 'stream.load.ready':
                 this._enabled = true;
                 this.reset();
@@ -44,6 +41,9 @@ class ChartRoot {
                 break;
             case 'data.cache.updated':
             case 'filter.change':
+                if (payload.changed.channel) {
+                    this.reset();
+                }
                 if (this._enabled) {
                     this.update();
                 }

@@ -22,8 +22,10 @@ class FollowedStreamersVC extends ChartRoot {
 
     _eventSignalsFunc(payload) {
         switch (payload.event) {
-            case 'channel.input.update':
-                this.reset();
+            case 'filter.change':
+                if (payload.changed.channel) {
+                    this.reset();
+                }
                 break;
             case 'stream.load.ready':
                 this._enabled = true;

@@ -101,7 +101,10 @@ class Filter {
         if (!isIgnoreSignal) {
             eventSignals.dispatch({
                 event: 'filter.change',
-                changed: { channelId: parseInt(channelId), channel: channel },
+                changed: {
+                    channelId: this.getChannelId(),
+                    channel: this.getChannel()
+                },
             });
         }
     }

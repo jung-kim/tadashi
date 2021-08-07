@@ -58,7 +58,7 @@ const browserifyAll = async () => {
 // Browserify external 3rd party libraries
 const browserifyExternal = async () => {
     console.log(`building browserifyExternal...`);
-    const pkgs = ['tmi.js', 'micro-signals', 'material-color-hash', 'http-status-codes'];
+    const pkgs = ['tmi.js', 'micro-signals', 'material-color-hash', 'http-status-codes', 'p-limit'];
 
     const b = browserify({
         noParse: ['window', 'lodash', 'moment', 'moment-timezone', 'node-localstorage'],

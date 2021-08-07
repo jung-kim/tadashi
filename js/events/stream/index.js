@@ -37,9 +37,6 @@ const _eventSignalsFunc = (payload) => {
         case 'main.minute.top':
             dateTimeRangeVC.minProgressed();
             break;
-        case 'channel.input.update':
-            navOptionVC.populateStreamInfo();
-            break;
         case 'stream.cleanup':
             navOptionVC.destroy();
             dateTimeRangeVC.destroy();

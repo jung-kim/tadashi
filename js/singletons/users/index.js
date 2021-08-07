@@ -35,11 +35,13 @@ class Users {
                 userFollowsFetcher.fetch();
                 channelSubscribedFetcher.fetch();
                 break;
-            case 'channel.input.update':
-                userIDFetcher.reset();
-                userFollowsFetcher.reset();
-                // channelFollowsFetcher.fetch(payload.data.id);
-                this._ensureUserExists(payload.data.id, payload.data.channel)
+            case 'filter.change':
+                if (payload.changed.channel) {
+                    userIDFetcher.reset();
+                    userFollowsFetcher.reset();
+                    // channelFollowsFetcher.fetch(payload.data.id);
+                    this._ensureUserExists(payload.changed.id, payload.changed.channel);
+                }
                 break;
             case 'fetch.channel.follows.resp':
                 this.processUserFollowsResp(payload.data);
