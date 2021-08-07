@@ -30,10 +30,10 @@ class TwitchClient {
         eventSignals.add(this._eventSignalFunc.bind(this));
     }
 
-    _eventSignalFunc(payload) {
+    async _eventSignalFunc(payload) {
         switch (payload.event) {
             case 'filter.change':
-                if (payload.changed.searchString) {
+                if (payload.changed.searchString || payload.changed.channel) {
                     this.updateViewersCache();
                 }
                 break;
@@ -58,16 +58,11 @@ class TwitchClient {
             await twitchClient._initPromise;
         }
 
-        if (!env.channel) {
-            if (localStorage.getItem(CHANNEL_LS_KEY)) {
-                this._setChannel(localStorage.getItem(CHANNEL_LS_KEY));
-                this._setChannelID(localStorage.getItem(CHANNEL_LS_ID_KEY));
-            } else if (auth.isBroadcaster()) {
-                this._setChannel(auth.getLogin());
-                this._setChannelID(auth.getID());
+        if (!filter.getChannelId() || !filter.getChannel()) {
+            if (auth.isBroadcaster()) {
+                filter.setChannelInfo(auth.getLogin(), auth.getID(), false);
             } else {
-                this._setChannel(DEFAULT_CHANNEL);
-                this._setChannelID(DEFAULT_CHANNEL_ID);
+                filter.setChannelInfo(DEFAULT_CHANNEL, DEFAULT_CHANNEL_ID, false);
             }
         }
 
@@ -80,7 +75,7 @@ class TwitchClient {
                 reconnectDecay: 1.0,
                 timeout: 5000,
             },
-            channels: [env.channel]
+            channels: [filter.getChannel()]
         });
 
         this._client.on("anongiftpaidupgrade", (channel, username, userstate) => {
@@ -124,26 +119,28 @@ class TwitchClient {
     }
 
     async changeChannel(channel, id) {
-        if (env.channel === channel) {
+        if (filter.getChannel() === channel) {
             // channel is already set, return
             return;
         }
 
-        if (env.channel) {
-            this._client.part(env.channel);
+        if (filter.getChannel()) {
+            this._client.part(filter.getChannel());
         }
 
-        this._setChannel(channel);
-        this._setChannelID(id);
+        if (!id) {
+            const resp = await api.queryTwitchApi(`kraken/users?login=${this.getChannel()}`);
+            id = parseInt(resp.users[0]._id);
+        }
 
-        await this._client.join(env.channel);
+        await this._client.join(filter.getChannel());
+        filter.setChannelInfo(channel, id);
 
-        this.updateViewersCache();
         eventSignals.dispatch({
             event: 'channel.input.update',
             data: {
-                id: env.channelID,
-                channel: env.channel,
+                id: filter.getChannelId(),
+                channel: filter.getChannel(),
             }
         });
     }
@@ -161,41 +158,17 @@ class TwitchClient {
     }
 
     async _updateViewersCache() {
-        if (!this._enabled || !env.channel) {
+        if (!this._enabled || !filter.getChannel()) {
             return;
         }
 
-        const json = await api.queryTmiApi(`group/user/${env.channel}/chatters`);
+        const json = await api.queryTmiApi(`group/user/${filter.getChannel()}/chatters`);
 
         eventSignals.dispatch({
             event: "chatters.data.update",
             data: json[CHATTERS_KEY],
-            channelID: env.channelID,
+            channelID: filter.getChannelId(),
         });
-    }
-
-    /**
-     * Sets and caches channel name and channel id.
-     * If want to redirect tmi client channel, use `changechannel()`
-     * @param {string} channel channel name
-     * @returns {undefined}
-     */
-    _setChannel(channel) {
-        env.channel = channel;
-    }
-
-    /**
-     * Set channel id 
-     * @param {number} id if set, cache id. if id is not set and channel exists, then id is from fetch. else nothing.
-     * @returns {undefined}
-     */
-    async _setChannelID(id) {
-        if (id) {
-            env.channelID = parseInt(id);
-        } else if (env.channel) {
-            const resp = await api.queryTwitchApi(`kraken/users?login=${env.channel}`);
-            env.channelID = parseInt(resp.users[0]._id);
-        }
     }
 
     async changeToRandomFeaturedStream() {
@@ -215,8 +188,8 @@ class TwitchClient {
     }
 
     _saveChannel() {
-        localStorage.setItem(CHANNEL_LS_KEY, env.channel);
-        localStorage.setItem(CHANNEL_LS_ID_KEY, env.channelID);
+        localStorage.setItem(CHANNEL_LS_KEY, filter.getChannel());
+        localStorage.setItem(CHANNEL_LS_ID_KEY, filter.getChannelId());
         eventSignals.dispatch({
             alert: {
                 type: 'success',

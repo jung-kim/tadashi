@@ -3,6 +3,9 @@ const constants = require('../helpers/constants');
 const moment = require('../helpers/moment');
 const { eventSignals } = require('../helpers/signals');
 
+const CHANNEL_LS_KEY = 'channel';
+const CHANNEL_LS_ID_KEY = 'channel-id';
+
 class Filter {
     constructor() {
         env._filter = {};
@@ -10,6 +13,8 @@ class Filter {
     }
 
     reset() {
+        env._filter._channelId = localStorage.getItem(CHANNEL_LS_ID_KEY);
+        env._filter._channel = localStorage.getItem(CHANNEL_LS_KEY);
         env._filter._start = moment().set('second', 0).set('millisecond', 0);
         env._filter._end = moment().set('second', 0).set('millisecond', 0);
         env._filter._searchString = undefined;
@@ -91,22 +96,22 @@ class Filter {
         }
 
         env._filter._channel = channel;
-        env._filter._channelId = channelId;
+        env._filter._channelId = parseInt(channelId);
 
         if (!isIgnoreSignal) {
             eventSignals.dispatch({
                 event: 'filter.change',
-                changed: { channelId: channelId, channel: channel },
+                changed: { channelId: parseInt(channelId), channel: channel },
             });
         }
     }
 
     getChannelId() {
-        return env._filter._channel;
+        return env._filter._channelId;
     }
 
     getChannel() {
-        return env._filter._channelId;
+        return env._filter._channel;
     }
 }
 
