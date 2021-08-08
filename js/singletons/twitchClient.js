@@ -6,6 +6,7 @@ const events = require('../models/events');
 const eventSignals = require('../helpers/signals').eventSignals;
 const constants = require('../helpers/constants');
 const filter = require('../shared/filter');
+const users = require('../singletons/users');
 
 const auth = require('../simpletons/auth');
 const api = require('../simpletons/api');
@@ -59,10 +60,8 @@ class TwitchClient {
 
         if (!filter.getChannelId() || !filter.getChannel()) {
             if (auth.isBroadcaster()) {
-                console.log(888222)
                 filter.setChannelInfo(auth.getLogin(), auth.getID(), true);
             } else {
-                console.log(87727288222)
                 filter.setChannelInfo(DEFAULT_CHANNEL, DEFAULT_CHANNEL_ID, true);
             }
         }
@@ -116,6 +115,9 @@ class TwitchClient {
 
     _processChatMessage(channel, raw) {
         this.ping();
+        if (raw.displayName) {
+            users._ensureUserExists(raw.userID, raw.displayName);
+        }
         dataCache.add(channel, raw);
     }
 

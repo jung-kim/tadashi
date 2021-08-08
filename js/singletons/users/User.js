@@ -1,4 +1,3 @@
-const env = require("../../env");
 const filter = require("../../shared/filter");
 
 const followingFlag = ':following';
@@ -101,7 +100,7 @@ class User {
     }
 
     isFollowingCurrent() {
-        return this.isFollowing(env.channelID);
+        return this.isFollowing(filter.getChannelId());
     }
 
     /**
@@ -125,7 +124,7 @@ class User {
     }
 
     getSubscribedToCurrent() {
-        return this.getSubscribedTo(env.channelID);
+        return this.getSubscribedTo(filter.getChannelId());
     }
 
     /**
@@ -156,7 +155,7 @@ class User {
      * @returns {string} css class depends on subscribed or not
      */
     getInfoCss() {
-        const subObj = this.getSubscribedTo(env.channelID);
+        const subObj = this.getSubscribedTo(filter.getChannelId);
         return subObj ? 'subscribed' : 'not-subscribed';
     }
 

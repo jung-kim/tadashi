@@ -7,7 +7,7 @@ const moment = require('./helpers/moment');
 const twitchClient = require('./singletons/twitchClient');
 const auth = require('./simpletons/auth');
 const users = require('./singletons/users');
-const env = require('./env');
+const filter = require('./shared/filter');
 
 const ACTIVE = 'cir-active';
 const INACTIVE = 'cir-inactive';
@@ -176,7 +176,7 @@ window.authLogout = () => {
 window.minuteEventDispatcher = () => {
     eventSignals.dispatch({
         event: 'main.minute',
-        channel: env.channel,
+        channel: filter.getChannel(),
     });
 
     window.setMinTopTimeoutEvent();

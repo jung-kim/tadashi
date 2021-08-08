@@ -88,14 +88,15 @@ class Users {
         const lowerCaseName = name.toLowerCase();
         const userObj = this.getUserByID(id) || this.getUserByName(lowerCaseName) || new User(id, name);
 
-        if (id) {
-            if (!userObj._id) {
-                userObj._id = parseInt(id);
-            }
-
+        if (id && !userObj._id) {
+            userObj._id = parseInt(id);
+        }
+        if (id && !this._idToUser[id]) {
             this._idToUser[id] = userObj;
         }
-        this._nameToUser[lowerCaseName] = userObj;
+        if (!this._nameToUser[lowerCaseName]) {
+            this._nameToUser[lowerCaseName] = userObj;
+        }
 
         return userObj;
     }

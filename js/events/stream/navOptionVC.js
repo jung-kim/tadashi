@@ -15,7 +15,7 @@ class NavOptionVC {
         this.streamSelect = _.debounce(this._streamSelect.bind(this), 500, { leading: false });
         this.populateStreamInfo = _.debounce(this._populateStreamInfo.bind(this), 500, { leading: false });
         this.syncChannelInput = _.debounce(() => {
-            this.channelInputAutoComplete.input.value = env.channel;
+            this.channelInputAutoComplete.input.value = filter.getChannel();
         }, 250, { leading: false });
         require('../../helpers/signals').domSignals.add(this._domSignalsFunc.bind(this));
     }
@@ -98,18 +98,18 @@ class NavOptionVC {
     }
 
     async _populateStreamInfo() {
-        this.channelInputAutoComplete.input.value = this.lastSearchedChannel || env.channel;
-        document.getElementById('embeded-twitch-channel').innerText = env.channel;
+        this.channelInputAutoComplete.input.value = this.lastSearchedChannel || filter.getChannel();
+        document.getElementById('embeded-twitch-channel').innerText = filter.getChannel();
 
         try {
-            this.streamInfo = await api.getChannelInfo(env.channel, auth.getAuthObj());
+            this.streamInfo = await api.getChannelInfo(filter.getChannel(), auth.getAuthObj());
             if (this.streamInfo && this.streamInfo.data && this.streamInfo.data.length > 0) {
                 document.getElementById('embeded-twitch-desc').innerHTML = `${this.streamInfo.data[0].title}`;
             } else {
                 document.getElementById('embeded-twitch-desc').innerHTML = `(inactive...)`;
             }
         } catch (err) {
-            document.getElementById('embeded-twitch-desc').innerHTML = `${env.channel}'s stream`;
+            document.getElementById('embeded-twitch-desc').innerHTML = `${filter.getChannel()}'s stream`;
         }
     }
 

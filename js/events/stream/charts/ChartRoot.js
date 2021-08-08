@@ -2,7 +2,6 @@ const eventSignals = require('../../../helpers/signals').eventSignals;
 const filter = require('../../../shared/filter');
 const utils = require('../../../helpers/utils');
 const constants = require('../../../helpers/constants');
-const env = require('../../../env');
 const users = require('../../../singletons/users');
 const _ = require('lodash');
 
@@ -41,10 +40,9 @@ class ChartRoot {
                 break;
             case 'data.cache.updated':
             case 'filter.change':
-                if (payload.changed.channel) {
+                if (payload.changed && payload.changed.channel) {
                     this.reset();
-                }
-                if (this._enabled) {
+                } else if (this._enabled) {
                     this.update();
                 }
                 break;
@@ -97,7 +95,7 @@ class ChartRoot {
             interval: interval,
             startBucket: startBucket,
             endBucket: endBucket,
-            channel: env.channel,
+            channel: filter.getChannel(),
             usersObject: users,
             length: length,
         }

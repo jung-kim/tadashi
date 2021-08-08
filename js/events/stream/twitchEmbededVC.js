@@ -1,4 +1,4 @@
-const env = require('../../env');
+const filter = require('../../shared/filter');
 
 const keyIsOpenTwitchEmbeded = 'isOpenTwitchEmbeded';
 
@@ -31,7 +31,7 @@ class TwitchEmbededVC {
             this.embededTwitch = new Twitch.Embed("twitch-embed", {
                 width: '100%',
                 height: '100%',
-                channel: env.channel,
+                channel: filter.getChannel(),
                 autoplay: true,
                 muted: true,
                 allowfullscreen: false
