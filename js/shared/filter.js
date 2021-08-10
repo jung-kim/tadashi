@@ -13,8 +13,17 @@ class Filter {
     }
 
     reset() {
-        env._filter._channelId = localStorage.getItem(CHANNEL_LS_ID_KEY);
-        env._filter._channel = localStorage.getItem(CHANNEL_LS_KEY);
+        if (localStorage.getItem(CHANNEL_LS_KEY)) {
+            env._filter._channel = localStorage.getItem(CHANNEL_LS_KEY);
+        } else {
+            env._filter._channel = undefined;
+        }
+        if (localStorage.getItem(CHANNEL_LS_ID_KEY)) {
+            env._filter._channelId = parseInt(localStorage.getItem(CHANNEL_LS_ID_KEY));
+        } else {
+            env._filter._channelId = undefined;
+        }
+
         env._filter._start = moment().set('second', 0).set('millisecond', 0);
         env._filter._end = moment().set('second', 0).set('millisecond', 0);
         env._filter._searchString = undefined;

@@ -300,7 +300,7 @@ describe('users.js', () => {
             999: testUtils.getUserObject(999)
         }
 
-        env.channelID = 123;
+        filter.setChannelInfo('abc', 123);
         assert.deepEqual(users.getTopFollowedBySummary(), [
             { userID: 1, unknown: 1, following: 2, admiring: 0 },
             { userID: 123, unknown: 0, following: 2, admiring: 0 },
@@ -312,7 +312,7 @@ describe('users.js', () => {
             { userID: 777, unknown: 0, following: 0, admiring: 0 },
         ]);
 
-        env.channelID = 777;
+        filter.setChannelInfo('abc', 777);
         assert.deepEqual(users.getTopFollowedBySummary(), [
             { userID: 1, unknown: 1, following: 0, admiring: 2 },
             { userID: 123, unknown: 0, following: 0, admiring: 2 },
@@ -336,7 +336,7 @@ describe('users.js', () => {
             888: testUtils.getUserObject(888, 'hhh'),
         }
 
-        env.channelID = 123;
+        filter.setChannelInfo('abc', 123);
         assert.deepEqual(users._getFollowedBySummary(1), {
             userID: 1,
             unknown: 1,
@@ -344,7 +344,7 @@ describe('users.js', () => {
             admiring: 0,
         });
 
-        env.channelID = 77;
+        filter.setChannelInfo('abc', 77);
         assert.deepEqual(users._getFollowedBySummary(1), {
             userID: 1,
             unknown: 1,
@@ -352,7 +352,7 @@ describe('users.js', () => {
             admiring: 2,
         });
 
-        env.channelID = 123;
+        filter.setChannelInfo('abc', 123);
         assert.deepEqual(users._getFollowedBySummary(777), {
             userID: 777,
             unknown: 0,
@@ -488,14 +488,14 @@ describe('users.js', () => {
         });
 
         it('empty', () => {
-            env.channelID = 0;
+            filter.setChannelInfo('abc', 0);
             const res = users.getSubscriptionsByTiers();
 
             assert.deepEqual(res, {});
         });
 
         it('with a match', () => {
-            env.channelID = 111;
+            filter.setChannelInfo('abc', 111);
             const res = users.getSubscriptionsByTiers();
 
             assert.deepEqual(res, {

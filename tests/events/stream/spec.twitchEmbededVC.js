@@ -32,7 +32,7 @@ describe('twitchEmbededVC', () => {
     describe('_handleEmbededTwitch', () => {
         it('_getIsOpenTwitchEmbeded true', () => {
             sinon.stub(twitchEmbededVC, '_getIsOpenTwitchEmbeded').returns(true);
-            env.channel = 'abc'
+            filter.setChannelInfo('abc', 111);
 
             const embed = Twitch.Embed.withArgs('twitch-embed', {
                 width: '100%',

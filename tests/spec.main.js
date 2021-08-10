@@ -13,6 +13,7 @@ const users = require('../js/singletons/users');
 const constants = require('../js/helpers/constants');
 const env = require('../js/env');
 const testUtils = require('./testUtils');
+const filter = require('../js/shared/filter');
 
 describe('main.js', () => {
     beforeEach(() => {
@@ -230,7 +231,7 @@ describe('main.js', () => {
     });
 
     it('minuteEventDispatcher', () => {
-        env.channel = 'abc';
+        filter.setChannelInfo('abc', 111);
         const setMinTopTimeoutEvent = sinon.stub(window, 'setMinTopTimeoutEvent');
 
         window.minuteEventDispatcher();
@@ -288,7 +289,7 @@ describe('main.js', () => {
 
         it('user exists and not following is not fetched', () => {
             const user = testUtils.getUserObject(1, 'abc');
-            env.channelID = 111;
+            filter.setChannelInfo('abc', 111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_UNKNOWN);
@@ -297,7 +298,7 @@ describe('main.js', () => {
         it('user exists and follows', () => {
             const user = testUtils.getUserObject(1, 'abc', [111]);
             user.addFollowing(111);
-            env.channelID = 111;
+            filter.setChannelInfo('abc', 111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_FOLLOWING);
@@ -306,7 +307,7 @@ describe('main.js', () => {
         it('user exists and not following', () => {
             const user = testUtils.getUserObject(1, 'abc', [222]);
             user.addFollowing(222);
-            env.channelID = 111;
+            filter.setChannelInfo('abc', 111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_NOT_FOLLOWING);

@@ -103,7 +103,7 @@ describe('subsByTiers.js', () => {
     });
 
     it('_update', async () => {
-        env.channelID = 111;
+        filter.setChannelInfo('abc', 111);
         sinon.stub(users, 'getSubscriptionsByTiers').withArgs().
             returns({
                 1000: {

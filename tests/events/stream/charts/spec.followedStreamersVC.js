@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const followedStreamersVC = require('../../../../js/events/stream/charts/followedStreamersVC');
 const users = require('../../../../js/singletons/users');
-const env = require('../../../../js/env');
+const filter = require('../../../../js/shared/filter');
 const testUtils = require('../../../testUtils');
 
 
@@ -22,7 +22,7 @@ describe('followedStreamersVC.js', () => {
             4: testUtils.getUserObject(1, 'd'),
         }
 
-        env.channelID = 123;
+        filter.setChannelInfo('abc', 123);
         sinon.stub(users, 'getTopFollowedBySummary').
             returns([])
 
@@ -35,7 +35,7 @@ describe('followedStreamersVC.js', () => {
 
         sinon.verifyAndRestore();
 
-        env.channelID = 123;
+        filter.setChannelInfo('abc', 123);
         sinon.stub(users, 'getTopFollowedBySummary').
             returns([{
                 userID: 1,
@@ -53,7 +53,7 @@ describe('followedStreamersVC.js', () => {
 
         sinon.verifyAndRestore();
 
-        env.channelID = 123;
+        filter.setChannelInfo('abc', 123);
         sinon.stub(users, 'getTopFollowedBySummary').
             returns([{
                 userID: 1,

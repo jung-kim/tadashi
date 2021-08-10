@@ -200,7 +200,7 @@ describe('navOptionVC', () => {
 
     describe('_populateStreamInfo', () => {
         it('success', async () => {
-            env.channel = 'a-channel';
+            filter.setChannelInfo('a-channel', 111);
             navOptionVC.channelInputAutoComplete = { input: {} };
 
             const channelDom = {},
@@ -221,7 +221,7 @@ describe('navOptionVC', () => {
         });
 
         it('inactive', async () => {
-            env.channel = 'a-channel';
+            filter.setChannelInfo('a-channel', 111);
             navOptionVC.channelInputAutoComplete = { input: {} };
 
             const channelDom = {},
@@ -243,7 +243,7 @@ describe('navOptionVC', () => {
 
 
         it('fail', async () => {
-            env.channel = 'a-channel';
+            filter.setChannelInfo('a-channel', 111);
             navOptionVC.channelInputAutoComplete = { input: {} };
 
             const channelDom = {},

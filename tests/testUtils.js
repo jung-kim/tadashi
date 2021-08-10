@@ -100,8 +100,6 @@ module.exports = {
         api.reset();
         userIDFetcher._isRunning = undefined;
         users.reset();
-        env.channel = undefined;
-        env.channelID = undefined;
 
         // stub out boostrap functions 
         BSN = {

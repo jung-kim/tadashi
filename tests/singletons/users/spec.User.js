@@ -210,19 +210,19 @@ describe('User.js', () => {
     describe('getInfo', () => {
         it('without sub', () => {
             const user = testUtils.getUserObject(111, 'abc');
-            env.channelID = 123;
+            filter.setChannelInfo('abc', 123);
             assert.deepEqual(user.getInfo(), { following: undefined, is_subscribed: false });
         });
 
         it('with none gifted sub', () => {
             const user = testUtils.getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: false } });
-            env.channelID = 123;
+            filter.setChannelInfo('abc', 123);
             assert.deepEqual(user.getInfo(), { following: true, is_subscribed: true, tier: '1000', plan_name: 'a-plan' });
         });
 
         it('with gifted sub', () => {
             const user = testUtils.getUserObject(111, 'abc', [123], undefined, { 123: { tier: '1000', plan_name: 'a-plan', is_gift: true, gifter_name: 'a-gifter' } });
-            env.channelID = 123;
+            filter.setChannelInfo('abc', 123);
             assert.deepEqual(user.getInfo(), { following: true, is_subscribed: true, tier: '1000', plan_name: 'a-plan', gifter_name: 'a-gifter' });
         });
     });
@@ -230,14 +230,14 @@ describe('User.js', () => {
     describe('getInfoCss', () => {
         it('not subscribed', () => {
             const user = testUtils.getUserObject(111, 'abc');
-            env.channelID = 123;
+            filter.setChannelInfo('abc', 123);
             assert.equal(user.getInfoCss(), 'not-subscribed');
         });
 
         it('subscribed', () => {
             const user = testUtils.getUserObject(111, 'abc');
             user.addSubscribedTo({ broadcaster_id: 123 })
-            env.channelID = 123;
+            filter.setChannelInfo('abc', 123);
             assert.equal(user.getInfoCss(), 'subscribed');
         });
     });
@@ -245,7 +245,7 @@ describe('User.js', () => {
     describe('isApplicable', () => {
         it('is following', () => {
             filter.setSearchString(':following');
-            env.channelID = 333
+            filter.setChannelInfo('abc', 333);
 
             const user1 = testUtils.getUserObject(111, 'aaa');
             assert.equal(user1.isApplicable(), false);
@@ -256,7 +256,7 @@ describe('User.js', () => {
 
         it('is not following', () => {
             filter.setSearchString(':notFollowing');
-            env.channelID = 333
+            filter.setChannelInfo('abc', 333);
 
             const user1 = testUtils.getUserObject(111, 'aaa');
             assert.equal(user1.isApplicable(), true);
