@@ -60,8 +60,8 @@ describe('twitchClient.js', () => {
 
             await twitchClient.initializeClient();
 
-            assert.equal(env.channel, 'hi');
-            assert.equal(env.channelID, 88);
+            assert.equal(filter.getChannel(), 'hi');
+            assert.equal(filter.getChannelId(), 88);
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
@@ -80,8 +80,8 @@ describe('twitchClient.js', () => {
             await twitchClient.initializeClient();
 
             sinon.assert.calledOnce(ping);
-            assert.equal(env.channel, 'hi');
-            assert.equal(env.channelID, 99);
+            assert.equal(filter.getChannel(), 'hi');
+            assert.equal(filter.getChannelId(), 99);
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
@@ -101,8 +101,8 @@ describe('twitchClient.js', () => {
             await twitchClient.initializeClient();
 
             sinon.assert.calledOnce(ping);
-            assert.equal(env.channel, 'someone');
-            assert.equal(env.channelID, 123);
+            assert.equal(filter.getChannel(), 'someone');
+            assert.equal(filter.getChannelId(), 123);
             sinon.assert.calledOnce(fakeClient.connect);
         });
 
@@ -120,8 +120,8 @@ describe('twitchClient.js', () => {
 
             sinon.assert.calledOnce(ping);
             sinon.assert.calledOnce(fakeClient.connect);
-            assert.equal(env.channel, 'xqcow');
-            assert.equal(env.channelID, 71092938);
+            assert.equal(filter.getChannel(), 'xqcow');
+            assert.equal(filter.getChannelId(), 71092938);
         });
     });
 
@@ -220,12 +220,11 @@ describe('twitchClient.js', () => {
         sinon.assert.notCalled(eventSignals.dispatch);
 
         sinon.verifyAndRestore();
-        env.channelID = 333;
+        filter.setChannelInfo('abc', 333);
         queryStub = sinon.stub(api, 'queryTmiApi').withArgs(`group/user/abc/chatters`).returns({
             chatters: 'data'
         });
         twitchClient._enabled = true;
-        env.channel = 'abc'
         await twitchClient._updateViewersCache();
         sinon.assert.calledOnce(queryStub);
         sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
@@ -233,29 +232,6 @@ describe('twitchClient.js', () => {
             data: 'data',
             channelID: 333,
         }));
-    });
-
-    it('_setChannel', () => {
-        twitchClient._setChannel('abc');
-        assert.equal(env.channel, 'abc');
-    });
-
-    it('_setChannelID', async () => {
-        await twitchClient._setChannelID(123);
-        assert.equal(env.channelID, 123);
-
-        env.channel = 'abc';
-        sinon.stub(api, 'queryTwitchApi').
-            withArgs(`kraken/users?login=abc`).
-            returns({ users: [{ _id: '111' }] });
-        await twitchClient._setChannelID();
-        assert.equal(env.channelID, 111);
-
-        sinon.verifyAndRestore();
-
-        env.channel = undefined;
-        await twitchClient._setChannelID();
-        assert.equal(env.channelID, 111);
     });
 
     describe('changeToRandomFeaturedStream', () => {
@@ -312,8 +288,7 @@ describe('twitchClient.js', () => {
     });
 
     it('saveChannel', () => {
-        env.channelID = 111;
-        env.channel = 'abc'
+        filter.setChannelInfo('abc', 111);
         twitchClient._saveChannel();
 
         assert.equal(localStorage.getItem('channel'), 'abc');

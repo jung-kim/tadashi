@@ -105,7 +105,7 @@ describe('stream/index.js', () => {
     it('channel.input.update', () => {
         const populateStreamInfo = sinon.stub(navOptionVC, 'populateStreamInfo');
 
-        _eventSignalsFunc({ event: 'channel.input.update' });
+        _eventSignalsFunc({ event: 'filter.change', changed: { channel: 'a-channel' } });
 
         sinon.assert.calledOnce(populateStreamInfo);
     });

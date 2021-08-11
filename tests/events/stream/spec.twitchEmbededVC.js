@@ -1,7 +1,7 @@
 
 const { assert } = require('chai');
 const sinon = require('sinon');
-const env = require('../../../js/env');
+const filter = require('../../../js/shared/filter');
 
 const twitchEmbededVC = require('../../../js/events/stream/twitchEmbededVC');
 const testUtils = require('../../testUtils');

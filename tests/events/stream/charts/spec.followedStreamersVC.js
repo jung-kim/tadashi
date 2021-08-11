@@ -82,7 +82,7 @@ describe('followedStreamersVC.js', () => {
     describe('_eventSignalsFunc', () => {
         it('channel.input.update', () => {
             const reset = sinon.stub(followedStreamersVC, 'reset');
-            followedStreamersVC._eventSignalsFunc({ event: 'channel.input.update' });
+            followedStreamersVC._eventSignalsFunc({ event: 'filter.change', changed: { channel: 'a-channel' } });
             sinon.assert.calledOnce(reset);
         });
 

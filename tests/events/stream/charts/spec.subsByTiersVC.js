@@ -3,7 +3,7 @@ const { assert } = require('chai');
 
 const subsByTiersVC = require('../../../../js/events/stream/charts/subsByTiersVC');
 const users = require('../../../../js/singletons/users');
-const env = require('../../../../js/env');
+const filter = require('../../../../js/shared/filter');
 const testUtils = require('../../../testUtils');
 
 
@@ -17,7 +17,7 @@ describe('subsByTiers.js', () => {
     describe('_eventSignalsFunc', () => {
         it('channel.input.update', () => {
             const reset = sinon.stub(subsByTiersVC, 'reset');
-            subsByTiersVC._eventSignalsFunc({ event: 'channel.input.update' });
+            subsByTiersVC._eventSignalsFunc({ event: 'filter.change', changed: { channel: 'a-channel' } });
             sinon.assert.calledOnce(reset);
         });
 

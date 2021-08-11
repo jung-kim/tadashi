@@ -84,7 +84,7 @@ describe('ChartRoot.js', () => {
         it('channel.input.update', () => {
             const chartRoot = new ChartRoot({});
             const reset = sinon.stub(chartRoot, 'reset');
-            chartRoot._eventSignalsFunc({ event: 'channel.input.update' });
+            chartRoot._eventSignalsFunc({ event: 'filter.change', changed: { channel: 'a-channel' } });
             sinon.assert.calledOnce(reset);
         });
 
