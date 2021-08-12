@@ -155,7 +155,7 @@ class User {
      * @returns {string} css class depends on subscribed or not
      */
     getInfoCss() {
-        const subObj = this.getSubscribedTo(filter.getChannelId);
+        const subObj = this.getSubscribedTo(filter.getChannelId());
         return subObj ? 'subscribed' : 'not-subscribed';
     }
 

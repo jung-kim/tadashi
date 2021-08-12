@@ -220,16 +220,6 @@ describe('users.js', () => {
             sinon.assert.calledOnce(userFollowsFetch);
         });
 
-        it('channel.input.update', () => {
-            const userIDFetch = sinon.stub(userIDFetcher, 'reset').withArgs();
-            const userFollowsFetch = sinon.stub(userFollowsFetcher, 'reset').withArgs();
-            const userEnsureStub = sinon.stub(users, '_ensureUserExists').withArgs(1111, 'aBcD')
-            users._eventSignalFunc({ event: 'channel.input.update', data: { id: 1111, channel: 'aBcD' } });
-            sinon.assert.calledOnce(userIDFetch);
-            sinon.assert.calledOnce(userFollowsFetch);
-            sinon.assert.calledOnce(userEnsureStub);
-        });
-
         it('fetch.channel.follows.resp', () => {
             const processChannelFollows = sinon.stub(users, 'processUserFollowsResp').withArgs(["abc"]);
             users._eventSignalFunc({ event: 'fetch.channel.follows.resp', data: ["abc"], channelID: 123 });

@@ -44,47 +44,6 @@ describe('twitchClient.js', () => {
             sinon.assert.notCalled(tmiClientStub);
         });
 
-        it('channel is in localstorage but not id', async () => {
-            twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
-
-            localStorage.setItem('channel', 'hi');
-            sinon.stub(tmi, 'Client').
-                callThroughWithNew().
-                withArgs(sinon.match.any).
-                returns(fakeClient);
-            sinon.stub(api, 'queryTwitchApi').
-                withArgs(`kraken/users?login=hi`).
-                returns({ users: [{ _id: 88 }] });
-            sinon.stub(twitchClient, 'ping');
-
-            await twitchClient.initializeClient();
-
-            assert.equal(filter.getChannel(), 'hi');
-            assert.equal(filter.getChannelId(), 88);
-            sinon.assert.calledOnce(fakeClient.connect);
-        });
-
-        it('channel and ID is in localstorage', async () => {
-            twitchClient._client = undefined;
-            const fakeClient = { connect: sinon.stub(), on: () => ({}) };
-
-            localStorage.setItem('channel', 'hi');
-            localStorage.setItem('channel-id', '99');
-            sinon.stub(tmi, 'Client').
-                callThroughWithNew().
-                withArgs(sinon.match.any).
-                returns(fakeClient);
-            let ping = sinon.stub(twitchClient, 'ping');
-
-            await twitchClient.initializeClient();
-
-            sinon.assert.calledOnce(ping);
-            assert.equal(filter.getChannel(), 'hi');
-            assert.equal(filter.getChannelId(), 99);
-            sinon.assert.calledOnce(fakeClient.connect);
-        });
-
         it('broadcaster user init', async () => {
             twitchClient._client = undefined;
             const fakeClient = { connect: sinon.stub(), on: () => ({}) };
@@ -129,54 +88,38 @@ describe('twitchClient.js', () => {
         it('change channel from undefined', async () => {
             let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
             let partStub = sinon.stub(twitchClient._client, 'part');
-            let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
+
             await twitchClient.changeChannel('abcde', 5);
+
             sinon.assert.calledOnce(joinStub);
             sinon.assert.notCalled(partStub);
-            sinon.assert.calledOnce(updateViewerCacheStub);
-            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
-                event: 'channel.input.update',
-                data: {
-                    id: 5,
-                    channel: 'abcde',
-                }
-            }));
-            assert.equal(env.channel, 'abcde');
-            assert.equal(env.channelID, 5);
+            assert.equal(filter.getChannel(), 'abcde');
+            assert.equal(filter.getChannelId(), 5);
         });
 
         it('from same channel', async () => {
-            env.channel = 'abcde'
+            filter.setChannelInfo('abcde', 5);
             let joinStub = sinon.stub(twitchClient._client, 'join');
             let partStub = sinon.stub(twitchClient._client, 'part');
-            let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
+
             await twitchClient.changeChannel('abcde');
+
             sinon.assert.notCalled(joinStub);
             sinon.assert.notCalled(partStub);
-            sinon.assert.notCalled(updateViewerCacheStub);
-            sinon.assert.notCalled(eventSignals.dispatch);
-            assert.equal(env.channel, 'abcde');
+            assert.equal(filter.getChannel(), 'abcde');
         });
 
         it('from another channel', async () => {
-            env.channel = '1111';
-            env.channelID = 1111;
+            filter.setChannelInfo('1111', 1111);
             let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
             let partStub = sinon.stub(twitchClient._client, 'part').withArgs('1111');
-            let updateViewerCacheStub = sinon.stub(twitchClient, 'updateViewersCache');
+
             await twitchClient.changeChannel('abcde', 5);
+
             sinon.assert.calledOnce(joinStub);
             sinon.assert.calledOnce(partStub);
-            sinon.assert.calledOnce(updateViewerCacheStub);
-            sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
-                event: 'channel.input.update',
-                data: {
-                    id: 5,
-                    channel: 'abcde',
-                }
-            }));
-            assert.equal(env.channel, 'abcde');
-            assert.equal(env.channelID, 5);
+            assert.equal(filter.getChannel(), 'abcde');
+            assert.equal(filter.getChannelId(), 5);
         });
     });
 
@@ -214,7 +157,7 @@ describe('twitchClient.js', () => {
         sinon.assert.notCalled(eventSignals.dispatch);
 
         twitchClient._enabled = true;
-        env.channel = undefined;
+        filter.setChannelInfo(undefined, undefined);
         await twitchClient._updateViewersCache();
         sinon.assert.notCalled(queryStub);
         sinon.assert.notCalled(eventSignals.dispatch);
@@ -271,8 +214,8 @@ describe('twitchClient.js', () => {
                 });
 
             await twitchClient.changeToRandomFeaturedStream();
-            assert.equal(env.channel, 'two');
-            assert.equal(env.channelID, 333);
+            assert.equal(filter.getChannel(), 'two');
+            assert.equal(filter.getChannelId(), 333);
         });
 
         it('should default to xqcow with any fails', async () => {
@@ -282,8 +225,8 @@ describe('twitchClient.js', () => {
 
             await twitchClient.changeToRandomFeaturedStream();
 
-            assert.equal(env.channel, 'xqcow');
-            assert.equal(env.channelID, 71092938);
+            assert.equal(filter.getChannel(), 'xqcow');
+            assert.equal(filter.getChannelId(), 71092938);
         });
     });
 
