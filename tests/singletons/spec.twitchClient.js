@@ -3,7 +3,6 @@ const sinon = require('sinon');
 const tmi = require('tmi.js');
 const constants = require('../../js/helpers/constants');
 
-const env = require('../../js/env');
 const auth = require('../../js/simpletons/auth');
 const twitchClient = require("../../js/singletons/twitchClient");
 const api = require("../../js/simpletons/api");
@@ -12,6 +11,7 @@ const eventSignals = require('../../js/helpers/signals').eventSignals;
 const testUtils = require('../testUtils');
 const events = require('../../js/models/events');
 const filter = require('../../js/shared/filter');
+const users = require('../../js/singletons/users');
 
 const fakeClient = twitchClient._client;
 
@@ -55,7 +55,7 @@ describe('twitchClient.js', () => {
                 callThroughWithNew().
                 withArgs(sinon.match.any).
                 returns(fakeClient);
-            let ping = sinon.stub(twitchClient, 'ping');
+            const ping = sinon.stub(twitchClient, 'ping');
 
             await twitchClient.initializeClient();
 
@@ -73,7 +73,7 @@ describe('twitchClient.js', () => {
                 callThroughWithNew().
                 withArgs(sinon.match.any).
                 returns(fakeClient);
-            let ping = sinon.stub(twitchClient, 'ping');
+            const ping = sinon.stub(twitchClient, 'ping');
 
             await twitchClient.initializeClient();
 
@@ -86,8 +86,8 @@ describe('twitchClient.js', () => {
 
     describe('changeChannel()', () => {
         it('change channel from undefined', async () => {
-            let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
-            let partStub = sinon.stub(twitchClient._client, 'part');
+            const joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
+            const partStub = sinon.stub(twitchClient._client, 'part');
 
             await twitchClient.changeChannel('abcde', 5);
 
@@ -99,8 +99,8 @@ describe('twitchClient.js', () => {
 
         it('from same channel', async () => {
             filter.setChannelInfo('abcde', 5);
-            let joinStub = sinon.stub(twitchClient._client, 'join');
-            let partStub = sinon.stub(twitchClient._client, 'part');
+            const joinStub = sinon.stub(twitchClient._client, 'join');
+            const partStub = sinon.stub(twitchClient._client, 'part');
 
             await twitchClient.changeChannel('abcde');
 
@@ -111,8 +111,8 @@ describe('twitchClient.js', () => {
 
         it('from another channel', async () => {
             filter.setChannelInfo('1111', 1111);
-            let joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
-            let partStub = sinon.stub(twitchClient._client, 'part').withArgs('1111');
+            const joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
+            const partStub = sinon.stub(twitchClient._client, 'part').withArgs('1111');
 
             await twitchClient.changeChannel('abcde', 5);
 
@@ -121,16 +121,53 @@ describe('twitchClient.js', () => {
             assert.equal(filter.getChannel(), 'abcde');
             assert.equal(filter.getChannelId(), 5);
         });
+
+        it('missing id', async () => {
+            filter.setChannelInfo('1111', 1111);
+            const joinStub = sinon.stub(twitchClient._client, 'join').withArgs('abcde');
+            const partStub = sinon.stub(twitchClient._client, 'part').withArgs('1111');
+            const queryTwitchApi = sinon.stub(api, 'queryTwitchApi').withArgs(`kraken/users?login=abcde`).returns({
+                users: [{ _id: 5 }]
+            });
+
+            await twitchClient.changeChannel('abcde', undefined);
+
+            sinon.assert.calledOnce(joinStub);
+            sinon.assert.calledOnce(partStub);
+            sinon.assert.calledOnce(queryTwitchApi);
+            assert.equal(filter.getChannel(), 'abcde');
+            assert.equal(filter.getChannelId(), 5);
+        });
     });
 
-    it('_processChatMessage', () => {
-        const ping = sinon.stub(twitchClient, 'ping');
-        const dataCacheAdd = sinon.stub(dataCache, 'add').withArgs('abc', new events.Chat({}));
+    describe('_processChatMessage', () => {
+        it('missing display name', () => {
+            const ping = sinon.stub(twitchClient, 'ping');
+            const dataCacheAdd = sinon.stub(dataCache, 'add').withArgs('abc', new events.Chat({}));
 
-        twitchClient._processChatMessage('abc', new events.Chat({}));
+            twitchClient._processChatMessage('abc', new events.Chat({}));
 
-        sinon.assert.calledOnce(ping);
-        sinon.assert.calledOnce(dataCacheAdd);
+            sinon.assert.calledOnce(ping);
+            sinon.assert.calledOnce(dataCacheAdd);
+        });
+
+        it('with display name', () => {
+            const ping = sinon.stub(twitchClient, 'ping');
+            const _ensureUserExists = sinon.stub(users, '_ensureUserExists').withArgs()
+            const dataCacheAdd = sinon.stub(dataCache, 'add').withArgs('abc', new events.Chat({
+                'user-id': 123,
+                'display-name': 'hello'
+            }));
+
+            twitchClient._processChatMessage('abc', new events.Chat({
+                'user-id': 123,
+                'display-name': 'hello'
+            }));
+
+            sinon.assert.calledOnce(ping);
+            sinon.assert.calledOnce(dataCacheAdd);
+            sinon.assert.calledOnce(_ensureUserExists);
+        });
     });
 
     it('disable/enable', () => {
