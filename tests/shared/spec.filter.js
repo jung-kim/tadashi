@@ -14,6 +14,38 @@ describe('filter.js', () => {
         testUtils.reset();
     });
 
+    describe('reset', () => {
+        it('with out local storage', () => {
+            env._filter = {};
+            sinon.stub(moment, 'now').returns(60072);
+
+            filter.reset();
+
+            assert.isUndefined(env._filter._channelId);
+            assert.isUndefined(env._filter._channel);
+            assert.equal(env._filter._start.valueOf(), 60000);
+            assert.equal(env._filter._end.valueOf(), 60000);
+            assert.isUndefined(env._filter._searchString);
+            assert.equal(env._filter._intervalLevel, constants.BUCKET_MIN);
+        });
+
+        it('with local storage', () => {
+            localStorage.setItem('channel', 'abc');
+            localStorage.setItem('channel-id', '111');
+            env._filter = {};
+            sinon.stub(moment, 'now').returns(60072);
+
+            filter.reset();
+
+            assert.equal(env._filter._channelId, 111);
+            assert.equal(env._filter._channel, 'abc');
+            assert.equal(env._filter._start.valueOf(), 60000);
+            assert.equal(env._filter._end.valueOf(), 60000);
+            assert.isUndefined(env._filter._searchString);
+            assert.equal(env._filter._intervalLevel, constants.BUCKET_MIN);
+        });
+    });
+
     describe('setStart', () => {
         it('null', () => {
             filter.setStart(null);

@@ -230,7 +230,18 @@ describe('users.js', () => {
             const processChannelSubscribedResp = sinon.stub(users, 'processChannelSubscribedResp').withArgs({ a: 123 });
             users._eventSignalFunc({ event: 'fetch.channel.subscribed.resp', data: { a: 123 } });
             sinon.assert.calledOnce(processChannelSubscribedResp);
+        });
 
+        it('filter.change', () => {
+            const idReset = sinon.stub(userIDFetcher, 'reset');
+            const followsReset = sinon.stub(userFollowsFetcher, 'reset');
+            const _ensureUserExists = sinon.stub(users, '_ensureUserExists').withArgs(123, 'abc');
+
+            users._eventSignalFunc({ event: 'filter.change', changed: { channel: 'abc', id: 123 } });
+
+            sinon.assert.calledOnce(idReset);
+            sinon.assert.calledOnce(followsReset);
+            sinon.assert.calledOnce(_ensureUserExists);
         });
     });
 
