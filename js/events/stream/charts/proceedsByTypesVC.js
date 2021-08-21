@@ -37,11 +37,11 @@ class ProceedsByTypesVC extends ChartRoot {
     }
 
     async _update() {
-        const { channel, usersObject, startBucket, endBucket } = await this._getParameters();
+        const { channel, startBucket, endBucket } = await this._getParameters();
         const datasets = this._getDataset();
         const data = datasets[0].data;
         // endBucket + 60 since endbucket is exclusive
-        const total = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN, usersObject);
+        const total = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN);
 
         data[0] = total[constants.TYPE_CHEER]._sum;
         data[1] = total[constants.TYPE_SUB]._sum;

@@ -1,3 +1,4 @@
+const users = require('../../../../js/singletons/users');
 
 /**
  * Holds aggregate of event data that holds
@@ -41,14 +42,13 @@ class DataNode {
     /**
      * merge targetDataNode's values into this
      * 
-     * @param {User} usersObject
      * @param {DataNode} targetDataNode to be added into this
      * @returns {DataNode} this
      */
-    merge(usersObject, targetDataNode) {
+    merge(targetDataNode) {
         if (targetDataNode) {
             Object.keys(targetDataNode._users).forEach(key => {
-                if (!usersObject || usersObject.getUserByName(key).isApplicable()) {
+                if (users.getUserByName(key).isApplicable()) {
                     this._users[key] = (this._users[key] || 0) + targetDataNode._users[key];
                     this._sum += targetDataNode._users[key];
                 }

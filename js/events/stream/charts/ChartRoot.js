@@ -96,7 +96,6 @@ class ChartRoot {
             startBucket: startBucket,
             endBucket: endBucket,
             channel: filter.getChannel(),
-            usersObject: users,
             length: length,
         }
     }

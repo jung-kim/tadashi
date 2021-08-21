@@ -54,13 +54,12 @@ class DataBucket {
 
     /**
      * 
-     * @param {User} usersObject 
      * @param {DataBucket} dataBucket to merge with
      * @returns {DataBucet} merge target data bucket data to current data
      */
-    merge(usersObject, dataBucket) {
+    merge(dataBucket) {
         Object.keys(dataBucket).forEach(key => {
-            this[key].merge(usersObject, dataBucket[key]);
+            this[key].merge(dataBucket[key]);
         });
         return this;
     }

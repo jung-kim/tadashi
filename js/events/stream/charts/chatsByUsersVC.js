@@ -17,13 +17,13 @@ class ChatsByUsersVC extends ChartRoot {
     }
 
     async _update() {
-        const { channel, usersObject, startBucket, endBucket } = await this._getParameters();
+        const { channel, startBucket, endBucket } = await this._getParameters();
         const labels = this._getRootLabels();
         const datasets = this._getDataset();
         const data = datasets[0].data;
 
         // endBucket + 60 since endbucket is exclusive
-        const chatTotal = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN, usersObject)[constants.TYPE_CHAT];
+        const chatTotal = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN)[constants.TYPE_CHAT];
         const sorted = Object.entries(chatTotal._users).sort(([, a], [, b]) => b - a);
         const length = Math.min(sorted.length, DISPLAY_LIMIT);
 
