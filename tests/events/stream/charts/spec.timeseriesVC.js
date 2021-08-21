@@ -26,21 +26,21 @@ describe('timeseriesVC.js', () => {
             usersObject: users,
         });
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577901660, users).
+            withArgs('abc', 1577901600, 1577901660).
             returns(testUtils.getTestDataBucket(1, 'a')).
-            withArgs('abc', 1577901660, 1577901720, users).
+            withArgs('abc', 1577901660, 1577901720).
             returns(testUtils.getTestDataBucket(2, 'b')).
-            withArgs('abc', 1577901720, 1577901780, users).
+            withArgs('abc', 1577901720, 1577901780).
             returns(testUtils.getTestDataBucket(3, 'c')).
-            withArgs('abc', 1577901780, 1577901840, users).
+            withArgs('abc', 1577901780, 1577901840).
             returns(testUtils.getTestDataBucket(4, 'e')).
-            withArgs('abc', 1577901840, 1577901900, users).
+            withArgs('abc', 1577901840, 1577901900).
             returns(testUtils.getTestDataBucket(5, 'e')).
-            withArgs('abc', 1577901900, 1577901960, users).
+            withArgs('abc', 1577901900, 1577901960).
             returns(testUtils.getTestDataBucket(6, 'c')).
-            withArgs('abc', 1577901960, 1577902020, users).
+            withArgs('abc', 1577901960, 1577902020).
             returns(testUtils.getTestDataBucket(7, 'c')).
-            withArgs('abc', 1577902020, 1577902080, users).
+            withArgs('abc', 1577902020, 1577902080).
             returns(testUtils.getTestDataBucket(16, 'b'));
 
         await timeseriesVC._update();
@@ -161,13 +161,13 @@ describe('timeseriesVC.js', () => {
             startBucket: 1577901600,
         });
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577901660, users).
+            withArgs('abc', 1577901600, 1577901660).
             returns(testUtils.getTestDataBucket(1, 'a')).
-            withArgs('abc', 1577901660, 1577901720, users).
+            withArgs('abc', 1577901660, 1577901720).
             returns(testUtils.getTestDataBucket(2, 'b')).
-            withArgs('abc', 1577901720, 1577901780, users).
+            withArgs('abc', 1577901720, 1577901780).
             returns(testUtils.getTestDataBucket(3, 'c')).
-            withArgs('abc', 1577901780, 1577901840, users).
+            withArgs('abc', 1577901780, 1577901840).
             returns(testUtils.getTestDataBucket(4, 'e'));
 
         await timeseriesVC._update();

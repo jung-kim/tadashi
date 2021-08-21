@@ -5,8 +5,6 @@ const chatsByUsersVC = require('../../../../js/events/stream/charts/chatsByUsers
 const constants = require('../../../../js/helpers/constants');
 const dataCache = require('../../../../js/simpletons/dataCache');
 const testUtils = require('../../../testUtils');
-const users = require('../../../../js/singletons/users');
-const DataBucket = require('../../../../js/simpletons/dataCache/models/DataBucket');
 
 
 describe('chatsByUsersVC.js', () => {

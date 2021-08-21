@@ -122,6 +122,12 @@ module.exports = {
         users._ensureUserExists(7, 'g');
         users._ensureUserExists(8, 'h');
         users._ensureUserExists(9, 'i');
+        users._ensureUserExists(10, 'j');
+        users._ensureUserExists(11, 'k');
+        users._ensureUserExists(12, 'l');
+        users._ensureUserExists(13, 'm');
+        users._ensureUserExists(14, 'n');
+        users._ensureUserExists(15, 'o');
 
         return new DataBucket({
             [constants.TYPE_CHAT]: new DataNode(adjustedCount, { [name || 'a']: adjustedCount }),

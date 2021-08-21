@@ -225,7 +225,7 @@ describe('DataChannel.js', () => {
             const _getAt = sinon.stub(dataChannel, '_getAt');
             const _getAt1 = _getAt.withArgs(300).returns(testUtils.getTestDataBucket());
 
-            const res = dataChannel.get(300, 360, users);
+            const res = dataChannel.get(300, 360);
 
             sinon.assert.calledOnce(_getAt);
             sinon.assert.calledOnce(_getAt1);
@@ -250,7 +250,7 @@ describe('DataChannel.js', () => {
                 return testUtils.getTestDataBucket(1);
             });
 
-            const res = dataChannel.get(300, 600, users);
+            const res = dataChannel.get(300, 600);
 
             sinon.assert.callCount(_getAt, 5);
             sinon.assert.calledOnce(_validateCache);
@@ -274,7 +274,7 @@ describe('DataChannel.js', () => {
             const _validateCache = sinon.stub(dataChannel, '_validateCache').withArgs();
             const _getAt = sinon.stub(dataChannel, '_getAt');
 
-            const res = dataChannel.get(300, 600, users);
+            const res = dataChannel.get(300, 600);
 
             sinon.assert.notCalled(_getAt);
             sinon.assert.calledOnce(_validateCache);
@@ -300,7 +300,7 @@ describe('DataChannel.js', () => {
                 return testUtils.getTestDataBucket();
             });
 
-            const res = dataChannel.get(240, 720, users);
+            const res = dataChannel.get(240, 720);
 
             sinon.assert.calledThrice(_getAt);
             sinon.assert.calledOnce(_validateCache);
@@ -328,7 +328,7 @@ describe('DataChannel.js', () => {
                 return testUtils.getTestDataBucket();
             });
 
-            const res = dataChannel.get(240, 1320, users);
+            const res = dataChannel.get(240, 1320);
 
             sinon.assert.callCount(_getAt, 8);
             sinon.assert.calledOnce(_validateCache);
@@ -357,7 +357,7 @@ describe('DataChannel.js', () => {
                 return testUtils.getTestDataBucket(1)
             });
 
-            const res = dataChannel.get(0, 3600, users);
+            const res = dataChannel.get(0, 3600);
 
             sinon.assert.callCount(_getAt, 50);
             sinon.assert.calledOnce(_validateCache);
@@ -399,7 +399,7 @@ describe('DataChannel.js', () => {
                 return testUtils.getTestDataBucket()
             });
 
-            const res = dataChannel.get(0, 3600, users);
+            const res = dataChannel.get(0, 3600);
 
             sinon.assert.callCount(_getAt, 0);
             sinon.assert.calledOnce(_validateCache);
@@ -432,7 +432,7 @@ describe('DataChannel.js', () => {
                 return testUtils.getTestDataBucket()
             });
 
-            const res = dataChannel.get(0, 4020, users);
+            const res = dataChannel.get(0, 4020);
 
             sinon.assert.callCount(_getAt, 7);
             sinon.assert.calledOnce(_validateCache);
@@ -468,7 +468,7 @@ describe('DataChannel.js', () => {
                 return testUtils.getTestDataBucket()
             });
 
-            const res = dataChannel.get(0, 7620, users);
+            const res = dataChannel.get(0, 7620);
 
             sinon.assert.callCount(_getAt, 62);
             sinon.assert.calledOnce(_validateCache);
@@ -514,7 +514,7 @@ describe('DataChannel.js', () => {
             const _getAt3 = _getAt.withArgs(420).returns(testUtils.getTestDataBucket(1));
 
             filter.setSearchString('a');
-            const res = dataChannel.get(300, 480, users);
+            const res = dataChannel.get(300, 480);
 
             sinon.assert.calledThrice(_getAt);
             sinon.assert.calledOnce(_getAt1);
@@ -548,7 +548,7 @@ describe('DataChannel.js', () => {
             });
 
             filter.setSearchString('a');
-            const res = dataChannel.get(240, 720, users);
+            const res = dataChannel.get(240, 720);
 
             sinon.assert.calledThrice(_getAt);
             sinon.assert.calledOnce(_validateCache);
@@ -581,7 +581,7 @@ describe('DataChannel.js', () => {
             });
 
             filter.setSearchString('a');
-            const res = dataChannel.get(0, 3720, users);
+            const res = dataChannel.get(0, 3720);
 
             sinon.assert.calledTwice(_getAt);
             sinon.assert.calledOnce(_validateCache);
@@ -617,7 +617,7 @@ describe('DataChannel.js', () => {
             });
 
             filter.setSearchString('c');
-            const res = dataChannel.get(0, 3960, users);
+            const res = dataChannel.get(0, 3960);
 
             sinon.assert.calledOnce(_getAt);
             sinon.assert.calledOnce(_validateCache);

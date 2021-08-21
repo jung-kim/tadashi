@@ -38,12 +38,12 @@ describe('dataCache/index.js', () => {
     });
 
     it('get', () => {
-        assert.deepEqual(dataCache.get('aaa', 0, 60, filter), blankDataBucket);
+        assert.deepEqual(dataCache.get('aaa', 0, 60), blankDataBucket);
 
         dataCache._data['aaa'] = new DataChannel();
-        const get = sinon.stub(dataCache._data['aaa'], 'get').withArgs(0, 60, filter).returns('something');
+        const get = sinon.stub(dataCache._data['aaa'], 'get').withArgs(0, 60).returns('something');
 
-        assert.equal(dataCache.get('aaa', 0, 60, filter), 'something');
+        assert.equal(dataCache.get('aaa', 0, 60), 'something');
         sinon.assert.calledOnce(get);
     });
 });

@@ -33,7 +33,7 @@ describe('proceedsByUsersVC.js', () => {
             merge(undefined, testUtils.getTestDataBucket(3, 'k')).
             merge(undefined, testUtils.getTestDataBucket(5, 'l'))
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577902020 + 60, undefined).
+            withArgs('abc', 1577901600, 1577902020 + 60).
             returns(dataBucket);
 
         document.getElementById.withArgs(proceedsByUsersVC._chartDomSelector).returns({});
@@ -67,7 +67,7 @@ describe('proceedsByUsersVC.js', () => {
         });
 
         sinon.stub(dataCache, 'get').
-            withArgs('abc', 1577901600, 1577902020, undefined).
+            withArgs('abc', 1577901600, 1577902020).
             returns(testUtils.getTestDataBucket(1, 'a').
                 merge(undefined, testUtils.getTestDataBucket(3, 'b')).
                 merge(undefined, testUtils.getTestDataBucket(6, 'c')).
