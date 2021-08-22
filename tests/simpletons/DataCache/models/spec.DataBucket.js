@@ -190,7 +190,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_TIMEOUT]: node2,
             });
 
-            dataBucket1.merge(users, dataBucket2);
+            dataBucket1.merge(dataBucket2);
 
             assert.deepEqual(dataBucket1, {
                 0: {
@@ -308,7 +308,7 @@ describe('DataBucket.js', () => {
                 [constants.TYPE_TIMEOUT]: node2,
             });
 
-            dataBucket1.merge(users, dataBucket2);
+            dataBucket1.merge(dataBucket2);
 
             assert.deepEqual(dataBucket1, {
                 0: {

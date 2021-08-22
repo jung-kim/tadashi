@@ -42,6 +42,20 @@ describe('DataNode.js', () => {
             assert.deepEqual(node1, { _sum: 11, _users: { 'aa': 7, 'a': 4 } });
             assert.deepEqual(node2, { _sum: 9, _users: { 'aa': 4, 'bb': 3, 'a': 2 } });
         });
+
+        it('with filter but ignore filter', () => {
+            const node1 = new DataNode(5, { 'aa': 3, 'a': 2 });
+            const node2 = new DataNode(9, { 'aa': 4, 'bb': 3, 'a': 2 });
+            filter.setSearchString('a');
+
+            users._ensureUserExists(11, 'aa');
+            users._ensureUserExists(1, 'a');
+            users._ensureUserExists(22, 'bb');
+
+            assert.deepEqual(node1.merge(node2, true), { _sum: 14, _users: { 'aa': 7, 'bb': 3, 'a': 4 } });
+            assert.deepEqual(node1, { _sum: 14, _users: { 'aa': 7, 'bb': 3, 'a': 4 } });
+            assert.deepEqual(node2, { _sum: 9, _users: { 'aa': 4, 'bb': 3, 'a': 2 } });
+        });
     });
 
     it('add() for cheers', () => {

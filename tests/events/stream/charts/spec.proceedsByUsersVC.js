@@ -21,17 +21,17 @@ describe('proceedsByUsersVC.js', () => {
             startBucket: 1577901600,
         });
         const dataBucket = testUtils.getTestDataBucket(1, 'a').
-            merge(undefined, testUtils.getTestDataBucket(3, 'b')).
-            merge(undefined, testUtils.getTestDataBucket(6, 'c')).
-            merge(undefined, testUtils.getTestDataBucket(6, 'd')).
-            merge(undefined, testUtils.getTestDataBucket(5, 'e')).
-            merge(undefined, testUtils.getTestDataBucket(9, 'f')).
-            merge(undefined, testUtils.getTestDataBucket(8, 'g')).
-            merge(undefined, testUtils.getTestDataBucket(2, 'h')).
-            merge(undefined, testUtils.getTestDataBucket(1, 'i')).
-            merge(undefined, testUtils.getTestDataBucket(1, 'j')).
-            merge(undefined, testUtils.getTestDataBucket(3, 'k')).
-            merge(undefined, testUtils.getTestDataBucket(5, 'l'))
+            merge(testUtils.getTestDataBucket(3, 'b')).
+            merge(testUtils.getTestDataBucket(6, 'c')).
+            merge(testUtils.getTestDataBucket(6, 'd')).
+            merge(testUtils.getTestDataBucket(5, 'e')).
+            merge(testUtils.getTestDataBucket(9, 'f')).
+            merge(testUtils.getTestDataBucket(8, 'g')).
+            merge(testUtils.getTestDataBucket(2, 'h')).
+            merge(testUtils.getTestDataBucket(1, 'i')).
+            merge(testUtils.getTestDataBucket(1, 'j')).
+            merge(testUtils.getTestDataBucket(3, 'k')).
+            merge(testUtils.getTestDataBucket(5, 'l'))
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020 + 60).
             returns(dataBucket);
@@ -69,17 +69,17 @@ describe('proceedsByUsersVC.js', () => {
         sinon.stub(dataCache, 'get').
             withArgs('abc', 1577901600, 1577902020).
             returns(testUtils.getTestDataBucket(1, 'a').
-                merge(undefined, testUtils.getTestDataBucket(3, 'b')).
-                merge(undefined, testUtils.getTestDataBucket(6, 'c')).
-                merge(undefined, testUtils.getTestDataBucket(6, 'd')).
-                merge(undefined, testUtils.getTestDataBucket(5, 'e')).
-                merge(undefined, testUtils.getTestDataBucket(9, 'f')).
-                merge(undefined, testUtils.getTestDataBucket(8, 'g')).
-                merge(undefined, testUtils.getTestDataBucket(2, 'h')).
-                merge(undefined, testUtils.getTestDataBucket(1, 'i')).
-                merge(undefined, testUtils.getTestDataBucket(1, 'j')).
-                merge(undefined, testUtils.getTestDataBucket(3, 'k')).
-                merge(undefined, testUtils.getTestDataBucket(5, 'l')));
+                merge(testUtils.getTestDataBucket(3, 'b')).
+                merge(testUtils.getTestDataBucket(6, 'c')).
+                merge(testUtils.getTestDataBucket(6, 'd')).
+                merge(testUtils.getTestDataBucket(5, 'e')).
+                merge(testUtils.getTestDataBucket(9, 'f')).
+                merge(testUtils.getTestDataBucket(8, 'g')).
+                merge(testUtils.getTestDataBucket(2, 'h')).
+                merge(testUtils.getTestDataBucket(1, 'i')).
+                merge(testUtils.getTestDataBucket(1, 'j')).
+                merge(testUtils.getTestDataBucket(3, 'k')).
+                merge(testUtils.getTestDataBucket(5, 'l')));
 
         assert.deepEqual(proceedsByUsersVC._afterLabel('a'), [
             "  re-subscription: 1",

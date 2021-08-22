@@ -83,7 +83,7 @@ class DataChannel {
         if (!this._cache[constants.BUCKET_FIVE][startBucket]) {
             const result = this._getAt(startBucket).getCopy();
             for (let current = startBucket + constants.BUCKET_MIN; current < startBucket + constants.BUCKET_FIVE; current += constants.BUCKET_MIN) {
-                result.merge(undefined, this._getAt(current));
+                result.merge(this._getAt(current), true);
             }
             this._cache[constants.BUCKET_FIVE][startBucket] = Object.freeze(result);
         }
@@ -102,7 +102,7 @@ class DataChannel {
             // since _getFiveMinRange returns raw dataBucket, we need to clone it to prevent mutation of cache
             const result = this._getFiveMinRange(startBucket).getCopy();
             for (let current = startBucket + constants.BUCKET_FIVE; current < startBucket + constants.BUCKET_HOUR; current += constants.BUCKET_FIVE) {
-                result.merge(undefined, this._getFiveMinRange(current));
+                result.merge(this._getFiveMinRange(current), true);
             }
             this._cache[constants.BUCKET_HOUR][startBucket] = Object.freeze(result);
         }

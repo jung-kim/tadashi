@@ -55,11 +55,12 @@ class DataBucket {
     /**
      * 
      * @param {DataBucket} dataBucket to merge with
+     * @param {Boolean} isIgnoreFilter weather or not to ignore filtering or not
      * @returns {DataBucet} merge target data bucket data to current data
      */
-    merge(dataBucket) {
+    merge(dataBucket, isIgnoreFilter) {
         Object.keys(dataBucket).forEach(key => {
-            this[key].merge(dataBucket[key]);
+            this[key].merge(dataBucket[key], isIgnoreFilter);
         });
         return this;
     }

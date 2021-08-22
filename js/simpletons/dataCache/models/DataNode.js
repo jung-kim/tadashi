@@ -45,10 +45,10 @@ class DataNode {
      * @param {DataNode} targetDataNode to be added into this
      * @returns {DataNode} this
      */
-    merge(targetDataNode) {
+    merge(targetDataNode, isIgnoreFilter) {
         if (targetDataNode) {
             Object.keys(targetDataNode._users).forEach(key => {
-                if (users.getUserByName(key).isApplicable()) {
+                if (isIgnoreFilter || users.getUserByName(key).isApplicable()) {
                     this._users[key] = (this._users[key] || 0) + targetDataNode._users[key];
                     this._sum += targetDataNode._users[key];
                 }

@@ -41,7 +41,7 @@ class ProceedsByUsersVC extends ChartRoot {
         const dataBucket = dataCache.get(channel, startBucket, endBucket + constants.BUCKET_MIN);
 
         const total = this._proceedsTypesToProcess.reduce((prev, type) => {
-            return prev ? prev.merge(undefined, dataBucket[type]) : dataBucket[type].getCopy();
+            return prev ? prev.merge(dataBucket[type], true) : dataBucket[type].getCopy();
         }, null);
 
         const sorted = Object.entries(total._users).sort(([, a], [, b]) => b - a);
