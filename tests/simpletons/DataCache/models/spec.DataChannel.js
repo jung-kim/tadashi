@@ -8,7 +8,6 @@ const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
 const DataChannel = require('../../../../js/simpletons/dataCache/models/DataChannel');
 const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
-const users = require('../../../../js/singletons/users');
 const filter = require('../../../../js/shared/filter');
 
 describe('DataChannel.js', () => {

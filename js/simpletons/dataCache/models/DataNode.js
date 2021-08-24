@@ -43,6 +43,7 @@ class DataNode {
      * merge targetDataNode's values into this
      * 
      * @param {DataNode} targetDataNode to be added into this
+     * @param {boolean} isIgnoreFilter ignore filter or not
      * @returns {DataNode} this
      */
     merge(targetDataNode, isIgnoreFilter) {

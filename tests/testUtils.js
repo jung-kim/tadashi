@@ -12,7 +12,6 @@ const auth = require('../js/simpletons/auth');
 const fetchMock = require('fetch-mock');
 const { eventSignals, domSignals } = require('../js/helpers/signals');
 const userIDFetcher = require('../js/singletons/users/userIDFetcher');
-const env = require('../js/env');
 const filter = require('../js/shared/filter');
 
 /*eslint-disable no-bitwise */

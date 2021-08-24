@@ -11,7 +11,6 @@ const utils = require('../js/helpers/utils');
 const { domSignals, eventSignals } = require('../js/helpers/signals');
 const users = require('../js/singletons/users');
 const constants = require('../js/helpers/constants');
-const env = require('../js/env');
 const testUtils = require('./testUtils');
 const filter = require('../js/shared/filter');
 

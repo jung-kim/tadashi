@@ -66,15 +66,15 @@ class DataCache {
      * @returns {undefined}
      */
     add(channel, raw) {
-        channel = channel.charAt(0) === '#' ? channel.substring(1) : channel;
+        const adjChannel = channel.charAt(0) === '#' ? channel.substring(1) : channel;
 
         if (!this._isValidRaw(raw)) {
             return;
         }
 
-        this._ensureChannelExists(channel);
+        this._ensureChannelExists(adjChannel);
 
-        this._data[channel].add(raw);
+        this._data[adjChannel].add(raw);
         eventSignals.dispatch({ event: 'data.cache.updated' });
     }
 

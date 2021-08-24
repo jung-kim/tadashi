@@ -102,7 +102,6 @@ describe('filter.js', () => {
     });
 
 
-
     describe('setSearchString', () => {
         it('null', () => {
             filter.setSearchString(null);

@@ -8,7 +8,6 @@ const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
 const channelSubscribedFetcher = require('../../../js/singletons/users/channelSubscribedFetcher');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const User = require('../../../js/singletons/users/User');
-const env = require('../../../js/env');
 const testUtils = require('../../testUtils');
 const filter = require('../../../js/shared/filter');
 

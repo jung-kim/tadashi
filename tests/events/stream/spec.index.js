@@ -8,7 +8,6 @@ const dateTimeRangeVC = require('../../../js/events/stream/dateTimeRangeVC');
 const navOptionVC = require('../../../js/events/stream/navOptionVC');
 const twitchEmbededVC = require('../../../js/events/stream/twitchEmbededVC');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
-const filter = require('../../../js/shared/filter');
 const testUtils = require('../../testUtils');
 
 describe('stream/index.js', () => {

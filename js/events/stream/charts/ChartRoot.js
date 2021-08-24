@@ -2,7 +2,6 @@ const eventSignals = require('../../../helpers/signals').eventSignals;
 const filter = require('../../../shared/filter');
 const utils = require('../../../helpers/utils');
 const constants = require('../../../helpers/constants');
-const users = require('../../../singletons/users');
 const _ = require('lodash');
 
 const MAX_DATAPOINT_LIMIT = 250;

@@ -31,7 +31,7 @@ class API {
     }
 
     _getEffectiveTimeout(attempt) {
-        const effectiveTimeout = Math.pow(5, (attempt || 0) + 1) + Math.floor(Math.random() * 50);
+        const effectiveTimeout = 5 ** ((attempt || 0) + 1) + Math.floor(Math.random() * 50);
         return new Promise(resolve => setTimeout(resolve, effectiveTimeout));
     }
 

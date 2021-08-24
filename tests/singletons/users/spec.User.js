@@ -1,6 +1,4 @@
 const { assert } = require('chai');
-const env = require('../../../js/env');
-const constants = require('../../../js/helpers/constants');
 const filter = require('../../../js/shared/filter');
 const User = require('../../../js/singletons/users/User');
 const testUtils = require('../../testUtils');

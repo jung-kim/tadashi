@@ -7,7 +7,6 @@ const constants = require('../../../js/helpers/constants');
 const api = require('../../../js/simpletons/api');
 const auth = require('../../../js/simpletons/auth');
 const twitchClient = require('../../../js/singletons/twitchClient');
-const env = require('../../../js/env');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const testUtils = require('../../testUtils');
 const filter = require('../../../js/shared/filter');

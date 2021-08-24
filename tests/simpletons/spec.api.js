@@ -258,8 +258,8 @@ describe('api.js', () => {
 
         let startedCounter = 0;
         let finishedCounter = 0;
-        sinon.stub(api, '_queryTwitchApi')
-            .callsFake(async (...args) => {
+        sinon.stub(api, '_queryTwitchApi').
+            callsFake(async (...args) => {
                 assert.equal('http://127.0.0.1:5556/abc/edf', args[0])
                 assert.equal('an-auth', args[1])
 

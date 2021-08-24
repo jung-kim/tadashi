@@ -4,7 +4,6 @@ const auth = require('../../simpletons/auth');
 const api = require('../../simpletons/api');
 const constants = require('../../helpers/constants');
 const filter = require('../../shared/filter');
-const env = require('../../env');
 
 class NavOptionVC {
     constructor() {

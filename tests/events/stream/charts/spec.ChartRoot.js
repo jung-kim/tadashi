@@ -5,9 +5,7 @@ const sinon = require('sinon')
 const filter = require('../../../../js/shared/filter');
 const constants = require('../../../../js/helpers/constants');
 const ChartRoot = require('../../../../js/events/stream/charts/ChartRoot');
-const env = require('../../../../js/env');
 const testUtils = require('../../../testUtils');
-const users = require('../../../../js/singletons/users');
 
 describe('ChartRoot.js', () => {
     beforeEach(() => {
