@@ -131,13 +131,10 @@ class TwitchClient {
             this._client.part(filter.getChannel());
         }
 
-        if (!id) {
-            const resp = await api.queryTwitchApi(`kraken/users?login=${channel}`);
-            id = parseInt(resp.users[0]._id);
-        }
+        const nullSafeId = id ? id : parseInt((await api.queryTwitchApi(`kraken/users?login=${channel}`)).users[0]._id);
 
         await this._client.join(channel);
-        filter.setChannelInfo(channel, id);
+        filter.setChannelInfo(channel, nullSafeId);
     }
 
     _disable() {
