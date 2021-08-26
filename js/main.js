@@ -5,7 +5,7 @@ const constants = require('./helpers/constants');
 const moment = require('./helpers/moment');
 
 const twitchClient = require('./singletons/twitchClient');
-const auth = require('./simpletons/auth');
+const auth = require('./singletons/auth');
 const users = require('./singletons/users');
 const filter = require('./shared/filter');
 

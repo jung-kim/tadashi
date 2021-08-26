@@ -3,10 +3,10 @@ const sinon = require('sinon');
 const tmi = require('tmi.js');
 const constants = require('../../js/helpers/constants');
 
-const auth = require('../../js/simpletons/auth');
+const auth = require('../../js/singletons/auth');
 const twitchClient = require("../../js/singletons/twitchClient");
-const api = require("../../js/simpletons/api");
-const dataCache = require('../../js/simpletons/dataCache');
+const api = require("../../js/singletons/api");
+const dataCache = require('../../js/singletons/dataCache');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 const testUtils = require('../testUtils');
 const events = require('../../js/models/events');

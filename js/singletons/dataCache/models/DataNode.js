@@ -1,4 +1,4 @@
-const users = require('../../../../js/singletons/users');
+const users = require('../../users');
 
 /**
  * Holds aggregate of event data that holds

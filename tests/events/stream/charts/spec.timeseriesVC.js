@@ -3,7 +3,7 @@ const { assert } = require('chai');
 const moment = require('../../../../js/helpers/moment');
 
 const constants = require('../../../../js/helpers/constants');
-const dataCache = require('../../../../js/simpletons/dataCache');
+const dataCache = require('../../../../js/singletons/dataCache');
 const timeseriesVC = require('../../../../js/events/stream/charts/timeseriesVC');
 const testUtils = require('../../../testUtils');
 const users = require('../../../../js/singletons/users');

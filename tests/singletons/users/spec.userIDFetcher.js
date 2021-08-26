@@ -1,8 +1,8 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
 
-const auth = require('../../../js/simpletons/auth');
-const api = require('../../../js/simpletons/api');
+const auth = require('../../../js/singletons/auth');
+const api = require('../../../js/singletons/api');
 const userIDFetcher = require('../../../js/singletons/users/userIDFetcher');
 const { eventSignals } = require('../../../js/helpers/signals');
 const testUtils = require('../../testUtils');

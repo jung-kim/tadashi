@@ -2,9 +2,9 @@ const { assert } = require('chai');
 
 const testUtils = require('../../../testUtils');
 const constants = require('../../../../js/helpers/constants');
-const DataBucket = require('../../../../js/simpletons/dataCache/models/DataBucket');
-const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
-const blanks = require('../../../../js/simpletons/dataCache/models/blanks');
+const DataBucket = require('../../../../js/singletons/dataCache/models/DataBucket');
+const DataNode = require('../../../../js/singletons/dataCache/models/DataNode');
+const blanks = require('../../../../js/singletons/dataCache/models/blanks');
 
 describe('blanks.js', () => {
     describe('blankDataNode', () => {

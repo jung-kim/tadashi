@@ -3,12 +3,12 @@ const sinon = require('sinon');
 
 const constants = require('../js/helpers/constants');
 const utils = require('../js/helpers/utils');
-const DataBucket = require('../js/simpletons/dataCache/models/DataBucket');
-const DataNode = require('../js/simpletons/dataCache/models/DataNode');
-const api = require('../js/simpletons/api');
+const DataBucket = require('../js/singletons/dataCache/models/DataBucket');
+const DataNode = require('../js/singletons/dataCache/models/DataNode');
+const api = require('../js/singletons/api');
 const users = require('../js/singletons/users');
 const User = require('../js/singletons/users/User');
-const auth = require('../js/simpletons/auth');
+const auth = require('../js/singletons/auth');
 const fetchMock = require('fetch-mock');
 const { eventSignals, domSignals } = require('../js/helpers/signals');
 const userIDFetcher = require('../js/singletons/users/userIDFetcher');

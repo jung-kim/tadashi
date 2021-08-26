@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const auth = require('../../simpletons/auth');
-const api = require('../../simpletons/api');
+const auth = require('../../singletons/auth');
+const api = require('../../singletons/api');
 const eventSignals = require('../../helpers/signals').eventSignals;
 
 const FETCH_NAMES_LIMIT = 100;

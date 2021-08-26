@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const userFollowsCSS = sinon.stub(Handlebars, 'registerHelper').
     withArgs('userFollowsCSS', sinon.match.func);
 const main = require('../js/main');
-const auth = require('../js/simpletons/auth');
+const auth = require('../js/singletons/auth');
 const twitchClient = require('../js/singletons/twitchClient');
 const moment = require('../js/helpers/moment');
 const utils = require('../js/helpers/utils');

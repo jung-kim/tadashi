@@ -1,8 +1,8 @@
 const { assert } = require('chai');
 
 const testUtils = require('../../../testUtils');
-const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
-const DataBucket = require('../../../../js/simpletons/dataCache/models/DataBucket');
+const DataNode = require('../../../../js/singletons/dataCache/models/DataNode');
+const DataBucket = require('../../../../js/singletons/dataCache/models/DataBucket');
 const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
 const Ban = require('../../../../js/models/events/Ban');

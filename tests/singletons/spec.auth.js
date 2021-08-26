@@ -3,7 +3,7 @@ const fetchMock = require('fetch-mock');
 const statusCodes = require('http-status-codes').StatusCodes;
 const sinon = require('sinon');
 
-const auth = require('../../js/simpletons/auth');
+const auth = require('../../js/singletons/auth');
 const env = require('../../js/env');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 const testUtils = require('../testUtils');

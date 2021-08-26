@@ -3,7 +3,7 @@ const filter = require('../../../shared/filter');
 const moment = require('../../../helpers/moment');
 const constants = require('../../../helpers/constants');
 const ChartRoot = require('./ChartRoot');
-const dataCache = require('../../../simpletons/dataCache');
+const dataCache = require('../../../singletons/dataCache');
 
 const TIMEFORMAT_DISPLAY = 'YYYY/MM/DD HH:mm';
 

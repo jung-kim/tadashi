@@ -4,8 +4,8 @@ const sinon = require('sinon');
 
 const navOptionVC = require('../../../js/events/stream/navOptionVC');
 const constants = require('../../../js/helpers/constants');
-const api = require('../../../js/simpletons/api');
-const auth = require('../../../js/simpletons/auth');
+const api = require('../../../js/singletons/api');
+const auth = require('../../../js/singletons/auth');
 const twitchClient = require('../../../js/singletons/twitchClient');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const testUtils = require('../../testUtils');

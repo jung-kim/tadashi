@@ -8,9 +8,9 @@ const constants = require('../helpers/constants');
 const filter = require('../shared/filter');
 const users = require('../singletons/users');
 
-const auth = require('../simpletons/auth');
-const api = require('../simpletons/api');
-const dataCache = require('../simpletons/dataCache');
+const auth = require('../singletons/auth');
+const api = require('../singletons/api');
+const dataCache = require('../singletons/dataCache');
 
 const CHANNEL_LS_KEY = 'channel';
 const CHANNEL_LS_ID_KEY = 'channel-id';

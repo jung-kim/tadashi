@@ -5,7 +5,7 @@ const statusCodes = require('http-status-codes').StatusCodes;
 const pako = require('pako');
 
 const testUtils = require('../testUtils');
-const api = require('../../js/simpletons/api');
+const api = require('../../js/singletons/api');
 const env = require('../../js/env');
 
 describe('api.js', () => {

@@ -1,6 +1,6 @@
 const ChartRoot = require('./ChartRoot');
 const constants = require('../../../helpers/constants');
-const dataCache = require('../../../simpletons/dataCache');
+const dataCache = require('../../../singletons/dataCache');
 const utils = require('../../../helpers/utils');
 
 const chartChatsByUsersHelperContent = `<p>Chats grouped by user name</p>`

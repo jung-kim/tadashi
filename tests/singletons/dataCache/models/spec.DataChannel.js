@@ -6,8 +6,8 @@ const constants = require('../../../../js/helpers/constants');
 const Ban = require('../../../../js/models/events/Ban');
 const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
-const DataChannel = require('../../../../js/simpletons/dataCache/models/DataChannel');
-const DataNode = require('../../../../js/simpletons/dataCache/models/DataNode');
+const DataChannel = require('../../../../js/singletons/dataCache/models/DataChannel');
+const DataNode = require('../../../../js/singletons/dataCache/models/DataNode');
 const filter = require('../../../../js/shared/filter');
 
 describe('DataChannel.js', () => {

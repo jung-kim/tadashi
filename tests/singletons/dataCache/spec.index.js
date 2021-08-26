@@ -2,9 +2,9 @@ const { assert } = require('chai');
 const sinon = require('sinon');
 
 const Chat = require('../../../js/models/events/Chat');
-const dataCache = require("../../../js/simpletons/dataCache");
-const { blankDataBucket } = require('../../../js/simpletons/dataCache/models/blanks');
-const DataChannel = require('../../../js/simpletons/dataCache/models/DataChannel');
+const dataCache = require("../../../js/singletons/dataCache");
+const { blankDataBucket } = require('../../../js/singletons/dataCache/models/blanks');
+const DataChannel = require('../../../js/singletons/dataCache/models/DataChannel');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 
 

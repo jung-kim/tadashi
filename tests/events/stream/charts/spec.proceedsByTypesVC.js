@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const { assert } = require('chai');
 
 const constants = require('../../../../js/helpers/constants');
-const dataCache = require('../../../../js/simpletons/dataCache');
+const dataCache = require('../../../../js/singletons/dataCache');
 const proceedsByTypesVC = require('../../../../js/events/stream/charts/proceedsByTypesVC');
 const testUtils = require('../../../testUtils');
 

@@ -3,7 +3,7 @@ const { assert } = require('chai');
 
 const chatsByUsersVC = require('../../../../js/events/stream/charts/chatsByUsersVC');
 const constants = require('../../../../js/helpers/constants');
-const dataCache = require('../../../../js/simpletons/dataCache');
+const dataCache = require('../../../../js/singletons/dataCache');
 const testUtils = require('../../../testUtils');
 
 

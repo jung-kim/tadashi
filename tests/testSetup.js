@@ -7,7 +7,7 @@ const glob = require('glob');
 const fs = require('fs');
 const tmi = require('tmi.js');
 const moment = require('../js/helpers/moment');
-const api = require('../js/simpletons/api');
+const api = require('../js/singletons/api');
 _ = require('lodash');
 require('node-localstorage/register');
 
