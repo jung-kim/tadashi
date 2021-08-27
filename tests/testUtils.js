@@ -12,7 +12,7 @@ const auth = require('../js/singletons/auth');
 const fetchMock = require('fetch-mock');
 const { eventSignals, domSignals } = require('../js/helpers/signals');
 const userIDFetcher = require('../js/singletons/users/userIDFetcher');
-const filter = require('../js/shared/filter');
+const filter = require('../js/singletons/filter');
 
 /*eslint-disable no-bitwise */
 const hashCode = s => Math.abs(s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0))

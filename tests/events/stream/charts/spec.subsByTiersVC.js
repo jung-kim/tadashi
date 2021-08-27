@@ -3,7 +3,7 @@ const { assert } = require('chai');
 
 const subsByTiersVC = require('../../../../js/events/stream/charts/subsByTiersVC');
 const users = require('../../../../js/singletons/users');
-const filter = require('../../../../js/shared/filter');
+const filter = require('../../../../js/singletons/filter');
 const testUtils = require('../../../testUtils');
 
 

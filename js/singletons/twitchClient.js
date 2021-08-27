@@ -5,7 +5,7 @@ const _ = require('lodash');
 const events = require('../models/events');
 const eventSignals = require('../helpers/signals').eventSignals;
 const constants = require('../helpers/constants');
-const filter = require('../shared/filter');
+const filter = require('./filter');
 const users = require('../singletons/users');
 
 const auth = require('../singletons/auth');

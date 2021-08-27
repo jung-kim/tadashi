@@ -8,7 +8,7 @@ const Chat = require('../../../../js/models/events/Chat');
 const Cheer = require('../../../../js/models/events/Cheer');
 const DataChannel = require('../../../../js/singletons/dataCache/models/DataChannel');
 const DataNode = require('../../../../js/singletons/dataCache/models/DataNode');
-const filter = require('../../../../js/shared/filter');
+const filter = require('../../../../js/singletons/filter');
 
 describe('DataChannel.js', () => {
     beforeEach(() => {

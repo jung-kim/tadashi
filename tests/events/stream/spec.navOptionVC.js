@@ -9,7 +9,7 @@ const auth = require('../../../js/singletons/auth');
 const twitchClient = require('../../../js/singletons/twitchClient');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const testUtils = require('../../testUtils');
-const filter = require('../../../js/shared/filter');
+const filter = require('../../../js/singletons/filter');
 
 describe('navOptionVC', () => {
     beforeEach(() => {

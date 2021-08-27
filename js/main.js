@@ -7,7 +7,7 @@ const moment = require('./helpers/moment');
 const twitchClient = require('./singletons/twitchClient');
 const auth = require('./singletons/auth');
 const users = require('./singletons/users');
-const filter = require('./shared/filter');
+const filter = require('./singletons/filter');
 
 const ACTIVE = 'cir-active';
 const INACTIVE = 'cir-inactive';

@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const users = require('../../singletons/users');
 const Chatters = require('./components/Chatters');
-const filter = require('../../shared/filter');
+const filter = require('../../singletons/filter');
 
 const VIEWER_TYPES = ["broadcaster", "vips", "moderators", "staff", "admins", "global_mods", "viewers"];
 const RIGHT_PAGINATE_POSTFIX = '-page-right';

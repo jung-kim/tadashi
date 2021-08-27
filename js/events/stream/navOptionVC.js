@@ -3,7 +3,7 @@ const twitchClient = require('../../singletons/twitchClient');
 const auth = require('../../singletons/auth');
 const api = require('../../singletons/api');
 const constants = require('../../helpers/constants');
-const filter = require('../../shared/filter');
+const filter = require('../../singletons/filter');
 
 class NavOptionVC {
     constructor() {

@@ -1,4 +1,4 @@
-const filter = require('../../shared/filter');
+const filter = require('../../singletons/filter');
 
 const keyIsOpenTwitchEmbeded = 'isOpenTwitchEmbeded';
 

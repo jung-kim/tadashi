@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const filter = require('../../../../js/shared/filter');
+const filter = require('../../../../js/singletons/filter');
 
 const DataNode = require('../../../../js/singletons/dataCache/models/DataNode');
 const users = require('../../../../js/singletons/users');

@@ -7,7 +7,7 @@ const moment = require('../../../js/helpers/moment');
 const utils = require('../../../js/helpers/utils');
 const DateTime = require('../../../js/events/stream/components/DateTime');
 const testUtils = require('../../testUtils');
-const filter = require('../../../js/shared/filter');
+const filter = require('../../../js/singletons/filter');
 
 describe('DateTimeRange.js', () => {
     beforeEach(() => {

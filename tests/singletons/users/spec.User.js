@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const filter = require('../../../js/shared/filter');
+const filter = require('../../../js/singletons/filter');
 const User = require('../../../js/singletons/users/User');
 const testUtils = require('../../testUtils');
 

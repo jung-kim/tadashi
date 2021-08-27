@@ -1,4 +1,4 @@
-const filter = require("../../shared/filter");
+const filter = require("../filter");
 
 const followingFlag = ':following';
 const notFollowingFlag = ':notfollowing';

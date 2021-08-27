@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const followedStreamersVC = require('../../../../js/events/stream/charts/followedStreamersVC');
 const users = require('../../../../js/singletons/users');
-const filter = require('../../../../js/shared/filter');
+const filter = require('../../../../js/singletons/filter');
 const testUtils = require('../../../testUtils');
 
 

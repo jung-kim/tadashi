@@ -2,7 +2,7 @@ const moment = require('../../../../js/helpers/moment');
 const { assert } = require('chai');
 const sinon = require('sinon')
 
-const filter = require('../../../../js/shared/filter');
+const filter = require('../../../../js/singletons/filter');
 const constants = require('../../../../js/helpers/constants');
 const ChartRoot = require('../../../../js/events/stream/charts/ChartRoot');
 const testUtils = require('../../../testUtils');

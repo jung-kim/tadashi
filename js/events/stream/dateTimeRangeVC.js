@@ -1,7 +1,7 @@
 const utils = require('../../helpers/utils');
 const DateTime = require('./components/DateTime');
 
-const filter = require('../../shared/filter');
+const filter = require('../../singletons/filter');
 
 class DateTimeRangeVC {
     constructor() {

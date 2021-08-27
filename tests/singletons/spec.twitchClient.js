@@ -10,7 +10,7 @@ const dataCache = require('../../js/singletons/dataCache');
 const eventSignals = require('../../js/helpers/signals').eventSignals;
 const testUtils = require('../testUtils');
 const events = require('../../js/models/events');
-const filter = require('../../js/shared/filter');
+const filter = require('../../js/singletons/filter');
 const users = require('../../js/singletons/users');
 
 const fakeClient = twitchClient._client;

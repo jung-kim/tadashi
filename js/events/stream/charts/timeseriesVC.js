@@ -1,5 +1,5 @@
 
-const filter = require('../../../shared/filter');
+const filter = require('../../../singletons/filter');
 const moment = require('../../../helpers/moment');
 const constants = require('../../../helpers/constants');
 const ChartRoot = require('./ChartRoot');

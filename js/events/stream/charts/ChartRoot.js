@@ -1,5 +1,5 @@
 const eventSignals = require('../../../helpers/signals').eventSignals;
-const filter = require('../../../shared/filter');
+const filter = require('../../../singletons/filter');
 const utils = require('../../../helpers/utils');
 const constants = require('../../../helpers/constants');
 const _ = require('lodash');

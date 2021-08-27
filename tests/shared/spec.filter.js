@@ -1,7 +1,7 @@
 
 const { assert } = require('chai');
 const { eventSignals } = require('../../js/helpers/signals');
-const filter = require('../../js/shared/filter');
+const filter = require('../../js/singletons/filter');
 const moment = require('../../js/helpers/moment');
 const testUtils = require('../testUtils');
 const env = require('../../js/env');

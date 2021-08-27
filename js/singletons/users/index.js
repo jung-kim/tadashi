@@ -6,7 +6,7 @@ const userIDFetcher = require('./userIDFetcher');
 const userFollowsFetcher = require('./userFollowsFetcher');
 const channelSubscribedFetcher = require('./channelSubscribedFetcher');
 const constants = require('../../helpers/constants');
-const filter = require('../../shared/filter');
+const filter = require('../filter');
 
 class Users {
     constructor() {

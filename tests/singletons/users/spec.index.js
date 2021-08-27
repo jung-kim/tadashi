@@ -9,7 +9,7 @@ const channelSubscribedFetcher = require('../../../js/singletons/users/channelSu
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
 const User = require('../../../js/singletons/users/User');
 const testUtils = require('../../testUtils');
-const filter = require('../../../js/shared/filter');
+const filter = require('../../../js/singletons/filter');
 
 
 describe('users.js', () => {

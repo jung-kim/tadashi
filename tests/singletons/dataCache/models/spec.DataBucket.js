@@ -8,7 +8,7 @@ const Cheer = require('../../../../js/models/events/Cheer');
 const Ban = require('../../../../js/models/events/Ban');
 const constants = require('../../../../js/helpers/constants');
 const users = require('../../../../js/singletons/users');
-const filter = require('../../../../js/shared/filter');
+const filter = require('../../../../js/singletons/filter');
 
 describe('DataBucket.js', () => {
     beforeEach(() => {
