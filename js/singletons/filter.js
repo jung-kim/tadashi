@@ -8,11 +8,11 @@ const CHANNEL_LS_ID_KEY = 'channel-id';
 
 class Filter {
     constructor() {
-        env._filter = {};
         this.reset();
     }
 
     reset() {
+        env._filter = {};
         if (localStorage.getItem(CHANNEL_LS_KEY)) {
             env._filter._channel = localStorage.getItem(CHANNEL_LS_KEY);
         } else {

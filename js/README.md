@@ -24,6 +24,4 @@ Codes are organized by function and typs of dependency they are allowed to have.
 - [models](./models/README.md)
     - classes that describes object structures
 - [singletons](./singletons/README.md)
-    - simplest building block with minimal dependencies
-- [singletons](./singletons/README.md)
     - isolated shared logic units.
