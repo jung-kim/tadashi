@@ -20,6 +20,8 @@ class Main {
         this.updateLatestProcessTime = _.throttle(this._updateLatestProcessTime.bind(this), 1000);
         this._latestProcessTime = 0;
         eventSignals.add(this._eventSignalFunc.bind(this));
+        Handlebars.registerHelper('userFollowsCSS', this.userFollowsCSS);
+        Handlebars.registerHelper('getInfoCss', this.getInfoCss);
     }
 
     _eventSignalFunc(payload) {
@@ -195,7 +197,4 @@ window.domEvent = (event, id) => {
 }
 
 const main = new Main();
-
-Handlebars.registerHelper('userFollowsCSS', main.userFollowsCSS);
-Handlebars.registerHelper('getInfoCss', main.getInfoCss);
 module.exports = main;
