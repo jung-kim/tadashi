@@ -4,21 +4,21 @@ const sinon = require('sinon');
 const userFollowsCSS = sinon.stub(Handlebars, 'registerHelper').
     withArgs('userFollowsCSS', sinon.match.func);
 const main = require('../js/main');
-const auth = require('../js/simpletons/auth');
+const auth = require('../js/singletons/auth');
 const twitchClient = require('../js/singletons/twitchClient');
 const moment = require('../js/helpers/moment');
-const chartFilter = require('../js/events/shared/chartFilter');
 const utils = require('../js/helpers/utils');
 const { domSignals, eventSignals } = require('../js/helpers/signals');
 const users = require('../js/singletons/users');
 const constants = require('../js/helpers/constants');
-const User = require('../js/singletons/users/User');
+const testUtils = require('./testUtils');
+const filter = require('../js/singletons/filter');
 
 describe('main.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         window.location = undefined;
         main.activityStatusDom = {};
-        reset();
+        testUtils.reset();
     });
 
     it('initialize', () => {
@@ -230,8 +230,7 @@ describe('main.js', () => {
     });
 
     it('minuteEventDispatcher', () => {
-        sinon.stub(twitchClient, 'getChannel').returns('abc');
-        sinon.stub(chartFilter, 'getUserFilter').returns('a filter');
+        filter.setChannelInfo('abc', 111);
         const setMinTopTimeoutEvent = sinon.stub(window, 'setMinTopTimeoutEvent');
 
         window.minuteEventDispatcher();
@@ -239,7 +238,6 @@ describe('main.js', () => {
         sinon.assert.calledOnce(eventSignals.dispatch.withArgs({
             event: 'main.minute',
             channel: 'abc',
-            filter: 'a filter',
         }));
         sinon.assert.calledOnce(setMinTopTimeoutEvent);
     });
@@ -289,24 +287,26 @@ describe('main.js', () => {
         });
 
         it('user exists and not following is not fetched', () => {
-            const user = new User(1, 'abc');
-            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            const user = testUtils.getUserObject(1, 'abc');
+            filter.setChannelInfo('abc', 111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_UNKNOWN);
         });
 
         it('user exists and follows', () => {
-            const user = new User(1, 'abc', [111]);
-            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            const user = testUtils.getUserObject(1, 'abc', [111]);
+            user.addFollowing(111);
+            filter.setChannelInfo('abc', 111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_FOLLOWING);
         });
 
         it('user exists and not following', () => {
-            const user = new User(1, 'abc', [222]);
-            sinon.stub(twitchClient, 'getChannelID').returns(111);
+            const user = testUtils.getUserObject(1, 'abc', [222]);
+            user.addFollowing(222);
+            filter.setChannelInfo('abc', 111);
             sinon.stub(users, 'getUserByName').withArgs('abc').returns(user);
 
             assert.equal(main.userFollowsCSS('abc'), constants.CSS_NOT_FOLLOWING);
@@ -414,5 +414,14 @@ describe('main.js', () => {
             assert.equal(headerDom.innerHTML, 'Connected with no Auth');
             assert.isTrue(bodyDom.innerHTML.startsWith('Data collection is limited'));
         });
-    })
+    });
+
+    it('getInfoCss', () => {
+        const name = 'abc';
+        const id = 123;
+        const userObj = testUtils.getUserObject(id, name)
+        sinon.stub(users, 'getUserByName').returns(userObj);
+
+        assert.equal(main.getInfoCss(name), 'not-subscribed');
+    });
 });

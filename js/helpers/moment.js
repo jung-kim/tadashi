@@ -1,8 +1,7 @@
-let momentTemp;
-try {
-    momentTemp = moment;
-} catch (e) {
-    momentTemp = require('moment-timezone');
-}
-
-module.exports = momentTemp;
+module.exports = (() => {
+    if (typeof moment === 'undefined') {
+        return require('moment-timezone');
+    } else {
+        return moment
+    }
+})();

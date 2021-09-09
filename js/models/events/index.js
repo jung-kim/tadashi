@@ -7,4 +7,5 @@ module.exports = {
     ReSub: require('./ReSub'),
     SubGift: require('./SubGift'),
     Sub: require('./Sub'),
+    Timeout: require('./Timeout'),
 }

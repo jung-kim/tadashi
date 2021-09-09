@@ -58,6 +58,8 @@ module.exports = {
                 return constants.TYPE_SUBGIFT;
             case raw instanceof models.Sub:
                 return constants.TYPE_SUB;
+            case raw instanceof models.Timeout:
+                return constants.TYPE_TIMEOUT
             default:
                 throw `invalid object type: ${raw}`;
         }
@@ -81,6 +83,8 @@ module.exports = {
                 return new models.SubGift(obj);
             case constants.TYPE_SUB:
                 return new models.Sub(obj);
+            case constants.TYPE_TIMEOUT:
+                return new models.Timeout(obj);
             default:
                 throw `invalid message type: ${messageType}`;
         }
@@ -96,5 +100,9 @@ module.exports = {
 
     getBorderColor(labels) {
         return labels.map((userName) => getHashedColor(userName, 'FF'));
+    },
+
+    convertObjectToHTML(obj) {
+        return Object.entries(obj || {}).map(([k, v]) => `${k}: ${v}`).join('<br>');
     }
 }

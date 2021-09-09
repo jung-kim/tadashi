@@ -5,9 +5,9 @@ const constants = require('./helpers/constants');
 const moment = require('./helpers/moment');
 
 const twitchClient = require('./singletons/twitchClient');
-const auth = require('./simpletons/auth');
+const auth = require('./singletons/auth');
 const users = require('./singletons/users');
-const chartFilter = require('./events/shared/chartFilter');
+const filter = require('./singletons/filter');
 
 const ACTIVE = 'cir-active';
 const INACTIVE = 'cir-inactive';
@@ -20,6 +20,8 @@ class Main {
         this.updateLatestProcessTime = _.throttle(this._updateLatestProcessTime.bind(this), 1000);
         this._latestProcessTime = 0;
         eventSignals.add(this._eventSignalFunc.bind(this));
+        Handlebars.registerHelper('userFollowsCSS', this.userFollowsCSS);
+        Handlebars.registerHelper('getInfoCss', this.getInfoCss);
     }
 
     _eventSignalFunc(payload) {
@@ -100,7 +102,7 @@ class Main {
             return constants.CSS_UNKNOWN;
         }
 
-        const following = user.isFollowing(twitchClient.getChannelID());
+        const following = user.isFollowingCurrent();
 
         if (following === false) {
             return constants.CSS_NOT_FOLLOWING;
@@ -109,6 +111,10 @@ class Main {
         } else {
             return constants.CSS_UNKNOWN;
         }
+    }
+
+    getInfoCss(userName) {
+        return users.getUserByName(userName).getInfoCss();
     }
 
     activityStatusPopover() {
@@ -172,8 +178,7 @@ window.authLogout = () => {
 window.minuteEventDispatcher = () => {
     eventSignals.dispatch({
         event: 'main.minute',
-        channel: twitchClient.getChannel(),
-        filter: chartFilter.getUserFilter(),
+        channel: filter.getChannel(),
     });
 
     window.setMinTopTimeoutEvent();
@@ -192,7 +197,4 @@ window.domEvent = (event, id) => {
 }
 
 const main = new Main();
-
-Handlebars.registerHelper('userFollowsCSS', main.userFollowsCSS);
-
 module.exports = main;

@@ -1,10 +1,12 @@
+/*eslint max-lines: ["error", {"max": 300, "skipComments": true, "skipBlankLines": true}]*/
 const eventSignals = require('../../helpers/signals').eventSignals;
 
 const User = require('./User');
 const userIDFetcher = require('./userIDFetcher');
 const userFollowsFetcher = require('./userFollowsFetcher');
-// const channelFollowsFetcher = require('./channelFollowsFetcher');
+const channelSubscribedFetcher = require('./channelSubscribedFetcher');
 const constants = require('../../helpers/constants');
+const filter = require('../filter');
 
 class Users {
     constructor() {
@@ -16,6 +18,7 @@ class Users {
         switch (payload.event) {
             case 'chatters.data.update':
                 this.processChattersData(payload.data, payload.channelID);
+                channelSubscribedFetcher.fetch(payload.channelID);
                 eventSignals.dispatch({ event: 'chatters.data.update.data' });
                 break;
             case 'fetch.user.ids.resp':
@@ -24,14 +27,21 @@ class Users {
             case 'fetch.user.follows.resp':
                 this.processUserFollowsResp(payload.data);
                 break;
+            case 'fetch.channel.subscribed.resp':
+                this.processChannelSubscribedResp(payload.data);
+                break;
             case 'api.unthrottled':
                 userIDFetcher.fetch();
                 userFollowsFetcher.fetch();
+                channelSubscribedFetcher.fetch();
                 break;
-            case 'channel.input.update':
-                userIDFetcher.reset();
-                userFollowsFetcher.reset();
-                // channelFollowsFetcher.fetch(payload.data.id);
+            case 'filter.change':
+                if (payload.changed.channel) {
+                    userIDFetcher.reset();
+                    userFollowsFetcher.reset();
+                    // channelFollowsFetcher.fetch(payload.data.id);
+                    this._ensureUserExists(payload.changed.id, payload.changed.channel);
+                }
                 break;
             case 'fetch.channel.follows.resp':
                 this.processUserFollowsResp(payload.data);
@@ -51,22 +61,20 @@ class Users {
     }
 
     getUserByName(name) {
-        return this._nameToUser[name];
+        return this._nameToUser[name.toLowerCase()];
     }
 
     getViewers() {
-        return this._viewers;
-    }
-
-    getUsers(userFilter) {
-        const users = Object.values(this._idToUser);
-
-        if (!userFilter || !userFilter.isValid()) {
-            return users;
+        if (!filter.getSearchString()) {
+            return this._viewers;
         }
-
-        return userFilter.filterUsers(users);
+        const toReturn = {}
+        for (const [key, chatters] of Object.entries(this._viewers) || {}) {
+            toReturn[key] = chatters.filter(u => u.isApplicable());
+        }
+        return toReturn;
     }
+
 
     /**
      * When a pair of id and name arrives, ensure user exists.
@@ -80,12 +88,15 @@ class Users {
         const lowerCaseName = name.toLowerCase();
         const userObj = this.getUserByID(id) || this.getUserByName(lowerCaseName) || new User(id, name);
 
-        userObj._id = userObj._id || id;
-
-        if (id) {
+        if (id && !userObj._id) {
+            userObj._id = parseInt(id);
+        }
+        if (id && !this._idToUser[id]) {
             this._idToUser[id] = userObj;
         }
-        this._nameToUser[lowerCaseName] = userObj;
+        if (!this._nameToUser[lowerCaseName]) {
+            this._nameToUser[lowerCaseName] = userObj;
+        }
 
         return userObj;
     }
@@ -190,6 +201,43 @@ class Users {
     }
 
     /**
+     * for each user subscribed response, ensure users exists and set subcribed
+     * 
+     * @param {Object} resp result of https://dev.twitch.tv/docs/api/reference#get-users-follows
+     * {
+        "data": [
+            {
+            "broadcaster_id": "141981764",
+            "broadcaster_login": "twitchdev",
+            "broadcaster_name": "TwitchDev",
+            "gifter_id": "12826",
+            "gifter_login": "twitch",
+            "gifter_name": "Twitch",
+            "is_gift": true,
+            "tier": "1000",
+            "plan_name": "Channel Subscription (twitchdev)",
+            "user_id": "527115020",
+            "user_name": "twitchgaming",
+            "user_login": "twitchgaming"
+            },
+            ...
+        ],
+        "pagination": {
+            "cursor": "xxxx"
+        }
+     * }
+     * @returns {undefined}
+     * 
+     */
+    processChannelSubscribedResp(resp) {
+        resp.data.forEach(subscribed => {
+            this._ensureUserExists(subscribed.user_id, subscribed.user_name).
+                addSubscribedTo(subscribed);
+        });
+        eventSignals.dispatch({ event: `fetch.channel.subscribed.refresh` });
+    }
+
+    /**
      * process get user response from `helix/users?login=...' to ensure exists
      * and queue up for fetching user follows fetching.
      * 
@@ -221,14 +269,25 @@ class Users {
     }
 
     /**
+     * return all collected users so far.
+     * 
+     * @returns {Array.<User>} all users
+     */
+    getAllUsers() {
+        return Object.values(this._idToUser);
+    }
+
+    getFilteredUser() {
+        return this.getAllUsers().filter(u => u.isApplicable());
+    }
+
+    /**
      * get top N followed by summary
      * 
-     * @param {number} currentStreamID userID of the current streamer
-     * @param {UserFilter} filter filter to be applied on user lists
      * @returns {Array.<Object>} array of followed by summary objects
      */
-    getTopFollowedBySummary(currentStreamID, filter) {
-        return filter.filterUsers(Object.values(this._idToUser)).
+    getTopFollowedBySummary() {
+        return this.getFilteredUser().
             sort((left, right) => {
                 const followedByCount = (right.getFollowedByCounts() || 0) - (left.getFollowedByCounts() || 0);
                 if (followedByCount === 0) {
@@ -237,18 +296,44 @@ class Users {
                     return followedByCount;
                 }
             }).slice(0, 10).
-            map(userObj => this._getFollowedBySummary(currentStreamID, userObj.getID()));
+            map(userObj => this._getFollowedBySummary(userObj.getID()));
+    }
+
+    /**
+     * return subscription by tiers separated out by gifted or non gifted.
+     * 
+     * @returns {Object} count of gifted and non gifted subs grouped by tiers
+     */
+    getSubscriptionsByTiers() {
+        return this.getFilteredUser().
+            reduce((res, curr) => {
+                const subscribedTo = curr.getSubscribedToCurrent();
+                if (subscribedTo) {
+                    if (!res[subscribedTo.tier]) {
+                        res[subscribedTo.tier] = {
+                            gifted: 0,
+                            notGifted: 0,
+                        }
+                    }
+
+                    if (subscribedTo.is_gift) {
+                        res[subscribedTo.tier].gifted++;
+                    } else {
+                        res[subscribedTo.tier].notGifted++;
+                    }
+                }
+                return res;
+            }, {});
     }
 
     /**
      * Get followed summary of a user grouped by if they are following 
      * current streamer or not
      * 
-     * @param {number} currentStreamID userID of the current streamer
      * @param {number} userID userID of a user to get followed by summary
      * @returns {Object} { userID, unknown, folowing, admiring}
      */
-    _getFollowedBySummary(currentStreamID, userID) {
+    _getFollowedBySummary(userID) {
         if (!this.getUserByID(userID)) {
             return undefined;
         }
@@ -256,7 +341,7 @@ class Users {
         return [...(this.getUserByID(userID)._followedBy || [])].
             map(id => this.getUserByID(id)).
             reduce((accumulator, current) => {
-                switch (current.isFollowing(currentStreamID)) {
+                switch (current.isFollowingCurrent()) {
                     case undefined:
                         accumulator.unknown++;
                         break;
@@ -270,6 +355,7 @@ class Users {
                 return accumulator;
             }, { userID: userID, unknown: 0, following: 0, admiring: 0 });
     }
+
 }
 
 const users = new Users();

@@ -1,15 +1,14 @@
 const _ = require('lodash');
-const auth = require('../../simpletons/auth');
-const api = require('../../simpletons/api');
+const auth = require('../../singletons/auth');
+const api = require('../../singletons/api');
 const eventSignals = require('../../helpers/signals').eventSignals;
 
 const FETCH_NAMES_LIMIT = 100;
 
-let isRunning = false;
-
 class UserIDFetcher {
     constructor() {
         this.reset();
+        this._isRunning = undefined;
     }
 
     reset() {
@@ -23,10 +22,10 @@ class UserIDFetcher {
     }
 
     async _fetch() {
-        if (isRunning) {
+        if (this._isRunning) {
             return;
         }
-        isRunning = true;
+        this._isRunning = true;
 
         const targets = Array.from(this._names)
         const authObj = await auth.getAuthObj();
@@ -42,7 +41,7 @@ class UserIDFetcher {
         } catch (err) {
             console.warn(`failed to query for ids`, err);
         }
-        isRunning = false;
+        this._isRunning = false;
     }
 
     async _fetchUserIDsForNames(authObj, names) {

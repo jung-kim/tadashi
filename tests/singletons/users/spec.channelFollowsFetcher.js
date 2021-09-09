@@ -1,16 +1,17 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
 
-const auth = require('../../../js/simpletons/auth');
+const auth = require('../../../js/singletons/auth');
 const channelFollowsFetcher = require('../../../js/singletons/users/channelFollowsFetcher');
-const api = require('../../../js/simpletons/api');
+const api = require('../../../js/singletons/api');
 const eventSignals = require('../../../js/helpers/signals').eventSignals;
+const testUtils = require('../../testUtils');
 
 describe('channelFollowsFetcher.js', () => {
-    afterEach(() => {
+    beforeEach(() => {
         channelFollowsFetcher._paginations = {};
         eventSignals.dispatch.reset();
-        reset();
+        testUtils.reset();
     });
 
     describe('_fetch', () => {

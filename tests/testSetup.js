@@ -7,8 +7,7 @@ const glob = require('glob');
 const fs = require('fs');
 const tmi = require('tmi.js');
 const moment = require('../js/helpers/moment');
-const api = require('../js/simpletons/api');
-const fetchMock = require('fetch-mock');
+const api = require('../js/singletons/api');
 _ = require('lodash');
 require('node-localstorage/register');
 
@@ -62,13 +61,6 @@ glob.sync('./hbs/**/*.hbs').forEach((hbsFile) => {
     /*eslint-enable no-eval*/
 });
 
-// stub out boostrap functions 
-BSN = {
-    Collapse: sinon.stub(),
-    Popover: sinon.stub(),
-    Dropdown: sinon.stub(),
-    Alert: sinon.stub(),
-}
 
 // disable signal dispatch
 eventSignals.dispatch = sinon.stub();
@@ -104,48 +96,18 @@ window = {
     addEventListener: sinon.stub().withArgs(sinon.match.any).returns({}),
 }
 
-const auth = require('../js/simpletons/auth');
-const DataBucket = require('../js/simpletons/dataCache/models/DataBucket');
-const constants = require('../js/helpers/constants');
-const DataNode = require('../js/simpletons/dataCache/models/DataNode');
-const filter = require('../js/events/shared/chartFilter').getUserFilter();
-
 Handlebars.registerHelper('userFollowsCSS', () => {
+    // do nothing
+});
+
+Handlebars.registerHelper('getInfoCss', () => {
     // do nothing
 });
 
 Awesomplete = sinon.stub();
 
-// global test rest func
-reset = () => {
-    sinon.verifyAndRestore();
-    document.getElementById.reset();
-    auth.logout();
-    localStorage.clear();
-    fetchMock.reset();
-    filter.changeSearchString();
-    flatpickr.reset();
-    eventSignals.dispatch.reset();
-    domSignals.dispatch.reset();
-}
-
 Twitch = {
     Embed: sinon.stub(),
 };
-
-getTestDataBucket = (count, name) => {
-    const adjustedCount = count || 1;
-
-    return new DataBucket({
-        [constants.TYPE_CHAT]: new DataNode(adjustedCount, { [name || 'a']: adjustedCount }),
-        [constants.TYPE_RESUB]: new DataNode(adjustedCount, { [name || 'b']: adjustedCount }),
-        [constants.TYPE_CHEER]: new DataNode(adjustedCount, { [name || 'c']: adjustedCount }),
-        [constants.TYPE_SUB]: new DataNode(adjustedCount, { [name || 'd']: adjustedCount }),
-        [constants.TYPE_BAN]: new DataNode(adjustedCount, { [name || 'e']: adjustedCount }),
-        [constants.TYPE_ANONGIFT]: new DataNode(adjustedCount, { [name || 'f']: adjustedCount }),
-        [constants.TYPE_SUBGIFT]: new DataNode(adjustedCount, { [name || 'g']: adjustedCount }),
-        [constants.TYPE_SUBMYSTERY]: new DataNode(adjustedCount, { [name || 'h']: adjustedCount }),
-    });
-}
 
 /*eslint-enable no-global-assign,no-implicit-globals,no-native-reassign*/

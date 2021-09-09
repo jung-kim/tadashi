@@ -9,7 +9,7 @@ const events = require('../../js/models/events');
 
 describe('Utils.js', () => {
     beforeEach(() => {
-        reset();
+        testUtils.reset();
     });
 
     describe('getTimeBucket', () => {
@@ -122,6 +122,7 @@ describe('Utils.js', () => {
         assert.equal(utils.getMessageType(new events.Sub({})), constants.TYPE_SUB);
         assert.equal(utils.getMessageType(new events.SubGift({})), constants.TYPE_SUBGIFT);
         assert.equal(utils.getMessageType(new events.MysterySubGift({})), constants.TYPE_SUBMYSTERY);
+        assert.equal(utils.getMessageType(new events.Timeout({})), constants.TYPE_TIMEOUT);
 
         try {
             utils.getMessageType({});
@@ -139,6 +140,7 @@ describe('Utils.js', () => {
         assert.instanceOf(utils.getRaw(constants.TYPE_SUB, {}), events.Sub);
         assert.instanceOf(utils.getRaw(constants.TYPE_SUBGIFT, {}), events.SubGift);
         assert.instanceOf(utils.getRaw(constants.TYPE_SUBMYSTERY, {}), events.MysterySubGift);
+        assert.instanceOf(utils.getRaw(constants.TYPE_TIMEOUT, {}), events.Timeout);
 
         try {
             utils.getRaw(undefined, {});
@@ -163,5 +165,18 @@ describe('Utils.js', () => {
             "#E6EE9CFF",
             "#FFCC80FF",
         ]);
+    });
+
+    describe('convertObjectToHTML', () => {
+        it('with valid', () => {
+            const str = utils.convertObjectToHTML({ a: 123, b: 444 });
+            assert.equal(str, "a: 123<br>b: 444");
+        });
+
+        it('with null', () => {
+            const str = utils.convertObjectToHTML();
+            assert.equal(str, "");
+        })
+
     });
 });
