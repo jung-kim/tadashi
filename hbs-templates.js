@@ -149,7 +149,7 @@ this["templates"]['./hbs/stream/components/chart.hbs'] = Handlebars.template({"c
 },"useData":true});
 
 this["templates"]['./hbs/stream/components/chatters-group-list.hbs'] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
-    var alias1=container.lambda, alias2=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+    var alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : (container.nullContext || {}), alias4=container.hooks.helperMissing, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
         }
@@ -159,10 +159,14 @@ this["templates"]['./hbs/stream/components/chatters-group-list.hbs'] = Handlebar
   return "<li class=\"list-group-item justify-content-between lh-condensed\">\n    <small id=\"chatters-"
     + alias2(alias1((depth0 != null ? lookupProperty(depth0,"_userName") : depth0), depth0))
     + "\" class=\""
-    + alias2((lookupProperty(helpers,"userFollowsCSS")||(depth0 && lookupProperty(depth0,"userFollowsCSS"))||container.hooks.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"_userName") : depth0),{"name":"userFollowsCSS","hash":{},"data":data,"loc":{"start":{"line":3,"column":51},"end":{"line":3,"column":84}}}))
+    + alias2((lookupProperty(helpers,"userFollowsCSS")||(depth0 && lookupProperty(depth0,"userFollowsCSS"))||alias4).call(alias3,(depth0 != null ? lookupProperty(depth0,"_userName") : depth0),{"name":"userFollowsCSS","hash":{},"data":data,"loc":{"start":{"line":3,"column":51},"end":{"line":3,"column":84}}}))
     + "\">"
     + alias2(alias1((depth0 != null ? lookupProperty(depth0,"_userName") : depth0), depth0))
-    + "</small>\n</li>\n";
+    + "</small>\n    <span id=\"chatters-subs-"
+    + alias2(alias1((depth0 != null ? lookupProperty(depth0,"_userName") : depth0), depth0))
+    + "\" class=\"user-info "
+    + alias2((lookupProperty(helpers,"getInfoCss")||(depth0 && lookupProperty(depth0,"getInfoCss"))||alias4).call(alias3,(depth0 != null ? lookupProperty(depth0,"_userName") : depth0),{"name":"getInfoCss","hash":{},"data":data,"loc":{"start":{"line":4,"column":65},"end":{"line":4,"column":94}}}))
+    + "\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-info-circle\"\n            viewBox=\"0 0 16 16\">\n            <path d=\"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z\" />\n            <path\n                d=\"m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z\" />\n        </svg>\n    </span>\n</li>\n";
 },"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -171,7 +175,7 @@ this["templates"]['./hbs/stream/components/chatters-group-list.hbs'] = Handlebar
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":1,"column":0},"end":{"line":5,"column":9}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":1,"column":0},"end":{"line":13,"column":9}}})) != null ? stack1 : "");
 },"useData":true});
 
 this["templates"]['./hbs/stream/components/chatters-group.hbs'] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -209,7 +213,7 @@ this["templates"]['./hbs/stream/date-time-range.hbs'] = Handlebars.template({"co
 },"useData":true});
 
 this["templates"]['./hbs/stream/index.hbs'] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div id=\"stream\" class=\"container-fluid\">\n    <div id=\"twitch-stream\" class=\"row\">\n        <div class=\"col-md-12\">\n            <h2 id=\"embeded-twitch-collapse\" class=\"header pl-4\" data-toggle=\"collapse\" data-target=\"#twitch-embed\"\n                aria-expanded=\"true\" aria-controls=\"twitch-embed\" onclick=\"domEvent(event, 'embeded-twitch-collapse')\">\n                <span id=\"embeded-twitch-channel\" class=\"btn-link\">\n                </span>\n                <span id=\"embeded-twitch-desc\">\n                </span>\n            </h2>\n            <div id=\"twitch-embed\" class=\"collapse show\" aria-labelledby=\"headingOne\"\n                data-parent=\"#embeded-twitch-collapse\">\n            </div>\n        </div>\n    </div>\n    <div id=\"chart\" class=\"row\">\n        <div id=\"timeseries-container\" class=\"timeseries col-md-10\">\n            <canvas id=\"canvas-timeseries\"></canvas>\n        </div>\n        <div id=\"chatters-table\" class=\"chatters col-md-2\">\n        </div>\n    </div>\n    <div class=\"pie-active row\">\n        <div id='pie-chats-by-users' class=\"col-md-4\">\n        </div>\n\n        <div id='pie-proceeds-by-users' class=\"col-md-4\">\n        </div>\n\n        <div id='pie-proceeds' class=\"col-md-4\">\n        </div>\n    </div>\n    <div class=\"pie-active row\">\n        <div id='pie-followed-streamers' class=\"col-md-8\">\n        </div>\n    </div>\n</div>";
+    return "<div id=\"stream\" class=\"container-fluid\">\n    <div id=\"twitch-stream\" class=\"row\">\n        <div class=\"col-md-12\">\n            <h2 id=\"embeded-twitch-collapse\" class=\"header pl-4\" data-toggle=\"collapse\" data-target=\"#twitch-embed\"\n                aria-expanded=\"true\" aria-controls=\"twitch-embed\" onclick=\"domEvent(event, 'embeded-twitch-collapse')\">\n                <span id=\"embeded-twitch-channel\" class=\"btn-link\">\n                </span>\n                <span id=\"embeded-twitch-desc\">\n                </span>\n            </h2>\n            <div id=\"twitch-embed\" class=\"collapse show\" aria-labelledby=\"headingOne\"\n                data-parent=\"#embeded-twitch-collapse\">\n            </div>\n        </div>\n    </div>\n    <div id=\"chart\" class=\"row\">\n        <div id=\"timeseries-container\" class=\"timeseries col-md-10\">\n            <canvas id=\"canvas-timeseries\"></canvas>\n        </div>\n        <div id=\"chatters-table\" class=\"chatters col-md-2\">\n        </div>\n    </div>\n    <div class=\"pie-active row\">\n        <div id='pie-chats-by-users' class=\"col-md-4\">\n        </div>\n\n        <div id='pie-proceeds-by-users' class=\"col-md-4\">\n        </div>\n\n        <div id='pie-proceeds' class=\"col-md-4\">\n        </div>\n    </div>\n    <div class=\"pie-active row\">\n        <div id='chart-followed-streamers' class=\"col-md-8\">\n        </div>\n\n        <div id='chart-subs-by-tiers' class=\"col-md-4\">\n        </div>\n    </div>\n</div>";
 },"useData":true});
 
 this["templates"]['./hbs/stream/nav-options.hbs'] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {

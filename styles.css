@@ -347,7 +347,14 @@ nav .cir-active-no-auth {
   border: 0px 0px;
 }
 #stream .chatters .list-group-item small {
-  margin: 4px 4px 4px 40px;
+  margin: 4px 4px 4px 20px;
+}
+#stream .chatters .list-group-item .user-info {
+  text-align: right;
+  height: 0px;
+}
+#stream .chatters .list-group-item .user-info svg {
+  margin-top: -55px;
 }
 #stream .chatters .panel-heading {
   display: inline-block;
@@ -369,6 +376,7 @@ nav .cir-active-no-auth {
 }
 #stream .chatters .list-group {
   display: inline-flex;
+  width: 100%;
 }
 #stream .pie-active {
   height: 450px;
